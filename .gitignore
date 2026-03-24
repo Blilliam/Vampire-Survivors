@@ -1,0 +1,56 @@
+# Eclipse project files
+.project
+.classpath
+.settings/
+.metadata/
+
+# Eclipse build output
+bin/
+out/
+
+# Eclipse launch configurations
+*.launch
+
+# Java compiled files
+*.class
+
+# JAR files
+*.jar
+*.war
+*.ear
+
+# Package files
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# Logs
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+
+# IntelliJ (in case project is ever opened there)
+.idea/
+*.iml
+*.iws
+*.ipr
