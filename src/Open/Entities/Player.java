@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 import Open.Artifacts.Artifact;
 import Open.Entities.Enemies.Enemy;
+import Open.Weapons.GunWeapon;
+import Open.Weapons.Weapon;
 import main.Animation;
 import main.AppPanel;
 import main.Assets;
@@ -17,6 +19,7 @@ import main.enums.GameState;
 
 public class Player extends Entity {
 	private ArrayList<Artifact> artifacts = new ArrayList<>();
+	private Weapon[] weapons;
 	
 	private int kills;
 
@@ -34,6 +37,12 @@ public class Player extends Entity {
 
 	public Player(GameObject gameObj) {
 		super(gameObj);
+		
+		//shoudl be 5
+		weapons = new Weapon[1];
+		
+		//temp
+		weapons[0] = new GunWeapon(gameObj);
 		
 		maxHp = 10;
 		currHp = maxHp;
@@ -71,7 +80,10 @@ public class Player extends Entity {
 			// e.damage(5);
 		}
 		handleEnemyCollisions();
-
+		
+		for (Weapon w: weapons) {
+			w.update();
+		}
 	}
 
 	public void updateOpenMovement() {
@@ -200,7 +212,8 @@ public class Player extends Entity {
 		}
 	}
 	
-	public Enemy closestEnemy(ArrayList<Enemy> enemies) {
+	public Enemy closestEnemy() {
+		ArrayList<Enemy> enemies = gameObj.getEnemies();
 		int indexOfClosestEnemy = 0;
 		
 		for (int i = 0; i < enemies.size() - 1; i++) {

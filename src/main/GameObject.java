@@ -252,6 +252,9 @@ public class GameObject {
 		
 		chests = new ArrayList<Chest>();
 		chests.add(new Chest(this, player.getX() + 200, player.getY()));
+		
+		projectiles = new ArrayList<WeaponEntity>();
+		//projectiles.add(new WeaponEntity(this, Assets.ProjectileBanana, player.getX() + 200, player.getY(), 0, 0, 0));
 	}
 	
 	public int getCameraX() {
@@ -337,5 +340,9 @@ public class GameObject {
 	
 	public void addExp(int value, int x, int y) {
 		exp.add(new Exp(this, value, x, y));
+	}
+	
+	public void addProjectiles(WeaponEntity w) {
+		projectiles.add(w);
 	}
 }

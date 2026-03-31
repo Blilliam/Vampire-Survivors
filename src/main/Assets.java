@@ -47,8 +47,8 @@ public class Assets {
 			// assigns each image variable to an actual image in the file
 
 			// Weapons
-			aura = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Knife.png"));
-			bone = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Bone.png"));
+			aura = ImageIO.read(Assets.class.getResource("/Images/Items/Aura_Icon.png"));
+//			bone = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Bone.png"));
 //			axe = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Axe.png"));
 //			cross = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Cross.png"));
 //			kingBible = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-King_Bible.png"));
