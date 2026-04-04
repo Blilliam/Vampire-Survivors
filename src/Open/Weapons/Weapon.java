@@ -16,6 +16,7 @@ public abstract class Weapon {
 	
 	public int atkDelay;
 	public int delayCounter;
+	public double projectileBounces;
 
 	
 	

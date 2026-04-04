@@ -125,8 +125,14 @@ public class GameObject {
 			for (Chest e: chests) {
 				e.update();
 			}
-			for (WeaponEntity e: projectiles) {
-				e.update();
+			for (int i = projectiles.size() - 1; i >= 0; i--) { // for every enemy (going backwards)
+				WeaponEntity e = projectiles.get(i);
+
+				e.update(); // update each enemy
+
+				if (e.isDead) {
+					projectiles.remove(i); // removes dead enemies
+				}
 			}
 			
 			waves.update(); // update enemy spawning

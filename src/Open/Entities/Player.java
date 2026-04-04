@@ -79,7 +79,6 @@ public class Player extends Entity {
 		for (Enemy e : gameObj.getEnemies()) {
 			// e.damage(5);
 		}
-		handleEnemyCollisions();
 		
 		for (Weapon w: weapons) {
 			w.update();
@@ -200,17 +199,6 @@ public class Player extends Entity {
 		int textWidth = g2.getFontMetrics().stringWidth(text);
 		g2.drawString(text, x + (barWidth - textWidth) / 2, y + barHeight - 8);
 	}
-
-	public void handleEnemyCollisions() {
-		for (int i = 0; i < gameObj.getEnemies().size(); i++) {
-
-			Enemy e2 = gameObj.getEnemies().get(i);
-
-			if (Entity.rectCollision(this, e2)) { // avoid divide by zero
-				currHp--;
-			}
-		}
-	}
 	
 	public Enemy closestEnemy() {
 		ArrayList<Enemy> enemies = gameObj.getEnemies();
@@ -249,5 +237,9 @@ public class Player extends Entity {
 	
 	public int getKills() {
 		return kills;
+	}
+
+	public void damadge(int i) {
+		currHp -= i;
 	}
 }

@@ -13,6 +13,9 @@ public class GunWeapon extends Weapon{
 		projectileCount = 1;
 		sprite = Assets.aura;
 		atkDelay = 60;
+		speed = 5;
+		projectileBounces = 1;
+		atk = 3;
 	}
 	
 	public void update() {

@@ -85,13 +85,13 @@ public class Enemy extends Entity {
 	/**
 	 * damages enemy
 	 * 
-	 * @param amount of damages
+	 * @param atk of damages
 	 */
-	public void damage(int amount) {
+	public void damage(double atk) {
 		if (dying)
 			return;
 
-		currHp -= amount;
+		currHp -= atk;
 
 		if (currHp <= 0) {
 			die();
@@ -124,6 +124,10 @@ public class Enemy extends Entity {
 			if (frameCounter > 6) {
 				frame = (frame + 1) % walkFrames.length;
 				frameCounter = 0;
+			}
+			
+			if (Entity.rectCollision(this, gameObj.getPlayer())) {
+				gameObj.getPlayer().damadge(1);
 			}
 
 		} else {

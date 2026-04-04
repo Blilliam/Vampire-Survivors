@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import Open.Entities.Entity;
+import Open.Entities.Enemies.Enemy;
 import Open.Weapons.Weapon;
 import main.AppPanel;
 import main.GameObject;
@@ -17,6 +18,7 @@ public class WeaponEntity extends Entity {
 	Vec2 position;
 	Vec2 velocity;
 	Vec2 acceleration;
+	double currProjectileBounces;
 	
 	
 	
@@ -30,10 +32,13 @@ public class WeaponEntity extends Entity {
 	 */
 	public WeaponEntity(GameObject gameObj, Weapon weapon, Vec2 direction, int x, int y) {
 		super(gameObj);
+		this.weapon = weapon;
 		this.sprite = weapon.sprite;
 		this.position = new Vec2(x, y);
 		this.acceleration = new Vec2(0, 0);
 		this.velocity = direction.normalize().scale(weapon.speed);
+		this.currProjectileBounces = weapon.projectileBounces;
+		isDead = false;
 	}
 
 	public BufferedImage getSprite() {
@@ -46,13 +51,22 @@ public class WeaponEntity extends Entity {
 
 	protected void updatePhysics() {
 		
-		
 	}
 	
 	public void update() {
 		updatePhysics();
 		x = (int) position.x;
 		y = (int) position.y;
+		for (Enemy e: gameObj.getEnemies()) {
+			if (Entity.rectCollision(this, e)) {
+				e.damage(weapon.atk);
+				this.currProjectileBounces--;
+				if (currProjectileBounces <=0) {
+					isDead = true;
+				}
+			}
+		}
+		
 	}
 
 	@Override
