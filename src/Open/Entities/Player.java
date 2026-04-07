@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import Open.Artifacts.Artifact;
 import Open.Entities.Enemies.Enemy;
+import Open.Weapons.BananaWeapon;
 import Open.Weapons.GunWeapon;
 import Open.Weapons.Weapon;
 import main.Animation;
@@ -42,7 +43,7 @@ public class Player extends Entity {
 		weapons = new Weapon[1];
 		
 		//temp
-		weapons[0] = new GunWeapon(gameObj);
+		weapons[0] = new BananaWeapon(gameObj);
 		
 		maxHp = 10;
 		currHp = maxHp;
@@ -200,17 +201,19 @@ public class Player extends Entity {
 		g2.drawString(text, x + (barWidth - textWidth) / 2, y + barHeight - 8);
 	}
 	
-	public Enemy closestEnemy() {
+	public Enemy closestEnemy(int range) {
 		ArrayList<Enemy> enemies = gameObj.getEnemies();
-		int indexOfClosestEnemy = 0;
+		float minDistance = Integer.MAX_VALUE;
+		Enemy closestEnemy = null;
 		
-		for (int i = 0; i < enemies.size() - 1; i++) {
-	        if (Entity.getDistance(this, enemies.get(i)) < Entity.getDistance(this, enemies.get(indexOfClosestEnemy))) {
-	        	indexOfClosestEnemy = i;
+		for (int i = 0; i < enemies.size(); i++) {
+			int enemyDistance = Entity.getDistance(this, enemies.get(i));
+	        if (enemyDistance < range && !enemies.get(i).dying && enemyDistance < minDistance) {
+	        	closestEnemy = enemies.get(i);
 	        }
 		}
 		
-		return enemies.get(indexOfClosestEnemy);
+		return closestEnemy;
 	}
 	
 	

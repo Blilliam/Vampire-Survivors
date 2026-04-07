@@ -19,7 +19,7 @@ public class Enemy extends Entity {
 	private int frameCounter = 0;
 
 	private int deathHoldTimer = 0;
-	private boolean dying = false;
+	public boolean dying = false;
 
 	private int deathX, deathY; // store position when dying
 

@@ -40,7 +40,7 @@ public class EnemyWaves {
 	        baseTier = 5;
 	    }
 
-	    int margin = 200; // distance from player view
+	    int margin = -100; // distance from player view
 
 	    for (int i = 0; i < numEnemies; i++) {
 	        int tier = baseTier + (int) (Math.random() * 3);

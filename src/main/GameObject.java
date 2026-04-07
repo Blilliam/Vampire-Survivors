@@ -264,11 +264,11 @@ public class GameObject {
 	}
 	
 	public int getCameraX() {
-	    return (int)player.getX() - AppPanel.WIDTH / 2;
+	    return player.getX() - AppPanel.WIDTH / 2;
 	}
 
 	public int getCameraY() {
-	    return (int)player.getY() - AppPanel.HEIGHT / 2;
+	    return player.getY() - AppPanel.HEIGHT / 2;
 	}
 
 	private void startBossBattle() {

@@ -39,7 +39,7 @@ public abstract class Entity { // main parent class of all moving objects on scr
 		return e1.x < e2.x + e2.width && e1.x + e1.width > e2.x && e1.y < e2.y + e2.height && e1.y + e1.height > e2.y;
 	}
 	
-	public static double getDistance(Entity e1, Entity e2) {
+	public static int getDistance(Entity e1, Entity e2) {
 		double e1x = e1.getX() + e1.getWidth();
         double e1y = e1.getY() + e1.getHeight();
 
@@ -49,7 +49,7 @@ public abstract class Entity { // main parent class of all moving objects on scr
         double dxToEnemy = e1x - e2x;
         double dyToEnemy = e1y - e2y;
 
-        return Math.sqrt(dxToEnemy * dxToEnemy + dyToEnemy * dyToEnemy);
+        return (int) (Math.sqrt((dxToEnemy * dxToEnemy) + (dyToEnemy * dyToEnemy)));
 	}
 
 	public int getX() {
