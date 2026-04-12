@@ -11,15 +11,15 @@ import main.GameObject;
 import main.Vec2;
 
 public class WeaponEntity extends Entity {
-	BufferedImage sprite;
+	protected BufferedImage sprite;
 
-	Weapon weapon;
+	protected Weapon weapon;
 
-	Vec2 position;
-	Vec2 velocity;
-	Vec2 acceleration;
-	double currProjectileBounces;
-	double angle;
+	protected Vec2 position;
+	protected Vec2 velocity;
+	protected Vec2 acceleration;
+	protected double currProjectileBounces;
+	protected double angle;
 
 	/**
 	 * creates new projectile entity
@@ -33,11 +33,11 @@ public class WeaponEntity extends Entity {
 	public WeaponEntity(GameObject gameObj, Weapon weapon, Vec2 direction, int x, int y) {
 		super(gameObj);
 		this.weapon = weapon;
-		this.sprite = weapon.sprite;
+		this.sprite = weapon.getSprite();
 		this.position = new Vec2(x, y);
 		this.acceleration = new Vec2(0, 0);
-		this.velocity = direction.normalize().scale(weapon.speed);
-		this.currProjectileBounces = weapon.projectileBounces;
+		this.velocity = direction.normalize().scale(weapon.getSpeed());
+		this.currProjectileBounces = weapon.getProjectileBounces();
 		isDead = false;
 	}
 
@@ -55,11 +55,11 @@ public class WeaponEntity extends Entity {
 
 	public void update() {
 		updatePhysics();
-		x = (int) position.x;
-		y = (int) position.y;
+		x = (int) position.getX();
+		y = (int) position.getY();
 		for (Enemy e : gameObj.getEnemies()) {
 			if (Entity.rectCollision(this, e)) {
-				e.damage(weapon.atk);
+				e.damage(weapon.getAtk());
 				this.currProjectileBounces--;
 				if (currProjectileBounces <= 0) {
 					isDead = true;

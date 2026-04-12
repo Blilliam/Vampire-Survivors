@@ -7,17 +7,17 @@ import main.GameObject;
 
 
 public abstract class Weapon {
-	public double atk;
-	public double projectileCount;
-	public double rotationSpeed;
-	public int speed;
-	public BufferedImage sprite;
-	public GameObject gameObj;
+	private double atk;
+	protected double projectileCount;
+	protected double rotationSpeed;
+	private int speed;
+	private BufferedImage sprite;
+	protected GameObject gameObj;
 	
-	public int atkDelay;
-	public int delayCounter;
-	public double projectileBounces;
-	public int range;
+	protected int atkDelay;
+	protected int delayCounter;
+	private double projectileBounces;
+	protected int range;
 
 	
 	
@@ -31,6 +31,38 @@ public abstract class Weapon {
 	
 	public void update() {
 		
+	}
+
+	public double getProjectileBounces() {
+		return projectileBounces;
+	}
+
+	public void setProjectileBounces(double projectileBounces) {
+		this.projectileBounces = projectileBounces;
+	}
+
+	public int getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
+
+	public BufferedImage getSprite() {
+		return sprite;
+	}
+
+	public void setSprite(BufferedImage sprite) {
+		this.sprite = sprite;
+	}
+
+	public double getAtk() {
+		return atk;
+	}
+
+	public void setAtk(double atk) {
+		this.atk = atk;
 	}
 	
 }

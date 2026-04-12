@@ -12,13 +12,13 @@ public class BananaWeapon extends Weapon{
 
 	public BananaWeapon(GameObject gameObj) {
 		super(gameObj);
-		atk = 10;
+		setAtk(10);
 		projectileCount = 1;
-		sprite = Assets.ProjectileBanana;
+		setSprite(Assets.ProjectileBanana);
 		atkDelay = 60;
-		speed = 5;
-		projectileBounces = 1;
-		atk = 3;
+		setSpeed(5);
+		setProjectileBounces(1);
+		setAtk(3);
 		range = 500;
 	}
 	

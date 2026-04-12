@@ -51,7 +51,10 @@ public class Exp extends Entity {
         g2.setColor(rainbow);
 
         // Draw coin
-        g2.fillOval((int) getX(), (int) getY(), radius * 2, radius * 2);
+        int drawX = x - gameObj.getCameraX() - width / 2;
+		int drawY = y - gameObj.getCameraY() - height / 2;
+        
+        g2.fillOval(drawX, drawY, radius * 2, radius * 2);
     }
     
     public void update() {

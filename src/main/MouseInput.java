@@ -6,16 +6,16 @@ import java.awt.event.MouseEvent;
 public class MouseInput extends MouseAdapter {
 
 	//mouse positionn
-    public static int mouseX;
-    public static int mouseY;
+    private static int mouseX;
+    private static int mouseY;
 
     //mouse click
-    public static boolean mousePressed = false;
+    private static boolean mousePressed = false;
 
     //if clicked = true
     @Override
     public void mousePressed(MouseEvent e) {
-        mousePressed = true;
+        setMousePressed(true);
     }
 
     //whenever moved, update position
@@ -33,6 +33,23 @@ public class MouseInput extends MouseAdapter {
 
     // called once per frame to set pressed to false
     public static void update() {
-        mousePressed = false;
+        setMousePressed(false);
     }
+
+	public static int getMouseX() {
+		return mouseX;
+	}
+
+	public static int getMouseY() {
+		return mouseY;
+	}
+
+	public static boolean isMousePressed() {
+		return mousePressed;
+	}
+
+	public static void setMousePressed(boolean mousePressed) {
+		MouseInput.mousePressed = mousePressed;
+	}
+    
 }

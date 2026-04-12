@@ -115,7 +115,7 @@ public class GameObject {
 
 				e.update(); // update each enemy
 
-				if (e.isDead) {
+				if (e.isDead()) {
 					enemies.remove(i); // removes dead enemies
 				}
 			}
@@ -130,7 +130,7 @@ public class GameObject {
 
 				e.update(); // update each enemy
 
-				if (e.isDead) {
+				if (e.isDead()) {
 					projectiles.remove(i); // removes dead enemies
 				}
 			}

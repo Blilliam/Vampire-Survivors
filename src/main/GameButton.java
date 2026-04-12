@@ -36,13 +36,13 @@ public class GameButton {
 
     /** Returns true if mouse is hovering over this button */
     public boolean isHovering() {
-        return MouseInput.mouseX >= x && MouseInput.mouseX <= x + w &&
-               MouseInput.mouseY >= y && MouseInput.mouseY <= y + h;
+        return MouseInput.getMouseX() >= x && MouseInput.getMouseX() <= x + w &&
+               MouseInput.getMouseY() >= y && MouseInput.getMouseY() <= y + h;
     }
 
     /** Call this each frame to handle clicks */
     public void update() {
-        if (isHovering() && MouseInput.mousePressed) {
+        if (isHovering() && MouseInput.isMousePressed()) {
             clickFunc.run();
             MouseInput.update(); // consume click so it doesn't trigger again
         }

@@ -57,8 +57,9 @@ public class Upgrades {
 	// =========================
 	public void update() {
 
+		gameObj.getMouseHandler();
 		// Only handle **one click per frame**
-		if (MouseInput.mousePressed) {
+		if (MouseInput.isMousePressed()) {
 
 			boolean didUpgrade = false;
 
@@ -86,7 +87,7 @@ public class Upgrades {
 
 			// CLEAR mouse click AFTER handling **one action**
 			if (didUpgrade) {
-				MouseInput.mousePressed = false;
+				MouseInput.setMousePressed(false);
 			}
 		}
 

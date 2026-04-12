@@ -5,8 +5,8 @@ import main.GameObject;
 import main.enums.GameState;
 
 public class EnemyWaves {
-	GameObject gameObj;
-	int waveNum; // make instance variable
+	private GameObject gameObj;
+	private int waveNum; // make instance variable
 
 	public EnemyWaves(GameObject gameObj) {
 		this.gameObj = gameObj;

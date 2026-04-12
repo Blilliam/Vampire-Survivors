@@ -19,7 +19,7 @@ public class Enemy extends Entity {
 	private int frameCounter = 0;
 
 	private int deathHoldTimer = 0;
-	public boolean dying = false;
+	private boolean dying = false;
 
 	private int deathX, deathY; // store position when dying
 
@@ -88,7 +88,7 @@ public class Enemy extends Entity {
 	 * @param atk of damages
 	 */
 	public void damage(double atk) {
-		if (dying)
+		if (isDying())
 			return;
 
 		currHp -= atk;
@@ -102,7 +102,7 @@ public class Enemy extends Entity {
 	 * starts death animation and freezes them in place
 	 */
 	private void die() {
-		dying = true;
+		setDying(true);
 		frame = 0;
 		frameCounter = 0;
 		deathHoldTimer = 0;
@@ -118,7 +118,7 @@ public class Enemy extends Entity {
 	public void update() {
 		frameCounter++;
 
-		if (!dying) {
+		if (!isDying()) {
 			followPlayer();
 
 			if (frameCounter > 6) {
@@ -168,12 +168,12 @@ public class Enemy extends Entity {
 	public void draw(Graphics2D g) {
 
 		// Calculate screen position
-		int screenX = x - gameObj.getCameraX() - width / 2;
-		int screenY = y - gameObj.getCameraY() - height / 2;
+		int screenX = x - gameObj.getCameraX() - (width-20)/2;
+		int screenY = y - gameObj.getCameraY() - (height-40)/2;
 
 		BufferedImage img;
 
-		if (dying) {
+		if (isDying()) {
 			// Freeze position at death for drawing
 			img = deathFrames[Math.min(frame, deathFrames.length - 1)];
 
@@ -187,5 +187,13 @@ public class Enemy extends Entity {
 
 			g.drawImage(img, screenX, screenY, width, height, null);
 		}
+	}
+
+	public boolean isDying() {
+		return dying;
+	}
+
+	public void setDying(boolean dying) {
+		this.dying = dying;
 	}
 }

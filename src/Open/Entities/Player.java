@@ -208,7 +208,7 @@ public class Player extends Entity {
 		
 		for (int i = 0; i < enemies.size(); i++) {
 			int enemyDistance = Entity.getDistance(this, enemies.get(i));
-	        if (enemyDistance < range && !enemies.get(i).dying && enemyDistance < minDistance) {
+	        if (enemyDistance < range && !enemies.get(i).isDying() && enemyDistance < minDistance) {
 	        	closestEnemy = enemies.get(i);
 	        }
 		}

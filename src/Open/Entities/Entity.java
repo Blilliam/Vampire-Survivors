@@ -8,21 +8,21 @@ import main.GameObject;
 
 public abstract class Entity { // main parent class of all moving objects on screen (weapon effects, player, enemies)
 
-	public int x, y; // world coordinates
+	protected int x, y; // world coordinates
 
 	//width and heigh
-	public int width;
-	public int height;
+	protected int width;
+	protected int height;
 
 	//if youre dead
-	public boolean isDead;
+	protected boolean isDead;
 
-	public int speed; // pixels per update
+	protected int speed; // pixels per update
 	
-	public int maxHp; // maximum health
-	public int currHp; // current health
+	protected int maxHp; // maximum health
+	protected int currHp; // current health
 
-	public GameObject gameObj;
+	protected GameObject gameObj;
 
 	public Entity(GameObject gameObj) {
 		this.gameObj = gameObj;

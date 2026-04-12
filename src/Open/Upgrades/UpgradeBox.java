@@ -8,14 +8,14 @@ import main.MouseInput;
 
 public class UpgradeBox {
 
-    public int type;
+    private int type;
     private final GameObject gameObj;
 
     public int x, y, w = 150, h = 100;
 
     // Animation variables
-    public float animationProgress = 1f; // 1 = fully visible, 0 = invisible
-    public int startY = 0;                // starting Y for slide-in
+    private float animationProgress = 1f; // 1 = fully visible, 0 = invisible
+    private int startY = 0;                // starting Y for slide-in
 
     public UpgradeBox(GameObject gameObj, int type, int x, int y) {
         this.gameObj = gameObj;
@@ -27,8 +27,8 @@ public class UpgradeBox {
     }
 
     public boolean isHovering() {
-        return MouseInput.mouseX >= x && MouseInput.mouseX <= x + w &&
-               MouseInput.mouseY >= y && MouseInput.mouseY <= y + h;
+        return MouseInput.getMouseX() >= x && MouseInput.getMouseX() <= x + w &&
+               MouseInput.getMouseY() >= y && MouseInput.getMouseY() <= y + h;
     }
 
     public void updateAnimation() {

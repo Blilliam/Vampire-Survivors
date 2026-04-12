@@ -3,7 +3,23 @@ package main;
 import Open.Entities.Entity;
 
 public class Vec2 {
-	public double x, y;
+	private double x, y;
+
+	public double getX() {
+		return x;
+	}
+
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	public double getY() {
+		return y;
+	}
+
+	public void setY(double y) {
+		this.y = y;
+	}
 
 	public Vec2(double x, double y) {
 		this.x = x;
@@ -51,7 +67,7 @@ public class Vec2 {
 	}
 
 	public static Vec2 between(Entity from, Entity to) {
-		return new Vec2(to.x - from.x, to.y - from.y).normalize();
+		return new Vec2(to.getX() - from.getX(), to.getY() - from.getY()).normalize();
 	}
 
 	@Override
