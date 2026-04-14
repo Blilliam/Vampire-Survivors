@@ -5,84 +5,84 @@ import main.GameObject;
 import main.enums.GameState;
 
 public class EnemyWaves {
-	private GameObject gameObj;
-	private int waveNum; // make instance variable
 
-	public EnemyWaves(GameObject gameObj) {
-		this.gameObj = gameObj;
-		waveNum = 1;
-		createEnemies();
-	}
+    private GameObject gameObj;
 
-	public void update() {
-		// Only check for wave completion while playing
-		if (GameObject.getState() == GameState.OPEN && gameObj.getEnemies().size() == 0) {
-			waveNum++;
-			createEnemies();
-		}
-	}
+    // difficulty system
+    private double credits;
+    private double creditGainRate; // credits per tick
+    private int difficultyLevel;
 
-	/**
-	 * creates more enemies in the enemies ArrayList
-	 */
-	public void createEnemies() {
-	    int numEnemies;
-	    int baseTier;
+    public EnemyWaves(GameObject gameObj) {
+        this.gameObj = gameObj;
 
-	    if (waveNum <= 10) {
-	        numEnemies = waveNum + 2;
-	        baseTier = 1;
-	    } else if (waveNum <= 20) {
-	        numEnemies = 10 + (waveNum - 10) * 2;
-	        baseTier = 3;
-	    } else {
-	        numEnemies = 30 + (waveNum - 20) * 3;
-	        baseTier = 5;
-	    }
+        credits = 0;
+        creditGainRate = 0.05; // starting difficulty
+        difficultyLevel = 1;
+    }
 
-	    int margin = -100; // distance from player view
+    public void update() {
 
-	    for (int i = 0; i < numEnemies; i++) {
-	        int tier = baseTier + (int) (Math.random() * 3);
+        if (GameObject.getState() != GameState.OPEN) return;
 
-	        int tempX = 0;
-	        int tempY = 0;
+        // increase difficulty over time
+        difficultyLevel++;
 
-	        boolean spawnLeftOrRight = Math.random() < 0.5;
+        // gain credits over time
+        credits += creditGainRate;
 
-	        if (spawnLeftOrRight) {
-	            // Spawn left or right off-screen
-	            if (Math.random() < 0.5) {
-	                // left
-	                tempX = gameObj.getPlayer().getX() - AppPanel.WIDTH / 2 - margin;
-	            } else {
-	                // right
-	                tempX = gameObj.getPlayer().getY() + AppPanel.WIDTH / 2 + margin;
-	            }
+        // slowly ramp difficulty
+        if (difficultyLevel % 600 == 0) { // ~10 seconds at 60fps
+            creditGainRate += 0.02;
+        }
 
-	            tempY = (int) (Math.random() * gameObj.getMap().HEIGHT);
+        // spawn as long as we can afford enemies
+        while (credits >= 1) {
+            spawnEnemy();
+            credits -= 1;
+        }
+    }
 
-	        } else {
-	            // Spawn top or bottom off-screen
-	            if (Math.random() < 0.5) {
-	                // top
-	                tempY = gameObj.getPlayer().getY() - AppPanel.HEIGHT / 2 - margin;
-	            } else {
-	                // bottom
-	                tempY = gameObj.getPlayer().getY() + AppPanel.HEIGHT / 2 + margin;
-	            }
+    private void spawnEnemy() {
 
-	            tempX = (int) (Math.random() * gameObj.getMap().WIDTH);
-	        }
+        int tier = 1 + (int)(Math.random() * 3); // basic tiers for now
 
-	        // Clamp to map boundaries
-	        tempX = Math.max(0, Math.min(tempX, gameObj.getMap().WIDTH - 1));
-	        tempY = Math.max(0, Math.min(tempY, gameObj.getMap().HEIGHT - 1));
+        int margin = 100;
 
-	        gameObj.addEnemy(new Enemy(gameObj, tempX, tempY, tier));
-	    }
+        int tempX = 0;
+        int tempY = 0;
 
-	    // implemente boss later and events like swarm boss
-	    
-	}
+        boolean spawnLeftOrRight = Math.random() < 0.5;
+
+        if (spawnLeftOrRight) {
+
+            if (Math.random() < 0.5) {
+                // left
+                tempX = gameObj.getPlayer().getX() - AppPanel.WIDTH / 2 - margin;
+            } else {
+                // right
+                tempX = gameObj.getPlayer().getX() + AppPanel.WIDTH / 2 + margin;
+            }
+
+            tempY = (int) (Math.random() * gameObj.getMap().HEIGHT);
+
+        } else {
+
+            if (Math.random() < 0.5) {
+                // top
+                tempY = gameObj.getPlayer().getY() - AppPanel.HEIGHT / 2 - margin;
+            } else {
+                // bottom
+                tempY = gameObj.getPlayer().getY() + AppPanel.HEIGHT / 2 + margin;
+            }
+
+            tempX = (int) (Math.random() * gameObj.getMap().WIDTH);
+        }
+
+        // clamp to map
+        tempX = Math.max(0, Math.min(tempX, gameObj.getMap().WIDTH - 1));
+        tempY = Math.max(0, Math.min(tempY, gameObj.getMap().HEIGHT - 1));
+
+        gameObj.addEnemy(new Enemy(gameObj, tempX, tempY, tier));
+    }
 }

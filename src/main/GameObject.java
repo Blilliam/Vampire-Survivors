@@ -45,16 +45,16 @@ public class GameObject {
 
 	// all enemies
 	private ArrayList<Enemy> enemies;
-	
-	//chests
+
+	// chests
 	private ArrayList<Chest> chests;
-	
-	//exp
+
+	// exp
 	private ArrayList<Exp> exp;
-	
+
 	private ArrayList<WeaponEntity> projectiles;
-	
-	//upgrades
+
+	// upgrades
 	private Upgrades upgrades;
 
 	// manages enemy generation
@@ -70,8 +70,6 @@ public class GameObject {
 
 		this.mouseHandler = mouseHandler;
 		state = GameState.MENU; // sets teh state to the meneu
-		
-		
 
 		// actually initializes the buttons
 		startButtonWidth = 300;
@@ -92,8 +90,8 @@ public class GameObject {
 				controlButtonHeight, "CONTROLS", this::showControls, new Color(0, 60, 60), Color.BLACK);
 
 		exitControlButton = new GameButton(AppPanel.WIDTH / 2 - exitControlButtonWidth / 2,
-				AppPanel.HEIGHT / 2 + exitControlButtonHeight / 2 + 50, exitControlButtonWidth, exitControlButtonHeight, "EXIT BACK",
-				this::toMenu);
+				AppPanel.HEIGHT / 2 + exitControlButtonHeight / 2 + 50, exitControlButtonWidth, exitControlButtonHeight,
+				"EXIT BACK", this::toMenu);
 	}
 
 	public void update() {
@@ -104,8 +102,8 @@ public class GameObject {
 			controlButton.update();
 
 		} else if (state == GameState.OPEN) {
-			
-			ScoreManager.checkAndUpdateHighScore(player.getKills());//update the score
+
+			ScoreManager.checkAndUpdateHighScore(player.getKills());// update the score
 
 			// updatePlayer
 			player.update();
@@ -119,10 +117,10 @@ public class GameObject {
 					enemies.remove(i); // removes dead enemies
 				}
 			}
-			for (Exp e: exp) {
+			for (Exp e : exp) {
 				e.update();
 			}
-			for (Chest e: chests) {
+			for (Chest e : chests) {
 				e.update();
 			}
 			for (int i = projectiles.size() - 1; i >= 0; i--) { // for every enemy (going backwards)
@@ -134,7 +132,7 @@ public class GameObject {
 					projectiles.remove(i); // removes dead enemies
 				}
 			}
-			
+
 			waves.update(); // update enemy spawning
 
 		} else if (state == GameState.BOSS) { // boss battle
@@ -146,7 +144,7 @@ public class GameObject {
 			exitControlButton.update(); // button for going back to menu
 
 		} else if (state == GameState.UPGRADING) { // while upgrading
-			
+
 			upgrades.update(); // lets player select upgrades
 
 			// Only go back to PLAY **after player confirms upgrade or no upgrades left**
@@ -185,7 +183,7 @@ public class GameObject {
 			exitControlButton.draw(g2); // draw exit button
 
 		} else if (state == GameState.UPGRADING) {
-			
+
 			g2.setColor(new Color(0, 0, 0, 150)); // dark semi-transparent overlay
 			g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
 
@@ -199,21 +197,21 @@ public class GameObject {
 	}
 
 	public void drawOpen(Graphics2D g2) {
-		//map.draw(g2); // draw map
+		map.draw(g2); // draw map
 		player.draw(g2); // draw player
 		for (Enemy e : enemies) {
 			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
 				e.draw(g2); // draw every enemy
 		}
-		for (Exp e: exp) {
+		for (Exp e : exp) {
 			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
 				e.draw(g2);
 		}
-		for (Chest e: chests) {
+		for (Chest e : chests) {
 			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
 				e.draw(g2);
 		}
-		for (WeaponEntity e: projectiles) {
+		for (WeaponEntity e : projectiles) {
 			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
 				e.draw(g2);
 		}
@@ -249,7 +247,7 @@ public class GameObject {
 	private void startGame() { // creates new everything
 
 		enemies = new ArrayList<Enemy>();
-		
+
 		map = new Background(this);
 
 		player = new Player(this);
@@ -257,39 +255,53 @@ public class GameObject {
 		waves = new EnemyWaves(this);
 
 		state = GameState.OPEN;
-		
+
 		exp = new ArrayList<Exp>();
-		
+
 		chests = new ArrayList<Chest>();
 		chests.add(new Chest(this, player.getX() + 200, player.getY()));
-		
+
 		projectiles = new ArrayList<WeaponEntity>();
-		//projectiles.add(new WeaponEntity(this, Assets.ProjectileBanana, player.getX() + 200, player.getY(), 0, 0, 0));
+		// projectiles.add(new WeaponEntity(this, Assets.ProjectileBanana, player.getX()
+		// + 200, player.getY(), 0, 0, 0));
 	}
-	
+
 	public boolean isOnScreen(int x, int y, int w, int h) {
-		boolean left;
-		boolean right;
-		boolean top;
-		boolean bottom;
-		
-		left = x - getPlayer().getX() + AppPanel.WIDTH / 2 + w < 300;
-		System.out.println("left:" + (x - getPlayer().getX() + AppPanel.WIDTH / 2 + w) + " x:" + x);
-		right = x - getPlayer().getX() + AppPanel.WIDTH / 2 > AppPanel.WIDTH;
-		
-		top = y - getPlayer().getY() + AppPanel.HEIGHT / 2 + h < 0;
-		bottom = y - getPlayer().getY() + AppPanel.HEIGHT / 2 > AppPanel.HEIGHT;
-		
-		return !(left && right && top && bottom);
-		
+
+		int camX = getCameraX();
+		int camY = getCameraY();
+
+		// Object bounds in world space
+		int objLeft = x;
+		int objRight = x + w;
+		int objTop = y;
+		int objBottom = y + h;
+
+		// Screen bounds in world space
+		int screenLeft = camX;
+		int screenRight = camX + AppPanel.WIDTH;
+		int screenTop = camY;
+		int screenBottom = camY + AppPanel.HEIGHT;
+
+		// Check if completely outside screen
+		if (objRight < screenLeft)
+			return false; // left of screen
+		if (objLeft > screenRight)
+			return false; // right of screen
+		if (objBottom < screenTop)
+			return false; // above screen
+		if (objTop > screenBottom)
+			return false; // below screen
+
+		return true; // otherwise it's visible
 	}
-	
+
 	public int getCameraX() {
-	    return player.getX() - AppPanel.WIDTH / 2;
+		return player.getX() - AppPanel.WIDTH / 2;
 	}
 
 	public int getCameraY() {
-	    return player.getY() - AppPanel.HEIGHT / 2;
+		return player.getY() - AppPanel.HEIGHT / 2;
 	}
 
 	private void startBossBattle() {
@@ -304,7 +316,7 @@ public class GameObject {
 		state = GameState.MENU;
 
 	}
-	
+
 	private void startUpgrades() {
 		state = GameState.UPGRADING;
 	}
@@ -344,7 +356,7 @@ public class GameObject {
 	public ArrayList<Enemy> getEnemies() {
 		return enemies;
 	}
-	
+
 	public void addEnemy(Enemy e) {
 		enemies.add(e);
 	}
@@ -360,15 +372,15 @@ public class GameObject {
 	public void setWaves(EnemyWaves waves) {
 		this.waves = waves;
 	}
-	
+
 	public Background getMap() {
 		return map;
 	}
-	
+
 	public void addExp(int value, int x, int y) {
 		exp.add(new Exp(this, value, x, y));
 	}
-	
+
 	public void addProjectiles(WeaponEntity w) {
 		projectiles.add(w);
 	}
