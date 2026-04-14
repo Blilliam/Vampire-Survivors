@@ -2,7 +2,8 @@ package Open.Entities.Enemies;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.awt.AlphaComposite;
+import java.awt.Color;
 
 import Open.Entities.Entity;
 import main.AppPanel;
@@ -11,7 +12,7 @@ import main.GameObject;
 
 public class Enemy extends Entity {
 
-	// anamation / imates
+	// animation / images
 	private BufferedImage[] walkFrames;
 	private BufferedImage[] deathFrames;
 
@@ -22,6 +23,9 @@ public class Enemy extends Entity {
 	private boolean dying = false;
 
 	private int deathX, deathY; // store position when dying
+
+	private int damageFlashTimer = 0;
+	private final int FLASH_DURATION = 6;
 
 	public Enemy(GameObject gameObj, int x, int y, int teir) {
 		super(gameObj);
@@ -41,7 +45,6 @@ public class Enemy extends Entity {
 
 		currHp = maxHp;
 
-		// sets hp stuff
 		if (walkFrames == null || walkFrames.length == 0)
 			walkFrames = new BufferedImage[1];
 		if (deathFrames == null || deathFrames.length == 0)
@@ -49,7 +52,6 @@ public class Enemy extends Entity {
 	}
 
 	private void loadEnemy(int num) {
-		// returns image array and changes some values
 		switch (num) {
 		case 1 -> {
 			walkFrames = Assets.zombieWalk;
@@ -84,8 +86,6 @@ public class Enemy extends Entity {
 
 	/**
 	 * damages enemy
-	 * 
-	 * @param atk of damages
 	 */
 	public void damage(double atk) {
 		if (isDying())
@@ -93,30 +93,30 @@ public class Enemy extends Entity {
 
 		currHp -= atk;
 
+		damageFlashTimer = FLASH_DURATION;
+
 		if (currHp <= 0) {
+			currHp = 0;
 			die();
 		}
 	}
 
-	/**
-	 * starts death animation and freezes them in place
-	 */
 	private void die() {
 		setDying(true);
 		frame = 0;
 		frameCounter = 0;
 		deathHoldTimer = 0;
 
-		// Freeze position for death animation
 		deathX = x;
 		deathY = y;
 	}
 
-	/**
-	 * updates teh enemy
-	 */
 	public void update() {
 		frameCounter++;
+
+		if (damageFlashTimer > 0) {
+			damageFlashTimer--;
+		}
 
 		if (!isDying()) {
 			followPlayer();
@@ -125,25 +125,24 @@ public class Enemy extends Entity {
 				frame = (frame + 1) % walkFrames.length;
 				frameCounter = 0;
 			}
-			
+
 			if (Entity.rectCollision(this, gameObj.getPlayer())) {
 				gameObj.getPlayer().damadge(1);
 			}
 
 		} else {
-			// DEATH LOGIC
 			if (frameCounter > 6) {
 				if (frame < deathFrames.length - 1) {
-					frame++; // Advance the animation
+					frame++;
 				} else {
-					deathHoldTimer++; // Animation finished, now hold the corpse
+					deathHoldTimer++;
 				}
 				frameCounter = 0;
 			}
 
-			if (deathHoldTimer > 10) { // Adjust this for how long the body stays
+			if (deathHoldTimer > 10) {
 				isDead = true;
-				gameObj.addExp(1, x, y); // change this later
+				gameObj.addExp(1, x, y);
 				gameObj.getPlayer().addKills(1);
 			}
 		}
@@ -153,13 +152,12 @@ public class Enemy extends Entity {
 		double dx = gameObj.getPlayer().getX() - getX();
 		double dy = gameObj.getPlayer().getY() - getY();
 
-		double dist = Math.sqrt(dx * dx + dy * dy); // finds the distance
+		double dist = Math.sqrt(dx * dx + dy * dy);
 
-		if (dist > 0) { // if not on player
+		if (dist > 0) {
 			double moveX = (dx / dist) * speed;
 			double moveY = (dy / dist) * speed;
 
-			// actually moving towrds player
 			x += moveX * 0.5 + (Math.random() - 0.5) * 0.3;
 			y += moveY * 0.5 + (Math.random() - 0.5) * 0.3;
 		}
@@ -167,25 +165,34 @@ public class Enemy extends Entity {
 
 	public void draw(Graphics2D g) {
 
-		// Calculate screen position
-		int screenX = x - gameObj.getCameraX() - (width-20)/2;
-		int screenY = y - gameObj.getCameraY() - (height-40)/2;
-
 		BufferedImage img;
+		int drawX, drawY, drawW, drawH;
 
 		if (isDying()) {
-			// Freeze position at death for drawing
 			img = deathFrames[Math.min(frame, deathFrames.length - 1)];
 
-			g.drawImage(img, deathX - gameObj.getPlayer().getX() + AppPanel.WIDTH / 2 - width / 2,
-					deathY - gameObj.getPlayer().getY() + AppPanel.HEIGHT / 2 - height / 2, width + 50, height + 50,
-					null);
+			drawX = deathX - gameObj.getPlayer().getX() + AppPanel.WIDTH / 2 - width / 2;
+			drawY = deathY - gameObj.getPlayer().getY() + AppPanel.HEIGHT / 2 - height / 2;
+			drawW = width + 50;
+			drawH = height + 50;
 
 		} else {
-			// normal animation stuff
 			img = walkFrames[Math.min(frame, walkFrames.length - 1)];
 
-			g.drawImage(img, screenX, screenY, width, height, null);
+			drawX = x - gameObj.getCameraX() - (width - 20) / 2;
+			drawY = y - gameObj.getCameraY() - (height - 40) / 2;
+			drawW = width;
+			drawH = height;
+		}
+
+		// draw base image
+		g.drawImage(img, drawX, drawY, drawW, drawH, null);
+
+		if (damageFlashTimer > 0) {
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.5f));
+			g.setColor(Color.RED);
+			g.fillRect(drawX, drawY, drawW, drawH);
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 		}
 	}
 

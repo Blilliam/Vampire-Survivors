@@ -7,16 +7,16 @@ import main.GameObject;
 
 
 public abstract class Weapon {
-	private double atk;
+	protected double atk;
 	protected double projectileCount;
 	protected double rotationSpeed;
-	private int speed;
-	private BufferedImage sprite;
+	protected int speed;
+	protected BufferedImage sprite;
 	protected GameObject gameObj;
 	
 	protected int atkDelay;
 	protected int delayCounter;
-	private double projectileBounces;
+	protected double projectileBounces;
 	protected int range;
 
 	

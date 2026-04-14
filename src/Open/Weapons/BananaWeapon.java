@@ -17,7 +17,7 @@ public class BananaWeapon extends Weapon{
 		setSprite(Assets.ProjectileBanana);
 		atkDelay = 60;
 		setSpeed(5);
-		setProjectileBounces(1);
+		setProjectileBounces(-1);
 		setAtk(3);
 		range = 500;
 	}

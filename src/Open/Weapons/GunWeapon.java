@@ -9,13 +9,12 @@ public class GunWeapon extends Weapon{
 
 	public GunWeapon(GameObject gameObj) {
 		super(gameObj);
-		setAtk(10);
 		projectileCount = 1;
 		setSprite(Assets.aura);
 		atkDelay = 60;
-		setSpeed(20);
-		setProjectileBounces(1);
-		setAtk(3);
+		speed = 20;
+		projectileBounces = 1;
+		atk = 3;
 		range = 500;
 	}
 	
