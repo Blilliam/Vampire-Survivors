@@ -20,6 +20,7 @@ public class BananaWeapon extends Weapon{
 		setProjectileBounces(-1);
 		setAtk(3);
 		range = 500;
+		setMaxDuration(500);
 	}
 	
 	public void update() {

@@ -24,6 +24,7 @@ public class WeaponEntity extends Entity {
 	protected Vec2 acceleration;
 	protected double currProjectileBounces;
 	protected double angle;
+	protected double duration;
 
 	// tweak this for balance
 	private final int HIT_COOLDOWN = 15; // frames

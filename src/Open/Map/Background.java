@@ -30,6 +30,8 @@ public class Background {
 	public void draw(Graphics2D g) {
 		for (int r = 0; r < rows; r++) {
 			for (int c = 0; c < cols; c++) {
+				//if (!gameObj.isOnScreen(r * tileSize, c * tileSize, tileSize, tileSize))
+				//	continue;
 				int screenX = c * tileSize - gameObj.getPlayer().getX() + AppPanel.WIDTH / 2;
 				int screenY = r * tileSize - gameObj.getPlayer().getY() + AppPanel.HEIGHT / 2;
 

@@ -199,19 +199,23 @@ public class GameObject {
 	}
 
 	public void drawOpen(Graphics2D g2) {
-		map.draw(g2); // draw map
+		//map.draw(g2); // draw map
 		player.draw(g2); // draw player
 		for (Enemy e : enemies) {
-			e.draw(g2); // draw every enemy
+			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
+				e.draw(g2); // draw every enemy
 		}
 		for (Exp e: exp) {
-			e.draw(g2);
+			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
+				e.draw(g2);
 		}
 		for (Chest e: chests) {
-			e.draw(g2);
+			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
+				e.draw(g2);
 		}
 		for (WeaponEntity e: projectiles) {
-			e.draw(g2);
+			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
+				e.draw(g2);
 		}
 	}
 
@@ -261,6 +265,23 @@ public class GameObject {
 		
 		projectiles = new ArrayList<WeaponEntity>();
 		//projectiles.add(new WeaponEntity(this, Assets.ProjectileBanana, player.getX() + 200, player.getY(), 0, 0, 0));
+	}
+	
+	public boolean isOnScreen(int x, int y, int w, int h) {
+		boolean left;
+		boolean right;
+		boolean top;
+		boolean bottom;
+		
+		left = x - getPlayer().getX() + AppPanel.WIDTH / 2 + w < 300;
+		System.out.println("left:" + (x - getPlayer().getX() + AppPanel.WIDTH / 2 + w) + " x:" + x);
+		right = x - getPlayer().getX() + AppPanel.WIDTH / 2 > AppPanel.WIDTH;
+		
+		top = y - getPlayer().getY() + AppPanel.HEIGHT / 2 + h < 0;
+		bottom = y - getPlayer().getY() + AppPanel.HEIGHT / 2 > AppPanel.HEIGHT;
+		
+		return !(left && right && top && bottom);
+		
 	}
 	
 	public int getCameraX() {

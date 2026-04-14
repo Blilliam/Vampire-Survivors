@@ -18,6 +18,7 @@ public abstract class Weapon {
 	protected int delayCounter;
 	protected double projectileBounces;
 	protected int range;
+	private double maxDuration;
 
 	
 	
@@ -63,6 +64,14 @@ public abstract class Weapon {
 
 	public void setAtk(double atk) {
 		this.atk = atk;
+	}
+
+	public double getMaxDuration() {
+		return maxDuration;
+	}
+
+	public void setMaxDuration(double maxDuration) {
+		this.maxDuration = maxDuration;
 	}
 	
 }
