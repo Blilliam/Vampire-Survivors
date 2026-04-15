@@ -68,7 +68,6 @@ public class BananaProjectile extends WeaponEntity {
 		g.rotate(angle, screenX + width / 2.0, screenY + height / 2.0);
 		g.drawImage(sprite, screenX, screenY, width, height, null);
 		g.setTransform(old);
-
 	}
 
 }

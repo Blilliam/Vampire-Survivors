@@ -106,6 +106,9 @@ public class Enemy extends Entity {
 		frame = 0;
 		frameCounter = 0;
 		deathHoldTimer = 0;
+		
+		gameObj.addExp(1, x, y);
+		gameObj.getPlayer().addKills(1);
 
 		deathX = x;
 		deathY = y;
@@ -142,8 +145,7 @@ public class Enemy extends Entity {
 
 			if (deathHoldTimer > 10) {
 				isDead = true;
-				gameObj.addExp(1, x, y);
-				gameObj.getPlayer().addKills(1);
+				
 			}
 		}
 	}

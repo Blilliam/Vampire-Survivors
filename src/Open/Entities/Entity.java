@@ -36,7 +36,10 @@ public abstract class Entity { // main parent class of all moving objects on scr
 
 	//colision of 2 entities
 	public static boolean rectCollision(Entity e1, Entity e2) {
-		return e1.x < e2.x + e2.width && e1.x + e1.width > e2.x && e1.y < e2.y + e2.height && e1.y + e1.height > e2.y;
+		return e1.x < e2.x + e2.width && 
+				e1.x + e1.width > e2.x && 
+				e1.y < e2.y + e2.height && 
+				e1.y + e1.height > e2.y;
 	}
 	
 	public static int getDistance(Entity e1, Entity e2) {

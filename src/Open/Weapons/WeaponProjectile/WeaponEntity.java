@@ -11,7 +11,7 @@ import main.AppPanel;
 import main.GameObject;
 import main.Vec2;
 
-public class WeaponEntity extends Entity {
+public abstract class WeaponEntity extends Entity {
 
 	protected BufferedImage sprite;
 
@@ -27,7 +27,7 @@ public class WeaponEntity extends Entity {
 	protected double duration;
 
 	// tweak this for balance
-	private final int HIT_COOLDOWN = 15; // frames
+	protected final int HIT_COOLDOWN = 15; // frames
 
 	public WeaponEntity(GameObject gameObj, Weapon weapon, Vec2 direction, int x, int y) {
 		super(gameObj);

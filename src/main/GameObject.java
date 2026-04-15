@@ -92,6 +92,8 @@ public class GameObject {
 		exitControlButton = new GameButton(AppPanel.WIDTH / 2 - exitControlButtonWidth / 2,
 				AppPanel.HEIGHT / 2 + exitControlButtonHeight / 2 + 50, exitControlButtonWidth, exitControlButtonHeight,
 				"EXIT BACK", this::toMenu);
+		
+		this.upgrades = new Upgrades(this);
 	}
 
 	public void update() {
@@ -117,9 +119,17 @@ public class GameObject {
 					enemies.remove(i); // removes dead enemies
 				}
 			}
-			for (Exp e : exp) {
-				e.update();
+
+			for (int i = exp.size() - 1; i >= 0; i--) { // for every enemy (going backwards)
+				Exp e = exp.get(i);
+
+				e.update(); // update each enemy
+
+				if (e.isDead()) {
+					exp.remove(i); // removes dead enemies
+				}
 			}
+
 			for (Chest e : chests) {
 				e.update();
 			}
@@ -184,6 +194,8 @@ public class GameObject {
 
 		} else if (state == GameState.UPGRADING) {
 
+			drawOpen(g2);
+
 			g2.setColor(new Color(0, 0, 0, 150)); // dark semi-transparent overlay
 			g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
 
@@ -198,7 +210,11 @@ public class GameObject {
 
 	public void drawOpen(Graphics2D g2) {
 		map.draw(g2); // draw map
-		player.draw(g2); // draw player
+
+		for (WeaponEntity e : projectiles) {
+			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
+				e.draw(g2);
+		}
 		for (Enemy e : enemies) {
 			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
 				e.draw(g2); // draw every enemy
@@ -211,10 +227,8 @@ public class GameObject {
 			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
 				e.draw(g2);
 		}
-		for (WeaponEntity e : projectiles) {
-			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
-				e.draw(g2);
-		}
+		player.draw(g2); // draw player
+		
 	}
 
 	public void drawControls(Graphics2D g2) {
@@ -383,5 +397,9 @@ public class GameObject {
 
 	public void addProjectiles(WeaponEntity w) {
 		projectiles.add(w);
+	}
+
+	public void setGameState(GameState newState) {
+		state = newState;
 	}
 }

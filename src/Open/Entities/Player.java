@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import Open.Artifacts.Artifact;
 import Open.Entities.Enemies.Enemy;
+import Open.Weapons.AuraWeapon;
 import Open.Weapons.BananaWeapon;
 import Open.Weapons.GunWeapon;
 import Open.Weapons.Weapon;
@@ -24,10 +25,13 @@ public class Player extends Entity {
 	
 	private int kills;
 
-	private int expToUpgrade = 10;
+	private int expNeededToUpgrade = 10;
 	private int totalUpgradesAvailible = 1;
 	private boolean expCollectedForUpgrade = false;
 	private int currExp;
+	
+	private int hitDelay;
+	private int hitCount;
 
 	private boolean isRight;
 
@@ -39,12 +43,16 @@ public class Player extends Entity {
 	public Player(GameObject gameObj) {
 		super(gameObj);
 		
+		hitDelay = 500;
+		hitCount = 0;
+		
 		//shoudl be 5
-		weapons = new Weapon[2];
+		weapons = new Weapon[1];
 		
 		//temp
-		weapons[0] = new BananaWeapon(gameObj);
-		weapons[1] = new GunWeapon(gameObj);
+//		weapons[0] = new BananaWeapon(gameObj);
+//		weapons[1] = new GunWeapon(gameObj);
+		weapons[0] = new AuraWeapon(gameObj);
 		
 		maxHp = 10;
 		currHp = maxHp;
@@ -77,6 +85,8 @@ public class Player extends Entity {
 		}
 		
 		updateOpenMovement();
+		
+		hitCount++;
 
 		for (Enemy e : gameObj.getEnemies()) {
 			// e.damage(5);
@@ -84,6 +94,11 @@ public class Player extends Entity {
 		
 		for (Weapon w: weapons) {
 			w.update();
+		}
+		
+		if (currExp >= expNeededToUpgrade) {
+			gameObj.setGameState(GameState.UPGRADING);
+			expNeededToUpgrade *= 1.3;
 		}
 	}
 
@@ -217,6 +232,17 @@ public class Player extends Entity {
 		return closestEnemy;
 	}
 	
+	public void damadge(int i) {
+		if (hitDelay < hitCount) {
+			currHp -= i;
+			hitCount = 0;
+		}
+	}
+	
+	public Weapon[] getWeapons() {
+		return weapons;
+	}
+	
 	
 
 	public int getTotalUpgradesAvailible() {
@@ -228,22 +254,24 @@ public class Player extends Entity {
 	}
 
 	public int getExpToUpgrade() {
-		return expToUpgrade;
+		return expNeededToUpgrade;
 	}
 
-	public void setExpToUpgrade(int expToUpgrade) {
-		this.expToUpgrade = expToUpgrade;
+	public void setExpToUpgrade(int expNeededToUpgrade) {
+		this.expNeededToUpgrade = expNeededToUpgrade;
 	}
 	
 	public void addKills(int count) {
 		kills += count;
 	}
 	
+	public void addExp(int i) {
+		currExp += i;
+	}
+	
 	public int getKills() {
 		return kills;
 	}
 
-	public void damadge(int i) {
-		currHp -= i;
-	}
+	
 }

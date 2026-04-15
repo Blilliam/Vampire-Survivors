@@ -4,13 +4,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.util.Random;
 
 import main.AppPanel;
-import main.GameButton;
 import main.GameObject;
 import main.MouseInput;
-import main.enums.GameState;
 import main.enums.WeaponRarity;
 
 public class Upgrades {
@@ -18,19 +15,14 @@ public class Upgrades {
 
 	GameObject gameObj;
 
-	// =========================
-	// UPGRADE BOX DATA
-	// =========================
-	UpgradeBox[] totalBoxes;
-	int[] currBoxIndex = new int[3];
+	private int numberOfcurrBoxes = 3;
+	
+	private UpgradeBox[] boxes;
 
-	final int numberOfTotalBoxes = 8;
-	final int numberOfcurrBoxes = 3;
+	private boolean chosen;
 
-	private boolean upgradeChosen = false; // new
-
-	final int rectWidth = 300;
-	final int rectHeight = 450;
+	private final int rectWidth = 900;
+	private final int rectHeight = 200;
 
 
 	public Upgrades(GameObject gameObj) {
@@ -42,14 +34,8 @@ public class Upgrades {
 		rarities[3] = WeaponRarity.DIAMOND;
 
 		this.gameObj = gameObj;
-
-		// Create upgrade boxes
-		totalBoxes = new UpgradeBox[numberOfTotalBoxes];
-		for (int i = 0; i < numberOfTotalBoxes; i++) {
-			totalBoxes[i] = new UpgradeBox(gameObj, i + 1, 0, 0);
-		}
-
-		randomCurrBox();
+		
+		this.boxes = new UpgradeBox[3];
 	}
 
 	// =========================
@@ -66,14 +52,14 @@ public class Upgrades {
 			// Only handle boxes if we haven’t exited
 			if (!didUpgrade) {
 				for (int i = 0; i < numberOfcurrBoxes; i++) {
-					UpgradeBox box = totalBoxes[currBoxIndex[i]];
-
+					UpgradeBox box = new UpgradeBox(gameObj, rarities[(int) (Math.random() * rarities.length) + 1], gameObj.getPlayer().getWeapons()[(int)(Math.random()*gameObj.getPlayer().getWeapons().length) + 1], 200, i * 300 + 300);
+					boxes[i] = box;
 					if (box != null && box.isHovering()) {
 						if (gameObj.getPlayer().getTotalUpgradesAvailible() > 0) {
 							gameObj.getPlayer().setTotalUpgradesAvailible(gameObj.getPlayer().getTotalUpgradesAvailible() - 1);
 							box.upgrade();
 
-							upgradeChosen = true;
+							chosen = true;
 							randomCurrBox();
 							didUpgrade = true;
 
@@ -93,13 +79,11 @@ public class Upgrades {
 
 		// Update box animations
 		for (int i = 0; i < numberOfcurrBoxes; i++) {
-			totalBoxes[currBoxIndex[i]].updateAnimation();
+			//totalBoxes[currBoxIndex[i]].updateAnimation();
 		}
 	}
 
-	// =========================
 	// DRAW
-	// =========================
 	public void draw(Graphics2D g2) {
 
 		g2.setFont(new Font("Arial", Font.BOLD, 24));
@@ -118,7 +102,7 @@ public class Upgrades {
 
 		// Upgrade boxes
 		for (int i = 0; i < numberOfcurrBoxes; i++) {
-			UpgradeBox box = totalBoxes[currBoxIndex[i]];
+			UpgradeBox box = boxes[i];
 			int x = spacing + i * (rectWidth + spacing);
 
 			box.x = x;
@@ -130,32 +114,35 @@ public class Upgrades {
 		}
 	}
 
-	// =========================
-	// RANDOMIZE BOXES (FIXED)
-	// =========================
+
+	// RANDOMIZE BOXES 
 	public void randomCurrBox() {
 
-		Random rand = new Random();
-		boolean[] used = new boolean[numberOfTotalBoxes];
-
-		for (int i = 0; i < numberOfcurrBoxes; i++) {
-			int r;
-			do {
-				r = rand.nextInt(numberOfTotalBoxes);
-			} while (used[r]);
-
-			used[r] = true;
-			currBoxIndex[i] = r;
-			totalBoxes[r].startAnimation();
-		}
+		
+		
+		
+		
+//		Random rand = new Random();
+//		boolean[] used = new boolean[numberOfTotalBoxes];
+//
+//		for (int i = 0; i < numberOfcurrBoxes; i++) {
+//			int r;
+//			do {
+//				r = rand.nextInt(numberOfTotalBoxes);
+//			} while (used[r]);
+//
+//			used[r] = true;
+//			currBoxIndex[i] = r;
+//			totalBoxes[r].startAnimation();
+//		}
 	}
 
 	public boolean hasFinishedUpgrading() {
-		return upgradeChosen;
+		return chosen;
 	}
 
 	public void reset() {
-		upgradeChosen = false;
+		chosen = false;
 	}
 
 }

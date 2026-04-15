@@ -27,6 +27,8 @@ public class Assets {
 	// Player
 	public static BufferedImage playerSheet;
 
+	public static BufferedImage[] exp;
+
 	// Enemy GIF frames: walking and death
 	public static BufferedImage[] zombieWalk;
 	public static BufferedImage[] zombieDeath;
@@ -58,8 +60,11 @@ public class Assets {
 
 			ProjectileBanana = ImageIO.read(Assets.class.getResource("/Images/Projectiles/Banana projectile.png"));
 			ProjectileBullet = ImageIO.read(Assets.class.getResource("/Images/Projectiles/BulletProjectile.png"));
+			
+			exp = splitSpriteSheet(ImageIO.read(Assets.class.getResource("/Images/Coins/spr_coin_azu.png")), 16, 16);
 
 			// Player
+			
 			playerSheet = ImageIO.read(Assets.class.getResource("/Images/Player/antonio_spritesheet.png"));
 
 			// Enemy GIFs
@@ -137,5 +142,29 @@ public class Assets {
 			e.printStackTrace();
 			return new BufferedImage[0];
 		}
+	}
+
+	public static BufferedImage[] splitSpriteSheet(BufferedImage sheet, int frameWidth, int frameHeight) {
+
+	    int cols = sheet.getWidth() / frameWidth;
+
+	    BufferedImage[] output = new BufferedImage[cols];
+
+	    for (int x = 0; x < cols; x++) {
+
+	        if (x * frameWidth + frameWidth > sheet.getWidth()) break;
+	        if (frameHeight > sheet.getHeight()) break;
+
+	        BufferedImage frame = sheet.getSubimage(
+	            x * frameWidth,
+	            0,
+	            frameWidth,
+	            frameHeight
+	        );
+
+	        output[x] = frame;
+	    }
+
+	    return output;
 	}
 }
