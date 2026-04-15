@@ -40,10 +40,11 @@ public class Player extends Entity {
 		super(gameObj);
 		
 		//shoudl be 5
-		weapons = new Weapon[1];
+		weapons = new Weapon[2];
 		
 		//temp
 		weapons[0] = new BananaWeapon(gameObj);
+		weapons[1] = new GunWeapon(gameObj);
 		
 		maxHp = 10;
 		currHp = maxHp;

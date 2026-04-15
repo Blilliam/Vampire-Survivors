@@ -22,6 +22,7 @@ public class Assets {
 
 	public static BufferedImage WeaponBanana;
 	public static BufferedImage ProjectileBanana;
+	public static BufferedImage ProjectileBullet;
 
 	// Player
 	public static BufferedImage playerSheet;
@@ -55,7 +56,8 @@ public class Assets {
 //			magicWand = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Magic_Wand.png"));
 //			fireWand = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Fire_Wand.png"));
 
-			ProjectileBanana = ImageIO.read(Assets.class.getResource("/Images/Items/Banana projectile.png"));
+			ProjectileBanana = ImageIO.read(Assets.class.getResource("/Images/Projectiles/Banana projectile.png"));
+			ProjectileBullet = ImageIO.read(Assets.class.getResource("/Images/Projectiles/BulletProjectile.png"));
 
 			// Player
 			playerSheet = ImageIO.read(Assets.class.getResource("/Images/Player/antonio_spritesheet.png"));

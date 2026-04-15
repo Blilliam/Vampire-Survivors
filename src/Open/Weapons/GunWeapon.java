@@ -10,7 +10,7 @@ public class GunWeapon extends Weapon{
 	public GunWeapon(GameObject gameObj) {
 		super(gameObj);
 		projectileCount = 1;
-		setSprite(Assets.aura);
+		setSprite(Assets.ProjectileBullet);
 		atkDelay = 60;
 		speed = 20;
 		projectileBounces = 1;

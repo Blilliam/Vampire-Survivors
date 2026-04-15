@@ -41,6 +41,8 @@ public class WeaponEntity extends Entity {
 		this.velocity = direction.normalize().scale(weapon.getSpeed());
 		this.currProjectileBounces = weapon.getProjectileBounces();
 		isDead = false;
+		
+		this.angle = Math.atan2(velocity.getY(), velocity.getX()) - Math.PI / 2;
 	}
 
 	public BufferedImage getSprite() {
