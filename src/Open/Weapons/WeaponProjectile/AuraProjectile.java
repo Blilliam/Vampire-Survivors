@@ -23,16 +23,16 @@ public class AuraProjectile extends WeaponEntity {
 		this.position = new Vec2(AppPanel.WIDTH/2, AppPanel.HEIGHT/2);
 		this.currProjectileBounces = weapon.getProjectileBounces();
 		isDead = false;
-		this.width = this.weapon.getRange();
-		this.height = this.weapon.getRange();
+		this.width = (int) (this.weapon.getRange() * weapon.getSize());
+		this.height = (int) (this.weapon.getRange() * weapon.getSize());
 
 	}
 	
 	protected void updatePhysics() {
 		Entity player = gameObj.getPlayer();
 
-		position.setX(player.getX() + player.getWidth()/2.0 - width/2.0);
-		position.setY(player.getY() + player.getHeight()/2.0 - height/2.0);
+		position.setX(player.getX() + player.getWidth()/2 - width/2);
+		position.setY(player.getY() + player.getHeight()/2 - height/2);
 	}
 	@Override
 	public void update() {

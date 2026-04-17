@@ -11,8 +11,8 @@ public class GunProjectile extends WeaponEntity{
 
 	public GunProjectile(GameObject gameObj, Weapon weapon, Vec2 direction, int x, int y) {
 		super(gameObj, weapon, direction, x, y);
-		this.width = 50;
-		this.height = 50;
+		this.width = (int) (50 * weapon.getSize());
+		this.height = (int) (50 * weapon.getSize());
 	}
 	
 	@Override

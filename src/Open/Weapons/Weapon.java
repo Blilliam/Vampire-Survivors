@@ -83,5 +83,14 @@ public abstract class Weapon {
 	public void setRange(int range) {
 		this.range = range;
 	}
+
+	public double getSize() {
+		// TODO Auto-generated method stub
+		return size;
+	}
+	
+	public void setSize(double newsize) {
+		size = newsize;
+	}
 	
 }
