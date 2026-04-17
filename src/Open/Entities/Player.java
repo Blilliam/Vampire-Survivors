@@ -22,16 +22,15 @@ import main.enums.GameState;
 public class Player extends Entity {
 	private ArrayList<Artifact> artifacts = new ArrayList<>();
 	private Weapon[] weapons;
-	
+
 	private int kills;
 
 	private int expNeededToUpgrade = 10;
 	private int totalUpgradesAvailible = 1;
-	private boolean expCollectedForUpgrade = false;
 	private int currExp;
-	
-	private int hitDelay;
-	private int hitCount;
+
+	private int invincibilityFrames;
+	private final int HIT_DELAY = 30; // ~0.5 sec at 60fps
 
 	private boolean isRight;
 
@@ -42,21 +41,15 @@ public class Player extends Entity {
 
 	public Player(GameObject gameObj) {
 		super(gameObj);
-		
-		hitDelay = 500;
-		hitCount = 0;
-		
-		//shoudl be 5
-		weapons = new Weapon[3];
-		
-		//temp
+
+		// weapons
+		weapons = new Weapon[1];
 		weapons[0] = new BananaWeapon(gameObj);
-  		weapons[1] = new GunWeapon(gameObj);
-		weapons[2] = new AuraWeapon(gameObj);
-		
+		// weapons[1] = new GunWeapon(gameObj);
+		// weapons[2] = new AuraWeapon(gameObj);
+
 		maxHp = 10;
 		currHp = maxHp;
-		
 
 		x = gameObj.getMap().HEIGHT / 2;
 		y = gameObj.getMap().WIDTH / 2;
@@ -68,6 +61,8 @@ public class Player extends Entity {
 		height = 100;
 		width = 100;
 
+		invincibilityFrames = 0;
+
 		// Load walk frames
 		int frameCount = 4;
 		walkFrames = new BufferedImage[frameCount];
@@ -77,25 +72,24 @@ public class Player extends Entity {
 		walkAnim = new Animation(walkFrames, 100);
 	}
 
-	// Update player movement
 	public void update() {
 		if (currHp <= 0) {
 			isDead = true;
 			GameObject.setState(GameState.DEAD);
 		}
-		
-		updateOpenMovement();
-		
-		hitCount++;
 
-		for (Enemy e : gameObj.getEnemies()) {
-			// e.damage(5);
+		updateOpenMovement();
+
+		if (invincibilityFrames > 0) {
+			invincibilityFrames--;
 		}
-		
-		for (Weapon w: weapons) {
+
+		// update weapons
+		for (Weapon w : weapons) {
 			w.update();
 		}
-		
+
+		// leveling
 		if (currExp >= expNeededToUpgrade) {
 			gameObj.setGameState(GameState.UPGRADING);
 			expNeededToUpgrade *= 1.3;
@@ -136,142 +130,118 @@ public class Player extends Entity {
 		}
 	}
 
-	// Draw player at center of screen
+	public void damage(int amount) {
+		if (invincibilityFrames <= 0) {
+			currHp -= amount;
+			currHp = Math.max(currHp, 0); // prevent negative HP
+			invincibilityFrames = HIT_DELAY;
+		}
+	}
+
+	public boolean isInvincible() {
+		return invincibilityFrames > 0;
+	}
+
 	public void draw(Graphics2D g2) {
-		int drawX = AppPanel.WIDTH / 2 - 50; // display width = 100
+		int drawX = AppPanel.WIDTH / 2 - 50;
 		int drawY = AppPanel.HEIGHT / 2 - 50;
+
+		if (isInvincible() && invincibilityFrames % 6 < 3) {
+			return;
+		}
+
 		if (isRight)
 			g2.drawImage(walkAnim.getFrame(), drawX, drawY, width, height, null);
 		else
 			g2.drawImage(walkAnim.getFrame(), drawX + width, drawY, -100, height, null);
 
 		drawXPBar(g2);
-		
 		drawHpBar(g2);
 	}
 
 	private void drawXPBar(Graphics2D g2) {
-		if (getTotalUpgradesAvailible() != 0) {
-			g2.setColor(Color.WHITE);
-			g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
-			FontMetrics fm = g2.getFontMetrics();
-		}
-		// Bar position & size
 		int barWidth = AppPanel.WIDTH;
 		int barHeight = 30;
-		int x = (AppPanel.WIDTH - barWidth) / 2;
-		int y = 0; // below score stats
+		int x = 0;
+		int y = 0;
 
-		// Percentage filled
-		float percent = Math.min(1.0f, (float) currExp / getExpToUpgrade());
+		float percent = Math.min(1.0f, (float) currExp / expNeededToUpgrade);
 
-		// Background
 		g2.setColor(new Color(50, 50, 50, 180));
 		g2.fillRect(x, y, barWidth, barHeight);
 
-		// Filled portion
 		g2.setColor(new Color(0, 200, 255));
 		g2.fillRect(x, y, (int) (barWidth * percent), barHeight);
 
-		// Border
 		g2.setColor(Color.WHITE);
 		g2.drawRect(x, y, barWidth, barHeight);
 
-		// Text
 		g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
-		String text = "Exp: " + currExp + " / " + getExpToUpgrade();
+		String text = "Exp: " + currExp + " / " + expNeededToUpgrade;
 		int textWidth = g2.getFontMetrics().stringWidth(text);
 		g2.drawString(text, x + (barWidth - textWidth) / 2, y + barHeight - 5);
 	}
+
 	private void drawHpBar(Graphics2D g2) {
-		if (getTotalUpgradesAvailible() != 0) {
-			g2.setColor(Color.WHITE);
-			g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
-			FontMetrics fm = g2.getFontMetrics();
-		}
-		// Bar position & size
 		int barWidth = 200;
 		int barHeight = 30;
-		int x = (AppPanel.WIDTH - barWidth)/2;
+		int x = (AppPanel.WIDTH - barWidth) / 2;
 		int y = AppPanel.HEIGHT - barHeight - 100;
 
-		// Percentage filled
 		float percent = Math.min(1.0f, (float) currHp / maxHp);
 
-		// Background
 		g2.setColor(new Color(50, 50, 50, 180));
 		g2.fillRect(x, y, barWidth, barHeight);
 
-		// Filled portion
 		g2.setColor(new Color(255, 0, 0));
 		g2.fillRect(x, y, (int) (barWidth * percent), barHeight);
 
-		// Border
 		g2.setColor(Color.WHITE);
 		g2.drawRect(x, y, barWidth, barHeight);
 
-		// Text
 		g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
 		String text = "Hp: " + currHp + " / " + maxHp;
 		int textWidth = g2.getFontMetrics().stringWidth(text);
 		g2.drawString(text, x + (barWidth - textWidth) / 2, y + barHeight - 8);
 	}
-	
+
 	public Enemy closestEnemy(int range) {
 		ArrayList<Enemy> enemies = gameObj.getEnemies();
 		float minDistance = Integer.MAX_VALUE;
 		Enemy closestEnemy = null;
-		
-		for (int i = 0; i < enemies.size(); i++) {
-			int enemyDistance = Entity.getDistance(this, enemies.get(i));
-	        if (enemyDistance < range && !enemies.get(i).isDying() && enemyDistance < minDistance) {
-	        	closestEnemy = enemies.get(i);
-	        }
+
+		for (Enemy e : enemies) {
+			int dist = Entity.getDistance(this, e);
+			if (dist < range && !e.isDying() && dist < minDistance) {
+				minDistance = dist;
+				closestEnemy = e;
+			}
 		}
-		
+
 		return closestEnemy;
 	}
-	
-	public void damadge(int i) {
-		if (hitDelay < hitCount) {
-			currHp -= i;
-			hitCount = 0;
-		}
-	}
-	
+
 	public Weapon[] getWeapons() {
 		return weapons;
 	}
-	
-	
 
 	public int getTotalUpgradesAvailible() {
 		return totalUpgradesAvailible;
-	}
-
-	public void setTotalUpgradesAvailible(int totalUpgradesAvailible) {
-		this.totalUpgradesAvailible = totalUpgradesAvailible;
 	}
 
 	public int getExpToUpgrade() {
 		return expNeededToUpgrade;
 	}
 
-	public void setExpToUpgrade(int expNeededToUpgrade) {
-		this.expNeededToUpgrade = expNeededToUpgrade;
-	}
-	
 	public void addKills(int count) {
 		kills += count;
 	}
-	
+
 	public void addExp(int i) {
 		currExp += i;
 	}
-	
+
 	public int getKills() {
 		return kills;
 	}
-
-	
 }

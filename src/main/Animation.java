@@ -46,11 +46,19 @@ public class Animation {
         return frames[currentFrame];
     }
     
+    public int getCurrentFrameIndex() {
+    	return currentFrame;
+    }
+    
     /**
      * set frame to parameter
      * @param frame number to set it to
      */
     public void setFrame(int num) {
     	currentFrame = num;
+    }
+    
+    public int getFrameLength() {
+    	return frames.length;
     }
 }

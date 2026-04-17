@@ -28,6 +28,8 @@ public class Assets {
 	public static BufferedImage playerSheet;
 
 	public static BufferedImage[] exp;
+	
+	public static BufferedImage[] impact;
 
 	// Enemy GIF frames: walking and death
 	public static BufferedImage[] zombieWalk;
@@ -62,6 +64,8 @@ public class Assets {
 			ProjectileBullet = ImageIO.read(Assets.class.getResource("/Images/Projectiles/BulletProjectile.png"));
 			
 			exp = splitSpriteSheet(ImageIO.read(Assets.class.getResource("/Images/Coins/spr_coin_azu.png")), 16, 16);
+			
+			impact = splitSpriteSheet(ImageIO.read(Assets.class.getResource("/Images/Projectiles/Impact.png")), 48, 48);
 
 			// Player
 			

@@ -130,7 +130,7 @@ public class Enemy extends Entity {
 			}
 
 			if (Entity.rectCollision(this, gameObj.getPlayer())) {
-				gameObj.getPlayer().damadge(1);
+				gameObj.getPlayer().damage(1);
 			}
 
 		} else {

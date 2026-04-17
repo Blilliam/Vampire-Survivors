@@ -54,8 +54,12 @@ public class AuraProjectile extends WeaponEntity {
 			}
 
 			if (Entity.circleCollision(this, e) && !hitCooldowns.containsKey(e)) {
-
 				e.damage(weapon.getAtk());
+				
+				impactX = x;
+			    impactY = y;
+			    drawingImpact = true;
+				
 				// set cooldown
 				hitCooldowns.put(e, HIT_COOLDOWN);
 				currProjectileBounces--;
@@ -69,7 +73,8 @@ public class AuraProjectile extends WeaponEntity {
 	
 	@Override
 	public void draw(Graphics2D g) {
-
+		drawImpact(g);
+		
 	    int centerX = AppPanel.WIDTH / 2;
 	    int centerY = AppPanel.HEIGHT / 2;
 

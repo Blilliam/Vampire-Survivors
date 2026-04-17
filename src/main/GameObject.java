@@ -211,13 +211,14 @@ public class GameObject {
 	public void drawOpen(Graphics2D g2) {
 		map.draw(g2); // draw map
 
-		for (WeaponEntity e : projectiles) {
-			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
-				e.draw(g2);
-		}
+		
 		for (Enemy e : enemies) {
 			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
 				e.draw(g2); // draw every enemy
+		}
+		for (WeaponEntity e : projectiles) {
+			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
+				e.draw(g2);
 		}
 		for (Exp e : exp) {
 			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))

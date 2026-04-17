@@ -56,14 +56,14 @@ public class Upgrades {
 					boxes[i] = box;
 					if (box != null && box.isHovering()) {
 						if (gameObj.getPlayer().getTotalUpgradesAvailible() > 0) {
-							gameObj.getPlayer().setTotalUpgradesAvailible(gameObj.getPlayer().getTotalUpgradesAvailible() - 1);
+							//gameObj.getPlayer().setTotalUpgradesAvailible(gameObj.getPlayer().getTotalUpgradesAvailible() - 1);
 							box.upgrade();
 
 							chosen = true;
 							randomCurrBox();
 							didUpgrade = true;
 
-							gameObj.getPlayer().setExpToUpgrade((int)(gameObj.getPlayer().getExpToUpgrade() * 1.3));
+							//gameObj.getPlayer().setExpToUpgrade((int)(gameObj.getPlayer().getExpToUpgrade() * 1.3));
 
 							break; // stop after first valid box
 						}
@@ -117,11 +117,6 @@ public class Upgrades {
 
 	// RANDOMIZE BOXES 
 	public void randomCurrBox() {
-
-		
-		
-		
-		
 //		Random rand = new Random();
 //		boolean[] used = new boolean[numberOfTotalBoxes];
 //

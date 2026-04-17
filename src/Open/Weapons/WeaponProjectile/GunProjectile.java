@@ -22,7 +22,8 @@ public class GunProjectile extends WeaponEntity{
 	
 	@Override
 	public void draw(Graphics2D g) {
-
+		drawImpact(g);
+		
 	    int screenX = x - gameObj.getPlayer().getX() + AppPanel.WIDTH / 2;
 	    int screenY = y - gameObj.getPlayer().getY() + AppPanel.HEIGHT / 2;
 

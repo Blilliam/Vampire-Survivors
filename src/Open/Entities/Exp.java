@@ -59,7 +59,7 @@ public class Exp extends Entity {
 		updatePhysics();
 		
 		if (Entity.rectCollision(this, gameObj.getPlayer())) {
-			gameObj.getPlayer().addExp(value);
+			//gameObj.getPlayer().addExp(value);
 			isDead = true;
 		}
 		
