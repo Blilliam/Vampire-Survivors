@@ -15,13 +15,13 @@ public class GunWeapon extends Weapon{
 		speed = 20;
 		projectileBounces = 1;
 		atk = 3;
-		range = 500;
+		setRange(500);
 	}
 	
 	public void update() {
 		if (atkDelay < delayCounter) {
-			if (gameObj.getPlayer().closestEnemy(range) != null) {
-				Vec2 direction = Vec2.between(gameObj.getPlayer(), gameObj.getPlayer().closestEnemy(range));
+			if (gameObj.getPlayer().closestEnemy(getRange()) != null) {
+				Vec2 direction = Vec2.between(gameObj.getPlayer(), gameObj.getPlayer().closestEnemy(getRange()));
 				gameObj.addProjectiles(new GunProjectile(gameObj, this, direction, gameObj.getPlayer().getX(), gameObj.getPlayer().getY()));
 				delayCounter = 0;
 			}

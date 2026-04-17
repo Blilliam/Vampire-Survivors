@@ -17,13 +17,15 @@ public abstract class Weapon {
 	protected int atkDelay;
 	protected int delayCounter;
 	protected double projectileBounces;
-	protected int range;
+	private int range;
 	private double maxDuration;
+	protected double size;
 
 	
 	
 	public Weapon(GameObject gameObj) {
 		this.gameObj = gameObj;
+		size = 1;
 	}
 
 	public void draw(Graphics2D g2) {
@@ -72,6 +74,14 @@ public abstract class Weapon {
 
 	public void setMaxDuration(double maxDuration) {
 		this.maxDuration = maxDuration;
+	}
+
+	public int getRange() {
+		return range;
+	}
+
+	public void setRange(int range) {
+		this.range = range;
 	}
 	
 }

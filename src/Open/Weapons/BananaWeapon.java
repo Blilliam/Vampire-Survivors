@@ -19,14 +19,14 @@ public class BananaWeapon extends Weapon{
 		setSpeed(5);
 		setProjectileBounces(-1);
 		setAtk(3);
-		range = 500;
+		setRange(500);
 		setMaxDuration(200);
 	}
 	
 	public void update() {
 		if (atkDelay < delayCounter) {
-			if (gameObj.getPlayer().closestEnemy(range) != null) {
-				Vec2 direction = Vec2.between(gameObj.getPlayer(), gameObj.getPlayer().closestEnemy(range));
+			if (gameObj.getPlayer().closestEnemy(getRange()) != null) {
+				Vec2 direction = Vec2.between(gameObj.getPlayer(), gameObj.getPlayer().closestEnemy(getRange()));
 				gameObj.addProjectiles(new BananaProjectile(gameObj, this, direction, gameObj.getPlayer().getX(), gameObj.getPlayer().getY()));
 				delayCounter = 0;
 			}

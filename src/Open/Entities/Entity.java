@@ -42,6 +42,28 @@ public abstract class Entity { // main parent class of all moving objects on scr
 				e1.y + e1.height > e2.y;
 	}
 	
+	public static boolean circleCollision(Entity e1, Entity e2) {
+
+        // center points
+        double e1CenterX = e1.getX() + e1.getWidth() / 2.0;
+        double e1CenterY = e1.getY() + e1.getHeight() / 2.0;
+
+        double e2CenterX = e2.getX() + e2.getWidth() / 2.0;
+        double e2CenterY = e2.getY() + e2.getHeight() / 2.0;
+
+        // radii (assuming width = diameter)
+        double r1 = e1.getWidth() / 2.0;
+        double r2 = e2.getWidth() / 2.0;
+
+        double dx = e1CenterX - e2CenterX;
+        double dy = e1CenterY - e2CenterY;
+
+        double distanceSquared = dx * dx + dy * dy;
+        double radiusSum = r1 + r2;
+
+        return distanceSquared <= radiusSum * radiusSum;
+    }
+	
 	public static int getDistance(Entity e1, Entity e2) {
 		double e1x = e1.getX() + e1.getWidth();
         double e1y = e1.getY() + e1.getHeight();

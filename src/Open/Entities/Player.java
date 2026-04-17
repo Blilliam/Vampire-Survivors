@@ -47,12 +47,12 @@ public class Player extends Entity {
 		hitCount = 0;
 		
 		//shoudl be 5
-		weapons = new Weapon[1];
+		weapons = new Weapon[3];
 		
 		//temp
-//		weapons[0] = new BananaWeapon(gameObj);
-//		weapons[1] = new GunWeapon(gameObj);
-		weapons[0] = new AuraWeapon(gameObj);
+		weapons[0] = new BananaWeapon(gameObj);
+  		weapons[1] = new GunWeapon(gameObj);
+		weapons[2] = new AuraWeapon(gameObj);
 		
 		maxHp = 10;
 		currHp = maxHp;

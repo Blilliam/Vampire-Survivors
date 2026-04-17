@@ -21,7 +21,7 @@ public class AuraWeapon extends Weapon{
 		setSpeed(0);
 		setProjectileBounces(-1);
 		setAtk(3);
-		range = 500;
+		setRange(500);
 		setMaxDuration(Double.MAX_VALUE);
 		
 		created = false;
