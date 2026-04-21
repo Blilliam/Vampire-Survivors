@@ -23,6 +23,10 @@ public class Assets {
 	public static BufferedImage WeaponBanana;
 	public static BufferedImage ProjectileBanana;
 	public static BufferedImage ProjectileBullet;
+	
+	public static BufferedImage AuraIcon;
+	public static BufferedImage BananaIcon;
+	public static BufferedImage FireStaffIcon;
 
 	// Player
 	public static BufferedImage playerSheet;
@@ -52,13 +56,16 @@ public class Assets {
 			// assigns each image variable to an actual image in the file
 
 			// Weapons
-			aura = ImageIO.read(Assets.class.getResource("/Images/Items/Aura_Icon.png"));
 //			bone = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Bone.png"));
 //			axe = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Axe.png"));
 //			cross = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Cross.png"));
 //			kingBible = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-King_Bible.png"));
 //			magicWand = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Magic_Wand.png"));
 //			fireWand = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Fire_Wand.png"));
+			
+			AuraIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Aura_Icon.png"));
+			BananaIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Banana_Icon.png"));
+			FireStaffIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Fire_Staff.png"));
 
 			ProjectileBanana = ImageIO.read(Assets.class.getResource("/Images/Projectiles/Banana projectile.png"));
 			ProjectileBullet = ImageIO.read(Assets.class.getResource("/Images/Projectiles/BulletProjectile.png"));

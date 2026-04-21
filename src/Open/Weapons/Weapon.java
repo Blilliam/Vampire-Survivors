@@ -13,6 +13,7 @@ public abstract class Weapon {
 	protected int speed;
 	protected BufferedImage sprite;
 	protected GameObject gameObj;
+	protected BufferedImage icon;
 	
 	protected int atkDelay;
 	protected int delayCounter;
@@ -27,14 +28,8 @@ public abstract class Weapon {
 		this.gameObj = gameObj;
 		size = 1;
 	}
-
-	public void draw(Graphics2D g2) {
-		
-	}
 	
-	public void update() {
-		
-	}
+	public abstract void update();
 
 	public double getProjectileBounces() {
 		return projectileBounces;

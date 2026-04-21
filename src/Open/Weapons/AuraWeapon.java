@@ -16,14 +16,13 @@ public class AuraWeapon extends Weapon{
 		super(gameObj);
 		setAtk(10);
 		projectileCount = 1;
-		setSprite(Assets.aura);
 		atkDelay = 20;
 		setSpeed(0);
 		setProjectileBounces(-1);
 		setAtk(3);
 		setRange(500);
 		setMaxDuration(Double.MAX_VALUE);
-		
+		this.icon = Assets.AuraIcon;
 		created = false;
 	}
 	
@@ -33,9 +32,5 @@ public class AuraWeapon extends Weapon{
 			created = true;
 		}
 	}
-	
-	public void draw(Graphics2D g2) {
-		
-	}
-	
+
 }

@@ -1,5 +1,7 @@
 package Open.Weapons;
 
+import java.awt.Graphics2D;
+
 import Open.Weapons.WeaponProjectile.GunProjectile;
 import main.Assets;
 import main.GameObject;

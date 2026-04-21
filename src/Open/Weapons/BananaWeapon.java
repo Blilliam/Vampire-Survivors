@@ -21,6 +21,7 @@ public class BananaWeapon extends Weapon{
 		setAtk(3);
 		setRange(500);
 		setMaxDuration(200);
+		this.icon = Assets.BananaIcon;
 	}
 	
 	public void update() {
@@ -34,10 +35,6 @@ public class BananaWeapon extends Weapon{
 		}
 		
 		delayCounter++;
-	}
-	
-	public void draw(Graphics2D g2) {
-		
 	}
 	
 }
