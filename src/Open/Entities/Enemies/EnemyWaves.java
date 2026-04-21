@@ -2,7 +2,6 @@ package Open.Entities.Enemies;
 
 import main.AppPanel;
 import main.GameObject;
-import main.enums.GameState;
 
 public class EnemyWaves {
 
@@ -23,7 +22,7 @@ public class EnemyWaves {
 
     public void update() {
 
-        if (GameObject.getState() != GameState.OPEN) return;
+        if (gameObj.getState() != gameObj.getStateOpen()) return;
 
         // increase difficulty over time
         difficultyLevel++;

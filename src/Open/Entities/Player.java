@@ -17,11 +17,10 @@ import main.Animation;
 import main.AppPanel;
 import main.Assets;
 import main.GameObject;
-import main.enums.GameState;
 
 public class Player extends Entity {
 	private ArrayList<Artifact> artifacts = new ArrayList<>();
-	private Weapon[] weapons;
+	private ArrayList<Weapon> weapons;
 
 	private int kills;
 
@@ -43,8 +42,10 @@ public class Player extends Entity {
 		super(gameObj);
 
 		// weapons
-		weapons = new Weapon[1];
-		weapons[0] = new BananaWeapon(gameObj);
+		
+		weapons = new ArrayList<Weapon>();
+
+		weapons.add(new BananaWeapon(gameObj));
 		// weapons[1] = new GunWeapon(gameObj);
 		// weapons[2] = new AuraWeapon(gameObj);
 
@@ -75,7 +76,7 @@ public class Player extends Entity {
 	public void update() {
 		if (currHp <= 0) {
 			isDead = true;
-			GameObject.setState(GameState.DEAD);
+			gameObj.setState(gameObj.getStateDead());
 		}
 
 		updateOpenMovement();
@@ -91,7 +92,7 @@ public class Player extends Entity {
 
 		// leveling
 		if (currExp >= expNeededToUpgrade) {
-			gameObj.setGameState(GameState.UPGRADING);
+			gameObj.setState(gameObj.getStateUpgrade());
 			expNeededToUpgrade *= 1.3;
 		}
 	}
@@ -221,7 +222,7 @@ public class Player extends Entity {
 		return closestEnemy;
 	}
 
-	public Weapon[] getWeapons() {
+	public ArrayList<Weapon> getWeapons() {
 		return weapons;
 	}
 
@@ -243,5 +244,8 @@ public class Player extends Entity {
 
 	public int getKills() {
 		return kills;
+	}
+	public void addWeapon(Weapon w) {
+		weapons.add(w);
 	}
 }

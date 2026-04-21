@@ -40,7 +40,7 @@ public class AppPanel extends JPanel implements Runnable {
 
         // Enable anti-aliasing
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
+                RenderingHints.VALUE_ANTIALIAS_OFF);
         
         gameObj.draw(g2); // draws basically everything
 	}

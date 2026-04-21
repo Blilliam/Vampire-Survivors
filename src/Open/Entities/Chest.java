@@ -32,6 +32,7 @@ public class Chest extends Entity{
     public void update(){
     	if (Entity.rectCollision(this, gameObj.getPlayer())) {
     		state = ChestState.OPENING;
+    		gameObj.setState(gameObj.getStateOpen());
     	}
 
         switch(state){

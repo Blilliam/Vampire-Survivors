@@ -1,8 +1,6 @@
 package main;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
@@ -14,7 +12,12 @@ import Open.Entities.Enemies.EnemyWaves;
 import Open.Map.Background;
 import Open.Upgrades.Upgrades;
 import Open.Weapons.WeaponProjectile.WeaponEntity;
-import main.enums.GameState;
+import States.BaseState;
+import States.ControlsState;
+import States.DeadState;
+import States.MenuState;
+import States.OpenState;
+import States.UpgradeState;
 
 public class GameObject {
 	// declaring everything
@@ -37,11 +40,15 @@ public class GameObject {
 	// keyboard inputs
 	private KeyboardInput keyH;
 
-	// managing the various tates
-	private static GameState state;
-
 	// player
 	private Player player;
+	
+	private BaseState state;
+	private ControlsState stateControl;
+	private DeadState stateDead;
+	private MenuState stateMenu;
+	private OpenState stateOpen;
+	private UpgradeState stateUpgrade;
 
 	// all enemies
 	private ArrayList<Enemy> enemies;
@@ -67,9 +74,15 @@ public class GameObject {
 		Assets.load(); // loads all the images
 
 		this.keyH = keyH;
+		
+		  stateControl = new ControlsState(this);
+		  stateDead = new DeadState(this);
+		  stateMenu = new MenuState(this);
+		  stateOpen = new OpenState(this);
+		  stateUpgrade = new UpgradeState(this);
 
 		this.mouseHandler = mouseHandler;
-		state = GameState.MENU; // sets teh state to the meneu
+		state = stateMenu; // sets teh state to the meneu
 
 		// actually initializes the buttons
 		startButtonWidth = 300;
@@ -81,183 +94,31 @@ public class GameObject {
 		exitControlButtonWidth = 300;
 		exitControlButtonHeight = 100;
 
-		startButton = new GameButton(AppPanel.WIDTH / 2 - startButtonWidth / 2,
+		setStartButton(new GameButton(AppPanel.WIDTH / 2 - startButtonWidth / 2,
 				AppPanel.HEIGHT / 2 - startButtonHeight / 2, startButtonWidth, startButtonHeight, "START",
-				this::startGame, new Color(0, 60, 60), Color.BLACK);
+				this::startGame, new Color(0, 60, 60), Color.BLACK));
 
-		controlButton = new GameButton(AppPanel.WIDTH / 2 - startButtonWidth / 2,
+		setControlButton(new GameButton(AppPanel.WIDTH / 2 - startButtonWidth / 2,
 				AppPanel.HEIGHT / 2 - controlButtonWidth / 2 + 230 + controlButtonHeight / 2, controlButtonWidth,
-				controlButtonHeight, "CONTROLS", this::showControls, new Color(0, 60, 60), Color.BLACK);
+				controlButtonHeight, "CONTROLS", this::showControls, new Color(0, 60, 60), Color.BLACK));
 
-		exitControlButton = new GameButton(AppPanel.WIDTH / 2 - exitControlButtonWidth / 2,
+		setExitControlButton(new GameButton(AppPanel.WIDTH / 2 - exitControlButtonWidth / 2,
 				AppPanel.HEIGHT / 2 + exitControlButtonHeight / 2 + 50, exitControlButtonWidth, exitControlButtonHeight,
-				"EXIT BACK", this::toMenu);
+				"EXIT BACK", this::toMenu));
 		
-		this.upgrades = new Upgrades(this);
+		
 	}
 
 	public void update() {
-		if (state == GameState.MENU) { // while in menu
-
-			// update buttons
-			startButton.update();
-			controlButton.update();
-
-		} else if (state == GameState.OPEN) {
-
-			ScoreManager.checkAndUpdateHighScore(player.getKills());// update the score
-
-			// updatePlayer
-			player.update();
-
-			for (int i = enemies.size() - 1; i >= 0; i--) { // for every enemy (going backwards)
-				Enemy e = enemies.get(i);
-
-				e.update(); // update each enemy
-
-				if (e.isDead()) {
-					enemies.remove(i); // removes dead enemies
-				}
-			}
-
-			for (int i = exp.size() - 1; i >= 0; i--) { // for every enemy (going backwards)
-				Exp e = exp.get(i);
-
-				e.update(); // update each enemy
-
-				if (e.isDead()) {
-					exp.remove(i); // removes dead enemies
-				}
-			}
-
-			for (Chest e : chests) {
-				e.update();
-			}
-			for (int i = projectiles.size() - 1; i >= 0; i--) { // for every enemy (going backwards)
-				WeaponEntity e = projectiles.get(i);
-
-				e.update(); // update each enemy
-
-				if (e.isDead()) {
-					projectiles.remove(i); // removes dead enemies
-				}
-			}
-
-			waves.update(); // update enemy spawning
-
-		} else if (state == GameState.BOSS) { // boss battle
-
-			player.update(); // still updates player
-
-		} else if (state == GameState.DEAD) { // when you die
-
-			exitControlButton.update(); // button for going back to menu
-
-		} else if (state == GameState.UPGRADING) { // while upgrading
-
-			upgrades.update(); // lets player select upgrades
-
-			// Only go back to PLAY **after player confirms upgrade or no upgrades left**
-			if (upgrades.hasFinishedUpgrading()) {
-				state = GameState.OPEN;
-			}
-
-		} else if (state == GameState.CONTROLS) { // looking at controls
-			exitControlButton.update(); // for going back
-		}
-		// Clear click after updates
+		state.upadate();
 		MouseInput.update();
 	}
 
 	public void draw(Graphics2D g2) {
-
-		if (state == GameState.MENU) {
-
-			// draw buttons
-			startButton.draw(g2);
-			controlButton.draw(g2);
-
-		} else if (state == GameState.OPEN) {
-
-			drawOpen(g2); // draws everything related to the main game loop
-
-		} else if (state == GameState.BOSS) {
-
-			player.draw(g2); // draw player
-
-		} else if (state == GameState.DEAD) {
-
-			drawOpen(g2);
-			g2.setColor(new Color(0, 0, 0, 100));
-			g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
-			exitControlButton.draw(g2); // draw exit button
-
-		} else if (state == GameState.UPGRADING) {
-
-			drawOpen(g2);
-
-			g2.setColor(new Color(0, 0, 0, 150)); // dark semi-transparent overlay
-			g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
-
-			upgrades.draw(g2);
-
-		} else if (state == GameState.CONTROLS) {
-
-			drawControls(g2); // draw controls
-			exitControlButton.draw(g2);
-		}
+		state.draw(g2);
 	}
 
-	public void drawOpen(Graphics2D g2) {
-		map.draw(g2); // draw map
-
-		
-		for (Enemy e : enemies) {
-			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
-				e.draw(g2); // draw every enemy
-		}
-		for (WeaponEntity e : projectiles) {
-			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
-				e.draw(g2);
-		}
-		for (Exp e : exp) {
-			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
-				e.draw(g2);
-		}
-		for (Chest e : chests) {
-			if (isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
-				e.draw(g2);
-		}
-		player.draw(g2); // draw player
-		
-	}
-
-	public void drawControls(Graphics2D g2) {
-		// background
-		g2.setColor(new Color(30, 30, 80, 200)); // dark blue overlay
-		g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
-
-		// text settings
-		g2.setColor(Color.BLACK);
-		g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
-		FontMetrics fm = g2.getFontMetrics();
-
-		String s1 = "Up: W";
-		String s2 = "Down: S";
-		String s3 = "Left: A";
-		String s4 = "Right: D";
-
-		int x1 = (AppPanel.WIDTH - fm.stringWidth(s1)) / 2;
-		int x2 = (AppPanel.WIDTH - fm.stringWidth(s2)) / 2;
-		int x3 = (AppPanel.WIDTH - fm.stringWidth(s3)) / 2;
-		int x4 = (AppPanel.WIDTH - fm.stringWidth(s4)) / 2;
-
-		// actually drawing the controls
-		g2.drawString(s1, x1, AppPanel.HEIGHT / 2 - 100);
-		g2.drawString(s2, x2, AppPanel.HEIGHT / 2 - 70);
-		g2.drawString(s3, x3, AppPanel.HEIGHT / 2 - 40);
-		g2.drawString(s4, x4, AppPanel.HEIGHT / 2 - 10);
-	}
+	
 
 	private void startGame() { // creates new everything
 
@@ -266,17 +127,19 @@ public class GameObject {
 		map = new Background(this);
 
 		player = new Player(this);
+		
+		setUpgrades(new Upgrades(this));
 
 		waves = new EnemyWaves(this);
 
-		state = GameState.OPEN;
+		state = getStateOpen();
 
-		exp = new ArrayList<Exp>();
+		setExp(new ArrayList<Exp>());
 
-		chests = new ArrayList<Chest>();
-		chests.add(new Chest(this, player.getX() + 200, player.getY()));
+		setChests(new ArrayList<Chest>());
+		getChests().add(new Chest(this, player.getX() + 200, player.getY()));
 
-		projectiles = new ArrayList<WeaponEntity>();
+		setProjectiles(new ArrayList<WeaponEntity>());
 		// projectiles.add(new WeaponEntity(this, Assets.ProjectileBanana, player.getX()
 		// + 200, player.getY(), 0, 0, 0));
 	}
@@ -319,21 +182,17 @@ public class GameObject {
 		return player.getY() - AppPanel.HEIGHT / 2;
 	}
 
-	private void startBossBattle() {
-		state = GameState.BOSS;
-	}
-
 	private void showControls() {
-		state = GameState.CONTROLS;
+		state = stateControl;
 	}
 
 	private void toMenu() {
-		state = GameState.MENU;
+		state = stateMenu;
 
 	}
 
 	private void startUpgrades() {
-		state = GameState.UPGRADING;
+		state = getStateUpgrade();
 	}
 
 	public MouseInput getMouseHandler() {
@@ -352,12 +211,12 @@ public class GameObject {
 		this.keyH = keyH;
 	}
 
-	public static GameState getState() {
+	public BaseState getState() {
 		return state;
 	}
 
-	public static void setState(GameState state) {
-		GameObject.state = state;
+	public void setState(BaseState state) {
+		this.state = state;
 	}
 
 	public Player getPlayer() {
@@ -393,14 +252,90 @@ public class GameObject {
 	}
 
 	public void addExp(int value, int x, int y) {
-		exp.add(new Exp(this, value, x, y));
+		getExp().add(new Exp(this, value, x, y));
 	}
 
 	public void addProjectiles(WeaponEntity w) {
-		projectiles.add(w);
+		getProjectiles().add(w);
 	}
 
-	public void setGameState(GameState newState) {
-		state = newState;
+	public ArrayList<WeaponEntity> getProjectiles() {
+		return projectiles;
+	}
+
+	public void setProjectiles(ArrayList<WeaponEntity> projectiles) {
+		this.projectiles = projectiles;
+	}
+
+	public ArrayList<Exp> getExp() {
+		return exp;
+	}
+
+	public void setExp(ArrayList<Exp> exp) {
+		this.exp = exp;
+	}
+
+	public ArrayList<Chest> getChests() {
+		return chests;
+	}
+
+	public void setChests(ArrayList<Chest> chests) {
+		this.chests = chests;
+	}
+
+	public GameButton getExitControlButton() {
+		return exitControlButton;
+	}
+
+	public void setExitControlButton(GameButton exitControlButton) {
+		this.exitControlButton = exitControlButton;
+	}
+
+	public GameButton getStartButton() {
+		return startButton;
+	}
+
+	public void setStartButton(GameButton startButton) {
+		this.startButton = startButton;
+	}
+
+	public GameButton getControlButton() {
+		return controlButton;
+	}
+
+	public void setControlButton(GameButton controlButton) {
+		this.controlButton = controlButton;
+	}
+
+	public Upgrades getUpgrades() {
+		return upgrades;
+	}
+
+	public void setUpgrades(Upgrades upgrades) {
+		this.upgrades = upgrades;
+	}
+
+	public OpenState getStateOpen() {
+		return stateOpen;
+	}
+
+	public void setStateOpen(OpenState stateOpen) {
+		this.stateOpen = stateOpen;
+	}
+
+	public DeadState getStateDead() {
+		return stateDead;
+	}
+
+	public void setStateDead(DeadState stateDead) {
+		this.stateDead = stateDead;
+	}
+
+	public UpgradeState getStateUpgrade() {
+		return stateUpgrade;
+	}
+
+	public void setStateUpgrade(UpgradeState stateUpgrade) {
+		this.stateUpgrade = stateUpgrade;
 	}
 }
