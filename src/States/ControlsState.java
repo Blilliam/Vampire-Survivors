@@ -42,6 +42,8 @@ public class ControlsState extends BaseState {
 		g2.drawString(s2, x2, AppPanel.HEIGHT / 2 - 70);
 		g2.drawString(s3, x3, AppPanel.HEIGHT / 2 - 40);
 		g2.drawString(s4, x4, AppPanel.HEIGHT / 2 - 10);
+		
+		gameObj.getExitControlButton().draw(g2);
 
 	}
 
