@@ -2,9 +2,9 @@ package States;
 
 import java.awt.Graphics2D;
 
-import Open.Entities.Chest;
 import Open.Entities.Exp;
 import Open.Entities.Enemies.Enemy;
+import Open.Entities.Interactible.Chest;
 import Open.Weapons.WeaponProjectile.WeaponEntity;
 import main.GameObject;
 import main.ScoreManager;

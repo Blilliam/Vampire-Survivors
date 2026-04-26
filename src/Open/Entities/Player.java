@@ -27,6 +27,8 @@ public class Player extends Entity {
 	private int expNeededToUpgrade = 10;
 	private int totalUpgradesAvailible = 1;
 	private int currExp;
+	
+	private int gold;
 
 	private int invincibilityFrames;
 	private final int HIT_DELAY = 30; // ~0.5 sec at 60fps
@@ -46,6 +48,7 @@ public class Player extends Entity {
 		weapons = new ArrayList<Weapon>();
 
 		weapons.add(new BananaWeapon(gameObj));
+		weapons.add(new GunWeapon(gameObj));
 		// weapons[1] = new GunWeapon(gameObj);
 		// weapons[2] = new AuraWeapon(gameObj);
 
@@ -63,6 +66,10 @@ public class Player extends Entity {
 		width = 100;
 
 		invincibilityFrames = 0;
+		
+		//temp
+		//currExp = 10;
+		currExp = 0;
 
 		// Load walk frames
 		int frameCount = 4;
@@ -93,6 +100,7 @@ public class Player extends Entity {
 		// leveling
 		if (currExp >= expNeededToUpgrade) {
 			gameObj.setState(gameObj.getStateUpgrade());
+			currExp -= expNeededToUpgrade;
 			expNeededToUpgrade *= 1.3;
 		}
 	}
@@ -247,5 +255,13 @@ public class Player extends Entity {
 	}
 	public void addWeapon(Weapon w) {
 		weapons.add(w);
+	}
+
+	public int getGold() {
+		return gold;
+	}
+
+	public void setGold(int gold) {
+		this.gold = gold;
 	}
 }

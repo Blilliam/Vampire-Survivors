@@ -32,7 +32,7 @@ public abstract class WeaponEntity extends Entity {
 
 	protected boolean drawingImpact;
 	protected int impactCount;
-	private Animation impactAnim;
+	protected Animation impactAnim;
 
 	protected int impactX;
 	protected int impactY;
@@ -98,7 +98,7 @@ public abstract class WeaponEntity extends Entity {
 
 			if (Entity.rectCollision(this, e) && !hitCooldowns.containsKey(e)) {
 
-				e.damage(weapon.getAtk());
+				e.damage(weapon.getDmg());
 
 				// store impact position BEFORE projectile dies
 				impactX = x;

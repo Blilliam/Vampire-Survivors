@@ -53,15 +53,8 @@ public class Assets {
 
 	public static void load() {
 		try {
-			// assigns each image variable to an actual image in the file
-
-			// Weapons
-//			bone = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Bone.png"));
-//			axe = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Axe.png"));
-//			cross = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Cross.png"));
-//			kingBible = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-King_Bible.png"));
-//			magicWand = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Magic_Wand.png"));
-//			fireWand = ImageIO.read(Assets.class.getResource("/Images/Items/Sprite-Fire_Wand.png"));
+			//link to effect assets : https://untiedgames.itch.io/super-pixel-effects-gigapack
+	
 			
 			AuraIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Aura_Icon.png"));
 			BananaIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Banana_Icon.png"));

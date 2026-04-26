@@ -14,6 +14,8 @@ public class KeyboardInput implements KeyListener {
 	public boolean right = false;
 	public boolean boost = false;
 
+	public boolean interact;
+
 	@Override
 	public void keyTyped(KeyEvent e) {
 
@@ -33,6 +35,9 @@ public class KeyboardInput implements KeyListener {
 		}
 		if (e.getKeyCode() == KeyEvent.VK_A) {
 			left = true;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_E) {
+			interact = true;
 		}
 		//if any of the movement keys are pressed, you 
 		if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_D

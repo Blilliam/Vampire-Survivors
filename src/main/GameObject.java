@@ -4,11 +4,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import Open.Entities.Chest;
 import Open.Entities.Exp;
 import Open.Entities.Player;
 import Open.Entities.Enemies.Enemy;
 import Open.Entities.Enemies.EnemyWaves;
+import Open.Entities.Interactible.Chest;
 import Open.Map.Background;
 import Open.Upgrades.Upgrades;
 import Open.Weapons.WeaponProjectile.WeaponEntity;

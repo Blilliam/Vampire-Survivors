@@ -43,10 +43,10 @@ public class Upgrades {
 		
 		this.boxes = new GameButton[3];
 		
-//		boxes[0] = new GameButton(100, 300, 100, 100, "upgrade1", this::dosmth);
-//		boxes[1] = new GameButton(100, 500, 100, 100, "upgrade2", this::dosmth);
-//		boxes[2] = new GameButton(100, 700, 100, 100, "upgrade3", this::dosmth);
-		shuffleUpgrades();
+		boxes[0] = new GameButton(AppPanel.WIDTH/2 - rectWidth/2, 100, rectWidth, rectHeight, "NEW: Aura", this::dosmth);
+		boxes[1] = new GameButton(AppPanel.WIDTH/2 - rectWidth/2, 400, rectWidth, rectHeight, "upgrade2", this::dosmth);
+		boxes[2] = new GameButton(AppPanel.WIDTH/2 - rectWidth/2, 700, rectWidth, rectHeight, "upgrade3", this::dosmth);
+//		shuffleUpgrades();
 	}
 	
 	public void shuffleUpgrades() {
@@ -66,6 +66,7 @@ public class Upgrades {
 	}
 	public void dosmth() {
 		gameObj.getPlayer().addWeapon(new AuraWeapon(gameObj));
+		gameObj.setState(gameObj.getStateOpen());
 	}
 
 	public void update() {

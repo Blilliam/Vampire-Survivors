@@ -54,10 +54,10 @@ public class AuraProjectile extends WeaponEntity {
 			}
 
 			if (Entity.circleCollision(this, e) && !hitCooldowns.containsKey(e)) {
-				e.damage(weapon.getAtk());
+				e.damage(weapon.getDmg());
 				
-				impactX = x;
-			    impactY = y;
+				impactX = e.getX();
+			    impactY = e.getY();
 			    drawingImpact = true;
 				
 				// set cooldown

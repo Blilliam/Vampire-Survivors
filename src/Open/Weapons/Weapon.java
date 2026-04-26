@@ -21,12 +21,25 @@ public abstract class Weapon {
 	private int range;
 	private double maxDuration;
 	protected double size;
+	private double critRate;
+	private double critDmg;
 
 	
 	
 	public Weapon(GameObject gameObj) {
 		this.gameObj = gameObj;
 		size = 1;
+		critDmg = 1;
+	}
+	
+	public int getDmg() {
+		double dmgMult = 1;
+		dmgMult += (int)(critRate/1);
+		double baseCrit = critRate%1;
+		if (Math.random() <= critRate) {
+			dmgMult += 1;
+		}
+		return (int) (atk * dmgMult);
 	}
 	
 	public abstract void update();
