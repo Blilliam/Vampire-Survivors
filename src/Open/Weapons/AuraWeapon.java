@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 
 import Open.Weapons.WeaponProjectile.AuraProjectile;
 import Open.Weapons.WeaponProjectile.BananaProjectile;
-import Open.Weapons.WeaponProjectile.GunProjectile;
 import main.Assets;
 import main.GameObject;
 import main.Vec2;

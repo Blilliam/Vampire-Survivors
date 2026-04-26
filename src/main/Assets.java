@@ -61,7 +61,7 @@ public class Assets {
 			FireStaffIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Fire_Staff.png"));
 
 			ProjectileBanana = ImageIO.read(Assets.class.getResource("/Images/Projectiles/Banana projectile.png"));
-			ProjectileBullet = ImageIO.read(Assets.class.getResource("/Images/Projectiles/BulletProjectile.png"));
+			ProjectileBullet = ImageIO.read(Assets.class.getResource("/Images/Projectiles/newBulletProjectile.png"));
 			
 			exp = splitSpriteSheet(ImageIO.read(Assets.class.getResource("/Images/Coins/spr_coin_azu.png")), 16, 16);
 			

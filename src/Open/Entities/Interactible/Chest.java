@@ -111,7 +111,7 @@ public class Chest extends Interactible {
         g.fillRect(drawX + (width / 2) - 4, drawY - lidHeight + (lidHeight / 2) - 4, 8, 8);
 
         // Loot Glow
-        if (state == ChestState.OPEN || state == ChestState.OPENING) {
+        if (state == ChestState.OPEN || state == ChestState.OPENING && !tookItem) {
             g.setColor(new Color(255, 255, 100, 120));
             g.fillOval(drawX - 20, drawY - 40, width + 40, height);
         }

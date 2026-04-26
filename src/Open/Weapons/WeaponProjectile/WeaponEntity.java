@@ -1,9 +1,9 @@
 package Open.Weapons.WeaponProjectile;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
-
 import Open.Entities.Entity;
 import Open.Entities.Enemies.Enemy;
 import Open.Weapons.Weapon;
@@ -14,130 +14,99 @@ import main.GameObject;
 import main.Vec2;
 
 public abstract class WeaponEntity extends Entity {
+    protected BufferedImage sprite;
+    protected HashMap<Enemy, Integer> hitCooldowns;
+    protected Weapon weapon;
+    protected Vec2 position;
+    protected Vec2 velocity;
+    protected double currProjectileBounces;
+    protected double angle;
+    protected double duration;
 
-	protected BufferedImage sprite;
+    protected boolean drawingImpact;
+    protected Animation impactAnim;
+    protected int impactX, impactY, impactWidth, impactHeight;
+    protected final int HIT_COOLDOWN = 15;
 
-	protected BufferedImage[] impact;
+    public WeaponEntity(GameObject gameObj, Weapon weapon, Vec2 direction, int x, int y) {
+        super(gameObj);
+        this.impactAnim = new Animation(Assets.impact, 25);
+        this.impactWidth = 50;
+        this.impactHeight = 50;
+        this.hitCooldowns = new HashMap<>();
+        this.weapon = weapon;
+        this.sprite = weapon.getSprite();
+        this.position = new Vec2(x, y);
+        this.velocity = direction.normalize().scale(weapon.getSpeed());
+        this.currProjectileBounces = weapon.getProjectileBounces();
+        this.isDead = false;
+        // Initial angle based on launch
+        this.angle = Math.atan2(velocity.getY(), velocity.getX());
+    }
 
-	protected HashMap<Enemy, Integer> hitCooldowns;
+    // MAKE THIS ABSTRACT so children MUST implement movement
+    protected abstract void updatePhysics();
 
-	protected Weapon weapon;
+    public void update() {
+        updatePhysics(); // This calls the BouncingProjectile's code!
 
-	protected Vec2 position;
-	protected Vec2 velocity;
-	protected Vec2 acceleration;
-	protected double currProjectileBounces;
-	protected double angle;
-	protected double duration;
+        // Update Entity superclass x/y for collision math
+        this.x = (int) position.getX();
+        this.y = (int) position.getY();
 
-	protected boolean drawingImpact;
-	protected int impactCount;
-	protected Animation impactAnim;
+        // Handle hit cooldowns
+        hitCooldowns.entrySet().removeIf(entry -> {
+            entry.setValue(entry.getValue() - 1);
+            return entry.getValue() <= 0;
+        });
 
-	protected int impactX;
-	protected int impactY;
+        for (Enemy e : gameObj.getEnemies()) {
+            if (!e.isDead() && Entity.rectCollision(this, e) && !hitCooldowns.containsKey(e)) {
+                e.damage(weapon.getDmg());
+                
+                // Trigger the bounce logic
+                onHitEffect(e);
 
-	protected int impactWidth;
-	protected int impactHeight;
+                impactX = x;
+                impactY = y;
+                drawingImpact = true;
+                hitCooldowns.put(e, HIT_COOLDOWN);
+                
+                currProjectileBounces--;
+                if (currProjectileBounces < 0) { // < 0 because 0 bounces means 1 hit total
+                    isDead = true;
+                    break;
+                }
+            }
+        }
+    }
 
-	// tweak this for balance
-	protected final int HIT_COOLDOWN = 15; // frames
+    protected void onHitEffect(Enemy e) {}
 
-	public WeaponEntity(GameObject gameObj, Weapon weapon, Vec2 direction, int x, int y) {
-		super(gameObj);
+    @Override
+    public void draw(Graphics2D g) {
+        drawImpact(g);
 
-		this.impact = Assets.impact;
+        int screenX = x - gameObj.getPlayer().getX() + AppPanel.WIDTH / 2;
+        int screenY = y - gameObj.getPlayer().getY() + AppPanel.HEIGHT / 2;
 
-		impactAnim = new Animation(impact, 25);
-		
-		impactWidth = 50;
-		impactHeight = 50;
-
-		this.hitCooldowns = new HashMap<>();
-
-		this.weapon = weapon;
-		this.sprite = weapon.getSprite();
-		this.position = new Vec2(x, y);
-		this.acceleration = new Vec2(0, 0);
-		this.velocity = direction.normalize().scale(weapon.getSpeed());
-		this.currProjectileBounces = weapon.getProjectileBounces();
-		isDead = false;
-
-		this.angle = Math.atan2(velocity.getY(), velocity.getX()) - Math.PI / 2;
-	}
-
-	public BufferedImage getSprite() {
-		return sprite;
-	}
-
-	public void setSprite(BufferedImage sprite) {
-		this.sprite = sprite;
-	}
-
-	protected void updatePhysics() {
-		// (your movement code if any)
-	}
-
-	public void update() {
-		updatePhysics();
-
-		x = (int) position.getX();
-		y = (int) position.getY();
-
-		for (Enemy e : gameObj.getEnemies()) {
-
-			if (hitCooldowns.containsKey(e)) {
-				int time = hitCooldowns.get(e) - 1;
-
-				if (time <= 0) {
-					hitCooldowns.remove(e);
-				} else {
-					hitCooldowns.put(e, time);
-				}
-			}
-
-			if (Entity.rectCollision(this, e) && !hitCooldowns.containsKey(e)) {
-
-				e.damage(weapon.getDmg());
-
-				// store impact position BEFORE projectile dies
-				impactX = x;
-				impactY = y;
-				drawingImpact = true;
-
-				hitCooldowns.put(e, HIT_COOLDOWN);
-				currProjectileBounces--;
-
-				if (currProjectileBounces == 0) {
-					isDead = true;
-					break;
-				}
-			}
-		}
-	}
-
-	public void drawImpact(Graphics2D g) {
-		if (drawingImpact) {
-			int screenX = impactX - gameObj.getPlayer().getX() + AppPanel.WIDTH / 2 - impactWidth / 2;
-			int screenY = impactY - gameObj.getPlayer().getY() + AppPanel.HEIGHT / 2 - impactHeight / 2;
-
-			g.drawImage(impactAnim.getFrame(), screenX, screenY, impactWidth, impactHeight, null);
-			impactAnim.update();
-
-			if (impactAnim.getCurrentFrameIndex() == impactAnim.getFrameLength() - 1) {
-				drawingImpact = false;
-				impactAnim.setFrame(0);
-			}
-		}
-	}
-
-	@Override
-	public void draw(Graphics2D g) {
-		drawImpact(g);
-
-		int screenX = x - gameObj.getPlayer().getX() + AppPanel.WIDTH / 2 - width / 2;
-		int screenY = y - gameObj.getPlayer().getY() + AppPanel.HEIGHT / 2 - height / 2;
-
-		g.drawImage(sprite, screenX, screenY, width, height, null);
-	}
+        AffineTransform old = g.getTransform();
+        g.translate(screenX, screenY);
+        g.rotate(Math.atan2(velocity.getY(), velocity.getX())); // Point in direction of travel
+        g.drawImage(sprite, -width / 2, -height / 2, width, height, null);
+        g.setTransform(old);
+    }
+    
+    protected void drawImpact(Graphics2D g) {
+    	if (drawingImpact) {
+            int ix = impactX - gameObj.getPlayer().getX() + AppPanel.WIDTH / 2 - impactWidth / 2;
+            int iy = impactY - gameObj.getPlayer().getY() + AppPanel.HEIGHT / 2 - impactHeight / 2;
+            g.drawImage(impactAnim.getFrame(), ix, iy, impactWidth, impactHeight, null);
+            impactAnim.update();
+            if (impactAnim.getCurrentFrameIndex() == impactAnim.getFrameLength() - 1) {
+                drawingImpact = false;
+                impactAnim.setFrame(0);
+            }
+        }
+    }
 }

@@ -2,16 +2,14 @@ package Open.Entities;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import Open.Artifacts.Artifact;
 import Open.Entities.Enemies.Enemy;
-import Open.Weapons.AuraWeapon;
 import Open.Weapons.BananaWeapon;
-import Open.Weapons.GunWeapon;
+import Open.Weapons.PewPewWeapon;
 import Open.Weapons.Weapon;
 import main.Animation;
 import main.AppPanel;
@@ -47,10 +45,8 @@ public class Player extends Entity {
 		
 		weapons = new ArrayList<Weapon>();
 
-		weapons.add(new BananaWeapon(gameObj));
-		weapons.add(new GunWeapon(gameObj));
-		// weapons[1] = new GunWeapon(gameObj);
-		// weapons[2] = new AuraWeapon(gameObj);
+		//weapons.add(new BananaWeapon(gameObj));
+		weapons.add(new PewPewWeapon(gameObj));
 
 		maxHp = 10;
 		currHp = maxHp;
