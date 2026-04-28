@@ -6,11 +6,12 @@ import Open.Weapons.WeaponProjectile.BananaProjectile;
 import main.Assets;
 import main.GameObject;
 import main.Vec2;
+import main.enums.WeaponTypes;
 
 public class BananaWeapon extends Weapon{
 
 	public BananaWeapon(GameObject gameObj) {
-		super(gameObj);
+		super(gameObj, WeaponTypes.Banana);
 		setAtk(10);
 		projectileCount = 1;
 		setSprite(Assets.ProjectileBanana);

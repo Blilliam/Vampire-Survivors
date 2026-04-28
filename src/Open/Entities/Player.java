@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import Open.Artifacts.Artifact;
 import Open.Entities.Enemies.Enemy;
@@ -15,6 +17,7 @@ import main.Animation;
 import main.AppPanel;
 import main.Assets;
 import main.GameObject;
+import main.enums.WeaponTypes;
 
 public class Player extends Entity {
 	private ArrayList<Artifact> artifacts = new ArrayList<>();
@@ -32,6 +35,8 @@ public class Player extends Entity {
 	private final int HIT_DELAY = 30; // ~0.5 sec at 60fps
 
 	private boolean isRight;
+	
+	private final int MAX_WEAPONS = 4;
 
 	// Animation
 	private BufferedImage[] walkFrames;
@@ -45,7 +50,7 @@ public class Player extends Entity {
 		
 		weapons = new ArrayList<Weapon>();
 
-		//weapons.add(new BananaWeapon(gameObj));
+		weapons.add(new BananaWeapon(gameObj));
 		weapons.add(new PewPewWeapon(gameObj));
 
 		maxHp = 10;
@@ -229,6 +234,16 @@ public class Player extends Entity {
 	public ArrayList<Weapon> getWeapons() {
 		return weapons;
 	}
+	
+	public Set<WeaponTypes> getWeaponSet() {
+		Set<WeaponTypes> weaponSet = new HashSet<WeaponTypes>();
+		
+		for (Weapon w: weapons) {
+			weaponSet.add(w.getWeaponType());
+		}
+		
+		return weaponSet;
+	}
 
 	public int getTotalUpgradesAvailible() {
 		return totalUpgradesAvailible;
@@ -259,5 +274,9 @@ public class Player extends Entity {
 
 	public void setGold(int gold) {
 		this.gold = gold;
+	}
+
+	public int getMAX_WEAPONS() {
+		return MAX_WEAPONS;
 	}
 }

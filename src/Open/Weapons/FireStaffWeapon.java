@@ -5,10 +5,11 @@ import Open.Weapons.WeaponProjectile.FireStaffProjectile;
 import main.Assets;
 import main.GameObject;
 import main.Vec2;
+import main.enums.WeaponTypes;
 
 public class FireStaffWeapon extends Weapon {
     public FireStaffWeapon(GameObject gameObj) {
-        super(gameObj);
+        super(gameObj, WeaponTypes.FireStaff);
         this.atk = 10;
         this.speed = 8;
         this.atkDelay = 60; // 1 second

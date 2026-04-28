@@ -5,10 +5,11 @@ import Open.Weapons.WeaponProjectile.BouncingProjectile;
 import main.Assets;
 import main.GameObject;
 import main.Vec2;
+import main.enums.WeaponTypes;
 
 public class BoneWeapon extends Weapon {
 	public BoneWeapon(GameObject gameObj) {
-		super(gameObj);
+		super(gameObj, WeaponTypes.Bone);
 		this.atk = 25; // High damage
 		this.speed = 6; // Slow movement
 		this.atkDelay = 100; // Very slow fire rate

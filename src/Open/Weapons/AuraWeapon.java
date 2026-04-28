@@ -7,12 +7,13 @@ import Open.Weapons.WeaponProjectile.BananaProjectile;
 import main.Assets;
 import main.GameObject;
 import main.Vec2;
+import main.enums.WeaponTypes;
 
 public class AuraWeapon extends Weapon{
 	boolean created;
 
 	public AuraWeapon(GameObject gameObj) {
-		super(gameObj);
+		super(gameObj, WeaponTypes.Aura);
 		setAtk(10);
 		projectileCount = 1;
 		atkDelay = 20;

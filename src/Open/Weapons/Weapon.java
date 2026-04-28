@@ -1,19 +1,18 @@
 package Open.Weapons;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import main.GameObject;
+import main.enums.WeaponTypes;
 
 
 public abstract class Weapon {
-	protected double atk;
-	protected double projectileCount;
-	protected double rotationSpeed;
-	protected int speed;
+	
 	protected BufferedImage sprite;
 	protected GameObject gameObj;
 	protected BufferedImage icon;
+	
+	private WeaponTypes weaponType;
 	
 	protected int atkDelay;
 	protected int delayCounter;
@@ -23,11 +22,16 @@ public abstract class Weapon {
 	protected double size;
 	private double critRate;
 	private double critDmg;
+	protected double atk;
+	protected double projectileCount;
+	protected double rotationSpeed;
+	protected int speed;
 
 	
 	
-	public Weapon(GameObject gameObj) {
+	public Weapon(GameObject gameObj, WeaponTypes type) {
 		this.gameObj = gameObj;
+		this.setWeaponType(type);
 		size = 1;
 		critDmg = 1;
 	}
@@ -99,6 +103,14 @@ public abstract class Weapon {
 	
 	public void setSize(double newsize) {
 		size = newsize;
+	}
+
+	public WeaponTypes getWeaponType() {
+		return weaponType;
+	}
+
+	public void setWeaponType(WeaponTypes weaponType) {
+		this.weaponType = weaponType;
 	}
 	
 }

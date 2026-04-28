@@ -5,10 +5,11 @@ import Open.Weapons.WeaponProjectile.BouncingProjectile;
 import main.Assets;
 import main.GameObject;
 import main.Vec2;
+import main.enums.WeaponTypes;
 
 public class PewPewWeapon extends Weapon {
     public PewPewWeapon(GameObject gameObj) {
-        super(gameObj);
+        super(gameObj, WeaponTypes.PewPew);
         this.atk = 8;
         this.speed = 12;      // Fast bullets
         this.atkDelay = 40;   // Fast fire rate
