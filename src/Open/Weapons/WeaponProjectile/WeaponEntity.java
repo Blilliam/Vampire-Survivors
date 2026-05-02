@@ -12,6 +12,7 @@ import main.AppPanel;
 import main.Assets;
 import main.GameObject;
 import main.Vec2;
+import main.enums.WeaponUpgrades;
 
 public abstract class WeaponEntity extends Entity {
     protected BufferedImage sprite;
@@ -37,10 +38,15 @@ public abstract class WeaponEntity extends Entity {
         this.weapon = weapon;
         this.sprite = weapon.getSprite();
         this.position = new Vec2(x, y);
-        this.velocity = direction.normalize().scale(weapon.getSpeed());
-        this.currProjectileBounces = weapon.getProjectileBounces();
+        if (weapon.getStats().get(WeaponUpgrades.ProjectileSpeed) != null) {
+        	this.velocity = direction.normalize().scale(weapon.getStats().get(WeaponUpgrades.ProjectileSpeed));
+        } else {
+        	this.velocity = new Vec2(0, 0);
+        }
+       
         this.isDead = false;
         // Initial angle based on launch
+        
         this.angle = Math.atan2(velocity.getY(), velocity.getX());
     }
 
@@ -61,7 +67,7 @@ public abstract class WeaponEntity extends Entity {
         });
 
         for (Enemy e : gameObj.getEnemies()) {
-            if (!e.isDead() && Entity.rectCollision(this, e) && !hitCooldowns.containsKey(e)) {
+            if (!e.isDying() && Entity.rectCollision(this, e) && !hitCooldowns.containsKey(e)) {
                 e.damage(weapon.getDmg());
                 
                 // Trigger the bounce logic
@@ -72,6 +78,9 @@ public abstract class WeaponEntity extends Entity {
                 drawingImpact = true;
                 hitCooldowns.put(e, HIT_COOLDOWN);
                 
+                if (!weapon.getStats().containsKey(WeaponUpgrades.ProjectileBounce)) {
+                	continue;
+                }
                 currProjectileBounces--;
                 if (currProjectileBounces < 0) { // < 0 because 0 bounces means 1 hit total
                     isDead = true;

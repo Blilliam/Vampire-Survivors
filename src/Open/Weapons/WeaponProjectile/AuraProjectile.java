@@ -10,6 +10,7 @@ import Open.Weapons.Weapon;
 import main.AppPanel;
 import main.GameObject;
 import main.Vec2;
+import main.enums.WeaponUpgrades;
 
 public class AuraProjectile extends WeaponEntity {
 	
@@ -21,10 +22,9 @@ public class AuraProjectile extends WeaponEntity {
 		this.weapon = weapon;
 		this.sprite = weapon.getSprite();
 		this.position = new Vec2(AppPanel.WIDTH/2, AppPanel.HEIGHT/2);
-		this.currProjectileBounces = weapon.getProjectileBounces();
 		isDead = false;
-		this.width = (int) (this.weapon.getRange() * weapon.getSize());
-		this.height = (int) (this.weapon.getRange() * weapon.getSize());
+		this.width = (int) (this.weapon.getStats().get(WeaponUpgrades.Range) * weapon.getStats().get(WeaponUpgrades.AttackSize));
+		this.height = (int) (this.weapon.getStats().get(WeaponUpgrades.Range) * weapon.getStats().get(WeaponUpgrades.AttackSize));
 
 	}
 	
@@ -62,11 +62,6 @@ public class AuraProjectile extends WeaponEntity {
 				
 				// set cooldown
 				hitCooldowns.put(e, HIT_COOLDOWN);
-				currProjectileBounces--;
-				if (currProjectileBounces == 0) {
-					isDead = true;
-					break;
-				}
 			}
 		}
 	}

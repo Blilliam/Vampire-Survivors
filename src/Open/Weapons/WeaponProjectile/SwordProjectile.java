@@ -8,6 +8,7 @@ import Open.Weapons.Weapon;
 import main.AppPanel;
 import main.GameObject;
 import main.Vec2;
+import main.enums.WeaponUpgrades;
 
 public class SwordProjectile extends WeaponEntity {
 
@@ -15,10 +16,11 @@ public class SwordProjectile extends WeaponEntity {
 
     public SwordProjectile(GameObject gameObj, Weapon weapon, Vec2 direction, int x, int y) {
         super(gameObj, weapon, direction, x, y);
+      
         
         // Base size, scaled by weapon stats
-        this.width = (int)(150 * weapon.getSize());
-        this.height = (int)(80 * weapon.getSize());
+        this.width = (int)(150 * weapon.getStats().get(WeaponUpgrades.AttackSize));
+        this.height = (int)(80 * weapon.getStats().get(WeaponUpgrades.AttackSize));
         
         // Standard melee setup: velocity is (0,0), it doesn't fly.
         this.velocity = new Vec2(0, 0); 

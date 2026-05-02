@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ import main.enums.WeaponTypes;
 
 public class Player extends Entity {
 	private ArrayList<Artifact> artifacts = new ArrayList<>();
-	private ArrayList<Weapon> weapons;
+	private EnumMap<WeaponTypes, Weapon> weapons;
 
 	private int kills;
 
@@ -48,10 +49,9 @@ public class Player extends Entity {
 
 		// weapons
 		
-		weapons = new ArrayList<Weapon>();
+		weapons = new EnumMap<WeaponTypes, Weapon>(WeaponTypes.class);
 
-		weapons.add(new BananaWeapon(gameObj));
-		weapons.add(new PewPewWeapon(gameObj));
+		weapons.put(WeaponTypes.Banana, new BananaWeapon(gameObj));
 
 		maxHp = 10;
 		currHp = maxHp;
@@ -94,13 +94,14 @@ public class Player extends Entity {
 		}
 
 		// update weapons
-		for (Weapon w : weapons) {
+		for (Weapon w : weapons.values()) {
 			w.update();
 		}
 
 		// leveling
 		if (currExp >= expNeededToUpgrade) {
 			gameObj.setState(gameObj.getStateUpgrade());
+			gameObj.getUpgrades().shuffleUpgrades();
 			currExp -= expNeededToUpgrade;
 			expNeededToUpgrade *= 1.3;
 		}
@@ -215,14 +216,14 @@ public class Player extends Entity {
 		g2.drawString(text, x + (barWidth - textWidth) / 2, y + barHeight - 8);
 	}
 
-	public Enemy closestEnemy(int range) {
+	public Enemy closestEnemy(Double double1) {
 		ArrayList<Enemy> enemies = gameObj.getEnemies();
-		float minDistance = Integer.MAX_VALUE;
+		double minDistance = Double.MAX_VALUE;
 		Enemy closestEnemy = null;
 
 		for (Enemy e : enemies) {
 			int dist = Entity.getDistance(this, e);
-			if (dist < range && !e.isDying() && dist < minDistance) {
+			if (dist < double1 && !e.isDying() && dist < minDistance) {
 				minDistance = dist;
 				closestEnemy = e;
 			}
@@ -231,19 +232,19 @@ public class Player extends Entity {
 		return closestEnemy;
 	}
 
-	public ArrayList<Weapon> getWeapons() {
-		return weapons;
+	public EnumMap<WeaponTypes, Weapon> getWeapons() {
+	    return weapons;
 	}
 	
-	public Set<WeaponTypes> getWeaponSet() {
-		Set<WeaponTypes> weaponSet = new HashSet<WeaponTypes>();
-		
-		for (Weapon w: weapons) {
-			weaponSet.add(w.getWeaponType());
-		}
-		
-		return weaponSet;
-	}
+//	public Set<WeaponTypes> getWeaponSet() {
+//		Set<WeaponTypes> weaponSet = new HashSet<WeaponTypes>();
+//		
+//		for (Weapon w: weapons) {
+//			weaponSet.add(w.getWeaponType());
+//		}
+//		
+//		return weaponSet;
+//	}
 
 	public int getTotalUpgradesAvailible() {
 		return totalUpgradesAvailible;
@@ -264,8 +265,8 @@ public class Player extends Entity {
 	public int getKills() {
 		return kills;
 	}
-	public void addWeapon(Weapon w) {
-		weapons.add(w);
+	public void addWeapon(WeaponTypes type, Weapon w) {
+	    weapons.put(type, w);
 	}
 
 	public int getGold() {

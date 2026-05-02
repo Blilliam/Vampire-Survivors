@@ -8,20 +8,20 @@ import main.Assets;
 import main.GameObject;
 import main.Vec2;
 import main.enums.WeaponTypes;
+import main.enums.WeaponUpgrades;
 
 public class AuraWeapon extends Weapon{
 	boolean created;
 
 	public AuraWeapon(GameObject gameObj) {
 		super(gameObj, WeaponTypes.Aura);
-		setAtk(10);
-		projectileCount = 1;
-		atkDelay = 20;
-		setSpeed(0);
-		setProjectileBounces(-1);
-		setAtk(3);
-		setRange(500);
-		setMaxDuration(Double.MAX_VALUE);
+		stats.put(WeaponUpgrades.AttackDamage, (double) 3);
+		stats.put(WeaponUpgrades.ProjectileCount, (double) 1);
+		stats.put(WeaponUpgrades.AttackSize, (double) 1);
+		stats.put(WeaponUpgrades.AttackSpeed, (double) 20);
+		stats.put(WeaponUpgrades.Range, (double) 500);
+		stats.put(WeaponUpgrades.CriticalDamage, (double) 2);
+		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
 		this.icon = Assets.AuraIcon;
 		created = false;
 	}

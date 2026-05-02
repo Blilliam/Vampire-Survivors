@@ -8,6 +8,7 @@ import Open.Weapons.Weapon;
 import main.AppPanel;
 import main.GameObject;
 import main.Vec2;
+import main.enums.WeaponUpgrades;
 
 public class BananaProjectile extends WeaponEntity {
 
@@ -16,10 +17,11 @@ public class BananaProjectile extends WeaponEntity {
 
 	public BananaProjectile(GameObject gameObj, Weapon weapon, Vec2 direction, int x, int y) {
 		super(gameObj, weapon, direction, x, y);
-		this.width = (int) (50 * weapon.getSize());
-		this.height = (int) (50 * weapon.getSize());
+		this.width = (int) (50 * weapon.getStats().get(WeaponUpgrades.AttackSize));
+		this.height = (int) (50 * weapon.getStats().get(WeaponUpgrades.AttackSize));
 		this.angle = 0;
 		this.duration = 0;
+		this.currProjectileBounces = weapon.getStats().get(WeaponUpgrades.ProjectileBounce);
 
 		// Initialize velocity based on direction
 		this.velocity = direction.normalize().scale(speed);
@@ -30,7 +32,7 @@ public class BananaProjectile extends WeaponEntity {
 		// 1. Get the vector from Banana to Player
 		duration++;
 		
-		if (duration >= weapon.getMaxDuration()) {
+		if (duration >= weapon.getStats().get(WeaponUpgrades.Duration)) {
 			isDead = true;
 		}
 		
@@ -51,7 +53,7 @@ public class BananaProjectile extends WeaponEntity {
 
 		// Apply Movement
 		position = position.add(velocity);
-		angle += 0.2; // The spin
+		angle += weapon.getStats().get(WeaponUpgrades.ProjectileRotationSpeed); // The spin
 		
 
 		this.x = (int) position.getX();

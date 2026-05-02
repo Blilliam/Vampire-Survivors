@@ -6,15 +6,21 @@ import main.Assets;
 import main.GameObject;
 import main.Vec2;
 import main.enums.WeaponTypes;
+import main.enums.WeaponUpgrades;
 
 public class PewPewWeapon extends Weapon {
     public PewPewWeapon(GameObject gameObj) {
         super(gameObj, WeaponTypes.PewPew);
-        this.atk = 8;
-        this.speed = 12;      // Fast bullets
-        this.atkDelay = 40;   // Fast fire rate
-        this.projectileBounces = 2; // Diamond might increase this
-        this.sprite = Assets.ProjectileBullet;
+        this.setSprite(Assets.ProjectileBullet);
+        stats.put(WeaponUpgrades.AttackDamage, (double) 8);
+		stats.put(WeaponUpgrades.ProjectileCount, (double) 1);
+		stats.put(WeaponUpgrades.AttackSize, (double) 1);
+		stats.put(WeaponUpgrades.AttackSpeed, (double) 40);
+		stats.put(WeaponUpgrades.ProjectileSpeed, (double) 12);
+		stats.put(WeaponUpgrades.Range, (double) 700);
+		stats.put(WeaponUpgrades.ProjectileBounce, (double) 2);
+		stats.put(WeaponUpgrades.CriticalDamage, (double) 2);
+		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
     }
 
     @Override
@@ -22,10 +28,10 @@ public class PewPewWeapon extends Weapon {
         if (delayCounter > 0) {
             delayCounter--;
         } else {
-            Enemy target = gameObj.getPlayer().closestEnemy(500);
+            Enemy target = gameObj.getPlayer().closestEnemy(stats.get(WeaponUpgrades.Range));
             if (target != null) {
                 spawn(target);
-                delayCounter = atkDelay;
+                delayCounter = stats.get(WeaponUpgrades.AttackSpeed);
             }
         }
     }

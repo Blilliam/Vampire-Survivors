@@ -6,16 +6,19 @@ import main.Assets;
 import main.GameObject;
 import main.Vec2;
 import main.enums.WeaponTypes;
+import main.enums.WeaponUpgrades;
 
 public class FireStaffWeapon extends Weapon {
     public FireStaffWeapon(GameObject gameObj) {
         super(gameObj, WeaponTypes.FireStaff);
-        this.atk = 10;
-        this.speed = 8;
-        this.atkDelay = 60; // 1 second
-        this.projectileCount = 1;
-        this.size = 1.0;
-        //this.sprite = Assets.boomStickProjectile; // fireball sprite
+        stats.put(WeaponUpgrades.AttackDamage, (double) 8);
+		stats.put(WeaponUpgrades.ProjectileCount, (double) 1);
+		stats.put(WeaponUpgrades.AttackSize, (double) 1);
+		stats.put(WeaponUpgrades.AttackSpeed, (double) 60);
+		stats.put(WeaponUpgrades.ProjectileSpeed, (double) 4);
+		stats.put(WeaponUpgrades.Range, (double) 700);
+		stats.put(WeaponUpgrades.CriticalDamage, (double) 2);
+		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
     }
 
     @Override
@@ -23,10 +26,10 @@ public class FireStaffWeapon extends Weapon {
         if (delayCounter > 0) {
             delayCounter--;
         } else {
-            Enemy target = gameObj.getPlayer().closestEnemy(600);
+            Enemy target = gameObj.getPlayer().closestEnemy(stats.get(WeaponUpgrades.Range));
             if (target != null) {
                 spawnProjectile(target);
-                delayCounter = atkDelay;
+                delayCounter = stats.get(WeaponUpgrades.AttackSpeed);
             }
         }
     }

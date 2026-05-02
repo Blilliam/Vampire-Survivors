@@ -5,17 +5,20 @@ import Open.Weapons.WeaponProjectile.SwordProjectile;
 import main.GameObject;
 import main.Vec2;
 import main.enums.WeaponTypes;
+import main.enums.WeaponUpgrades;
 
 public class SwordWeapon extends Weapon {
 
     public SwordWeapon(GameObject gameObj) {
         super(gameObj, WeaponTypes.Sword);
-        this.atk = 15;
-        this.speed = 0;       // Melee weapons don't "fly"
-        this.atkDelay = 35;   // Very fast slashes
-        this.projectileCount = 1;
-        this.size = 1.5;      // Large reach
         //this.sprite = Assets.katanaSlashSprite; // A crescent moon slash sprite
+        stats.put(WeaponUpgrades.AttackDamage, (double) 10);
+		stats.put(WeaponUpgrades.ProjectileCount, (double) 1);
+		stats.put(WeaponUpgrades.AttackSize, (double) 1);
+		stats.put(WeaponUpgrades.AttackSpeed, (double) 35);
+		stats.put(WeaponUpgrades.Range, (double) 500);
+		stats.put(WeaponUpgrades.CriticalDamage, (double) 2);
+		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
     }
 
     @Override
@@ -24,11 +27,11 @@ public class SwordWeapon extends Weapon {
             delayCounter--;
         } else {
             // Find the closest enemy within a short range
-            Enemy target = gameObj.getPlayer().closestEnemy(200);
+            Enemy target = gameObj.getPlayer().closestEnemy(stats.get(WeaponUpgrades.Range));
             
             if (target != null) {
                 spawnSlash(target);
-                delayCounter = atkDelay;
+                delayCounter = stats.get(WeaponUpgrades.AttackSpeed);
             }
         }
     }

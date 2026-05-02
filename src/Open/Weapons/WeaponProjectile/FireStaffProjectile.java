@@ -3,12 +3,13 @@ package Open.Weapons.WeaponProjectile;
 import Open.Weapons.Weapon;
 import main.GameObject;
 import main.Vec2;
+import main.enums.WeaponUpgrades;
 
 public class FireStaffProjectile extends WeaponEntity {
     public FireStaffProjectile(GameObject gameObj, Weapon weapon, Vec2 direction, int x, int y) {
         super(gameObj, weapon, direction, x, y);
-        this.width = (int)(40 * weapon.getSize());
-        this.height = (int)(40 * weapon.getSize());
+        this.width = (int)(40 * weapon.getStats().get(WeaponUpgrades.AttackSize));
+        this.height = (int)(40 * weapon.getStats().get(WeaponUpgrades.AttackSize));
     }
 
     @Override

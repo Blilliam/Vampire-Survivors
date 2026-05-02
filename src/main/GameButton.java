@@ -80,6 +80,11 @@ public class GameButton {
     public Rectangle getBounds() {
         return new Rectangle(x, y, w, h);
     }
+
+	public void setText(String string) {
+		// TODO Auto-generated method stub
+		this.buttonText = string;
+	}
     
     
 }
