@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import Open.Artifacts.WorldItem;
 import Open.Entities.Exp;
 import Open.Entities.Player;
 import Open.Entities.Enemies.Enemy;
@@ -50,6 +51,8 @@ public class GameObject {
 	private OpenState stateOpen;
 	private UpgradeState stateUpgrade;
 
+	private ArrayList<WorldItem> groundItems;
+	
 	// all enemies
 	private ArrayList<Enemy> enemies;
 
@@ -337,5 +340,13 @@ public class GameObject {
 
 	public void setStateUpgrade(UpgradeState stateUpgrade) {
 		this.stateUpgrade = stateUpgrade;
+	}
+
+	public ArrayList<WorldItem> getGroundItems() {
+		return groundItems;
+	}
+
+	public void setGroundItems(ArrayList<WorldItem> groundItems) {
+		this.groundItems = groundItems;
 	}
 }

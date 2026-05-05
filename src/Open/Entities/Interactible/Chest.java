@@ -6,7 +6,9 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.util.Random;
 
+import Open.Artifacts.ChunkyOats;
 import Open.Entities.Entity;
+import Open.Entities.Player;
 import main.GameObject;
 import main.enums.ChestState;
 

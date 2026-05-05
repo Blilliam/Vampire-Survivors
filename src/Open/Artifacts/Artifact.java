@@ -1,12 +1,70 @@
 package Open.Artifacts;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+import Open.Entities.Entity;
 import main.GameObject;
 
 public abstract class Artifact {
-	
-	
+	protected int count;
+	protected String name;
+	protected BufferedImage icon;
+
 	public Artifact(GameObject gameObj) {
-		
+		count = 1;
 	}
 	
+	public BufferedImage getIcon() {
+		return icon;
+	}
+
+	public void addCount() {
+		count++;
+	}
+
+	public double GetPercentDamage() {
+		return 0;
+	}
+
+	public int GetFlatDamage() {
+		return 0;
+	}
+
+	public int getProjectileCount() {
+		return 0;
+	}
+
+	public double getPercentHealth() {
+		return 0;
+	}
+
+	public int getFlatHealth() {
+		return 0;
+	}
+
+	public void onCritEffect() {
+		return;
+	}
+
+	public double getPercentAttackSpeed() {
+		return 0;
+	}
+
+	public double getPercentLuck() {
+		return 0;
+	}
+
+	public double getPercentFreeChest() {
+		return 0;
+	}
+
+	public double getPercentBonusExp() {
+		return 0;
+	}
+
+	public double getBonusInvinsibilityFrames() {
+		return 0;
+	}
+
 }

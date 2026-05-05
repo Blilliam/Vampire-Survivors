@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import Open.Artifacts.Artifact;
+import Open.Artifacts.ArtifactManager;
+import Open.Artifacts.ChunkyOats;
 import Open.Entities.Enemies.Enemy;
 import Open.Weapons.BananaWeapon;
 import Open.Weapons.PewPewWeapon;
@@ -21,8 +23,10 @@ import main.GameObject;
 import main.enums.WeaponTypes;
 
 public class Player extends Entity {
-	private ArrayList<Artifact> artifacts = new ArrayList<>();
+	private ArtifactManager artifactManager;
 	private EnumMap<WeaponTypes, Weapon> weapons;
+	
+	private int baseMaxHp;
 
 	private int kills;
 
@@ -46,6 +50,9 @@ public class Player extends Entity {
 
 	public Player(GameObject gameObj) {
 		super(gameObj);
+		
+		setArtifactManager(new ArtifactManager(gameObj));
+		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
 
 		// weapons
 		
@@ -53,8 +60,8 @@ public class Player extends Entity {
 
 		weapons.put(WeaponTypes.Banana, new BananaWeapon(gameObj));
 
-		maxHp = 10;
-		currHp = maxHp;
+		baseMaxHp = 10;
+		currHp = getMaxHp();
 
 		x = gameObj.getMap().HEIGHT / 2;
 		y = gameObj.getMap().WIDTH / 2;
@@ -211,7 +218,7 @@ public class Player extends Entity {
 		g2.drawRect(x, y, barWidth, barHeight);
 
 		g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
-		String text = "Hp: " + currHp + " / " + maxHp;
+		String text = "Hp: " + currHp + " / " + getMaxHp();
 		int textWidth = g2.getFontMetrics().stringWidth(text);
 		g2.drawString(text, x + (barWidth - textWidth) / 2, y + barHeight - 8);
 	}
@@ -246,6 +253,11 @@ public class Player extends Entity {
 //		return weaponSet;
 //	}
 
+	 public int getMaxHp() {
+		return (int) ((baseMaxHp + getArtifactManager().getFlatHealth()) * (1 + getArtifactManager().getPercentHealth()));
+		 
+	 }
+	
 	public int getTotalUpgradesAvailible() {
 		return totalUpgradesAvailible;
 	}
@@ -279,5 +291,13 @@ public class Player extends Entity {
 
 	public int getMAX_WEAPONS() {
 		return MAX_WEAPONS;
+	}
+
+	public ArtifactManager getArtifactManager() {
+		return artifactManager;
+	}
+
+	public void setArtifactManager(ArtifactManager artifactManager) {
+		this.artifactManager = artifactManager;
 	}
 }

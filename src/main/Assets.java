@@ -27,6 +27,8 @@ public class Assets {
 	public static BufferedImage AuraIcon;
 	public static BufferedImage BananaIcon;
 	public static BufferedImage FireStaffIcon;
+	
+	public static BufferedImage oatsIcon;
 
 	// Player
 	public static BufferedImage playerSheet;
@@ -55,7 +57,7 @@ public class Assets {
 		try {
 			//link to effect assets : https://untiedgames.itch.io/super-pixel-effects-gigapack
 	
-			
+			oatsIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Common/Item_Oats.png"));
 			AuraIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Aura_Icon.png"));
 			BananaIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Banana_Icon.png"));
 			FireStaffIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Fire_Staff.png"));
