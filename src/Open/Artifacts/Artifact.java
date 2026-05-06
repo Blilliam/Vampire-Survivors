@@ -72,4 +72,9 @@ public abstract class Artifact {
 		return;
 	}
 
+	public double getPercentBonusGold() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

@@ -31,6 +31,10 @@ public class Assets {
 	public static BufferedImage oatsIcon;
 	public static BufferedImage watchIcon;
 	public static BufferedImage magnetIcon;
+	public static BufferedImage keyIcon;
+	public static BufferedImage batteryIcon;
+	public static BufferedImage cloverIcon;
+	public static BufferedImage midasIcon;
 
 	// Player
 	public static BufferedImage playerSheet;
@@ -60,8 +64,18 @@ public class Assets {
 			//link to effect assets : https://untiedgames.itch.io/super-pixel-effects-gigapack
 	
 			oatsIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Common/Item_Oats.png"));
-			magnetIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Legendary/Item_Sucky_Magnet.png"));
 			watchIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Common/Item_Time_Bracelet.png"));
+			cloverIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Common/Item_Clover.png"));
+			batteryIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Common/Item_Battery.png"));
+			keyIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Common/Item_Key.png"));
+			midasIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Common/Item_Golden_Glove.png"));
+			
+			magnetIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Legendary/Item_Sucky_Magnet.png"));
+			
+			
+			
+			
+			
 			AuraIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Aura_Icon.png"));
 			BananaIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Banana_Icon.png"));
 			FireStaffIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Fire_Staff.png"));

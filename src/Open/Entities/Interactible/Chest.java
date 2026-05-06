@@ -6,130 +6,134 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.util.Random;
 
-import Open.Artifacts.Magnet;
 import Open.Artifacts.WorldItem;
+import Open.Artifacts.Common.ChunkyOats;
+import Open.Artifacts.Common.Magnet;
 import main.GameObject;
 import main.enums.ChestState;
 
 public class Chest extends Interactible {
 
-    private int shakeTimer = 0;
-    private int openProgress = 0;
-    private int cost;
-    private boolean spawnedItem;
+	private int shakeTimer = 0;
+	private int openProgress = 0;
+	private int cost;
+	private boolean spawnedItem;
 
-    private Random rand = new Random();
+	private Random rand = new Random();
 
-    public Chest(GameObject gameObj, int x, int y) {
-        super(gameObj, x, y);
-        width = 80;
-        height = 60;
-        cost = 0;
-        spawnedItem = false;
-    }
+	public Chest(GameObject gameObj, int x, int y) {
+		super(gameObj, x, y);
+		width = 80;
+		height = 60;
+		cost = 0;
+		spawnedItem = false;
+	}
 
-    public void update() {
-    	updateInteract();
+	public void update() {
+	    updateInteract();
 
-        switch (state) {
-            case SHAKING:
-                shakeTimer++;
-                if (shakeTimer > 60) {
-                    state = ChestState.OPENING;
-                    // Trigger the game state change when it actually starts opening
-                    //gameObj.setState(gameObj.getStateOpen());
-                }
-                break;
+	    switch (state) {
+	        case SHAKING:
+	            shakeTimer++;
+	            if (shakeTimer > 60) {
+	                state = ChestState.OPENING;
+	            }
+	            break;
 
-            case OPENING:
-                openProgress++;
-                if (openProgress > 30) {
-                    state = ChestState.OPEN;
-                }
-                break;
+	        case OPENING:
+	            openProgress++;
+	            if (openProgress > 30) {
+	                state = ChestState.OPEN;
+	            }
+	            break;
 
-            default:
-                break;
-        }
-    }
+	        case OPEN:
+	            // MOVE SPAWNING LOGIC HERE
+	            if (!spawnedItem) {
+	                gameObj.getGroundItems().add(new WorldItem(gameObj, gameObj.getPlayer().getArtifactManager().getRandomArtifact(), x, y - 50));
+	                spawnedItem = true;
+	            }
+	            break;
 
-    public void draw(Graphics2D g) {
-        int drawX = x - gameObj.getCameraX() - width / 2;
-        int drawY = y - gameObj.getCameraY() - height / 2;
+	        default:
+	            break;
+	    }
+	}
 
-        // --- PIXEL ART INTERACT PROMPT ---
-        if (playerInRange && state == ChestState.CLOSED) {
-            String msg = "[E] OPEN";
-            g.setFont(new Font("Monospaced", Font.BOLD, 14)); // Monospaced looks more "pixel"
-            FontMetrics fm = g.getFontMetrics();
-            
-            int msgWidth = fm.stringWidth(msg);
-            int msgHeight = fm.getHeight();
-            int padding = 8;
-            
-            // Position prompt above the chest
-            int promptX = drawX + (width / 2) - (msgWidth / 2);
-            int promptY = drawY - 60;
+	public void draw(Graphics2D g) {
+		int drawX = x - gameObj.getCameraX() - width / 2;
+		int drawY = y - gameObj.getCameraY() - height / 2;
 
-            // 1. Draw Outer Shadow/Border (Black)
-            g.setColor(Color.BLACK);
-            g.fillRect(promptX - padding - 2, promptY - msgHeight - 2, msgWidth + (padding * 2) + 4, msgHeight + 8);
+		// --- PIXEL ART INTERACT PROMPT ---
+		if (playerInRange && state == ChestState.CLOSED) {
+			String msg = "[E] OPEN";
+			g.setFont(new Font("Monospaced", Font.BOLD, 14)); // Monospaced looks more "pixel"
+			FontMetrics fm = g.getFontMetrics();
 
-            // 2. Draw Main Background (Dark Brown to match chest)
-            g.setColor(new Color(60, 30, 10));
-            g.fillRect(promptX - padding, promptY - msgHeight, msgWidth + (padding * 2), msgHeight + 4);
+			int msgWidth = fm.stringWidth(msg);
+			int msgHeight = fm.getHeight();
+			int padding = 8;
 
-            // 3. Draw Pixel Highlight (Lighter border on top and left)
-            g.setColor(new Color(160, 100, 40));
-            g.fillRect(promptX - padding, promptY - msgHeight, msgWidth + (padding * 2), 2); // Top
-            g.fillRect(promptX - padding, promptY - msgHeight, 2, msgHeight + 4); // Left
+			// Position prompt above the chest
+			int promptX = drawX + (width / 2) - (msgWidth / 2);
+			int promptY = drawY - 60;
 
-            // 4. Draw Text
-            g.setColor(Color.WHITE);
-            g.drawString(msg, promptX, promptY);
-        }
+			// 1. Draw Outer Shadow/Border (Black)
+			g.setColor(Color.BLACK);
+			g.fillRect(promptX - padding - 2, promptY - msgHeight - 2, msgWidth + (padding * 2) + 4, msgHeight + 8);
 
-        // --- CHEST DRAWING LOGIC ---
-        if (state == ChestState.SHAKING) {
-            drawX += rand.nextInt(6) - 3;
-            drawY += rand.nextInt(6) - 3;
-        }
+			// 2. Draw Main Background (Dark Brown to match chest)
+			g.setColor(new Color(60, 30, 10));
+			g.fillRect(promptX - padding, promptY - msgHeight, msgWidth + (padding * 2), msgHeight + 4);
 
-        // Draw Chest Base
-        g.setColor(new Color(120, 70, 20));
-        g.fillRect(drawX, drawY, width, height / 2);
+			// 3. Draw Pixel Highlight (Lighter border on top and left)
+			g.setColor(new Color(160, 100, 40));
+			g.fillRect(promptX - padding, promptY - msgHeight, msgWidth + (padding * 2), 2); // Top
+			g.fillRect(promptX - padding, promptY - msgHeight, 2, msgHeight + 4); // Left
 
-        int lidHeight = height / 2;
-        if (state == ChestState.OPENING || state == ChestState.OPEN) {
-            lidHeight = height / 2 - openProgress;
-            if (lidHeight < 0) lidHeight = 0;
-        }
+			// 4. Draw Text
+			g.setColor(Color.WHITE);
+			g.drawString(msg, promptX, promptY);
+		}
 
-        // Draw Lid
-        g.setColor(new Color(160, 100, 40));
-        g.fillRect(drawX, drawY - lidHeight, width, lidHeight);
+		// --- CHEST DRAWING LOGIC ---
+		if (state == ChestState.SHAKING) {
+			drawX += rand.nextInt(6) - 3;
+			drawY += rand.nextInt(6) - 3;
+		}
 
-        // Draw Lock / Detail (Pixel style)
-        g.setColor(new Color(200, 150, 0)); // Gold
-        g.fillRect(drawX + (width / 2) - 4, drawY - lidHeight + (lidHeight / 2) - 4, 8, 8);
+		// Draw Chest Base
+		g.setColor(new Color(120, 70, 20));
+		g.fillRect(drawX, drawY, width, height / 2);
 
-        // Loot Glow
-        if (state == ChestState.OPEN || state == ChestState.OPENING && !tookItem) {
-            g.setColor(new Color(255, 255, 100, 120));
-            g.fillOval(drawX - 20, drawY - 40, width + 40, height);
-            if (!spawnedItem) {
-            	gameObj.getGroundItems().add(new WorldItem(gameObj, new Magnet(gameObj), x, y - 50));     
-            	spawnedItem = true; 
-            	tookItem = false;
-            }
-        }
-    }
-    
-    public void open() {
-    	if (gameObj.getPlayer().getGold() >= cost) {
-    		gameObj.getPlayer().setGold(gameObj.getPlayer().getGold() - cost);
-    		state = ChestState.SHAKING;
-    		
-    	}
-    }
+		int lidHeight = height / 2;
+		if (state == ChestState.OPENING || state == ChestState.OPEN) {
+			lidHeight = height / 2 - openProgress;
+			if (lidHeight < 0)
+				lidHeight = 0;
+		}
+
+		// Draw Lid
+		g.setColor(new Color(160, 100, 40));
+		g.fillRect(drawX, drawY - lidHeight, width, lidHeight);
+
+		// Draw Lock / Detail (Pixel style)
+		g.setColor(new Color(200, 150, 0)); // Gold
+		g.fillRect(drawX + (width / 2) - 4, drawY - lidHeight + (lidHeight / 2) - 4, 8, 8);
+
+		// Loot Glow
+		if (state == ChestState.OPEN || state == ChestState.OPENING && !tookItem) {
+			g.setColor(new Color(255, 255, 100, 120));
+			g.fillOval(drawX - 20, drawY - 40, width + 40, height);
+
+		}
+	}
+
+	public void open() {
+		if (gameObj.getPlayer().getGold() >= cost || Math.random() < gameObj.getPlayer().getArtifactManager().getPercentFreeChest()) {
+			gameObj.getPlayer().setGold(gameObj.getPlayer().getGold() - cost);
+			state = ChestState.SHAKING;
+
+		}
+	}
 }

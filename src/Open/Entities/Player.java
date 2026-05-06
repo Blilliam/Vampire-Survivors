@@ -11,8 +11,9 @@ import java.util.Set;
 
 import Open.Artifacts.Artifact;
 import Open.Artifacts.ArtifactManager;
-import Open.Artifacts.ChunkyOats;
+import Open.Artifacts.Common.ChunkyOats;
 import Open.Entities.Enemies.Enemy;
+import Open.Weapons.AuraWeapon;
 import Open.Weapons.BananaWeapon;
 import Open.Weapons.PewPewWeapon;
 import Open.Weapons.Weapon;
@@ -25,7 +26,7 @@ import main.enums.WeaponTypes;
 public class Player extends Entity {
 	private ArtifactManager artifactManager;
 	private EnumMap<WeaponTypes, Weapon> weapons;
-	
+
 	private int baseMaxHp;
 
 	private int kills;
@@ -33,14 +34,14 @@ public class Player extends Entity {
 	private int expNeededToUpgrade = 10;
 	private int totalUpgradesAvailible = 1;
 	private int currExp;
-	
+
 	private int gold;
 
 	private int invincibilityFrames;
 	private final int HIT_DELAY = 30; // ~0.5 sec at 60fps
 
 	private boolean isRight;
-	
+
 	private final int MAX_WEAPONS = 4;
 
 	// Animation
@@ -50,15 +51,15 @@ public class Player extends Entity {
 
 	public Player(GameObject gameObj) {
 		super(gameObj);
-		
+
 		setArtifactManager(new ArtifactManager(gameObj));
 		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
 
 		// weapons
-		
+
 		weapons = new EnumMap<WeaponTypes, Weapon>(WeaponTypes.class);
 
-		weapons.put(WeaponTypes.Banana, new BananaWeapon(gameObj));
+		weapons.put(WeaponTypes.Banana, new AuraWeapon(gameObj));
 
 		baseMaxHp = 10;
 		currHp = getMaxHp();
@@ -70,11 +71,11 @@ public class Player extends Entity {
 
 		isRight = true;
 
-		height = 100;
-		width = 100;
+		height = 70;
+		width = 70;
 
 		invincibilityFrames = 0;
-		
+
 		currExp = 0;
 
 		// Load walk frames
@@ -91,7 +92,7 @@ public class Player extends Entity {
 			isDead = true;
 			gameObj.setState(gameObj.getStateDead());
 		}
-		
+
 		artifactManager.onUpdate();
 
 		updateOpenMovement();
@@ -161,18 +162,33 @@ public class Player extends Entity {
 	}
 
 	public void draw(Graphics2D g2) {
-		int drawX = AppPanel.WIDTH / 2 - width/2;
-		int drawY = AppPanel.HEIGHT / 2 - width/2;
+		// 1. ANCHOR: Offset the screen center so the MIDDLE of the box is the center
+		int screenX = (int) ((AppPanel.WIDTH / 2) - (width / 2));
+		int screenY = (int) ((AppPanel.HEIGHT / 2) - (height / 2));
 
-		if (isInvincible() && invincibilityFrames % 6 < 3) {
-			return;
+		// 2. VISUALS: Scale the art
+		int visualW = (int) (width * 1.5);
+		int visualH = (int) (height * 1.5);
+
+		// 3. CENTERING ART: Offset the art so it centers on the box
+		int drawX = screenX - (visualW - width) / 2;
+		int drawY = screenY - (visualH - height) / 2;
+
+		// --- Draw Sprite ---
+		if (!(isInvincible() && invincibilityFrames % 6 < 3)) {
+			if (isRight) {
+				g2.drawImage(walkAnim.getFrame(), drawX, drawY, visualW, visualH, null);
+			} else {
+				g2.drawImage(walkAnim.getFrame(), drawX + visualW, drawY, -visualW, visualH, null);
+			}
 		}
 
-		if (isRight)
-			g2.drawImage(walkAnim.getFrame(), drawX, drawY, width, height, null);
-		else
-			g2.drawImage(walkAnim.getFrame(), drawX + width, drawY, -100, height, null);
+		// --- DEBUG: THE RED BOX ---
+//		g2.setColor(Color.RED);
+//		g2.drawRect(screenX, screenY, width, height);
 
+		// --- UI ---
+		artifactManager.draw(g2);
 		drawXPBar(g2);
 		drawHpBar(g2);
 	}
@@ -240,9 +256,9 @@ public class Player extends Entity {
 	}
 
 	public EnumMap<WeaponTypes, Weapon> getWeapons() {
-	    return weapons;
+		return weapons;
 	}
-	
+
 //	public Set<WeaponTypes> getWeaponSet() {
 //		Set<WeaponTypes> weaponSet = new HashSet<WeaponTypes>();
 //		
@@ -253,10 +269,11 @@ public class Player extends Entity {
 //		return weaponSet;
 //	}
 
-	 public int getMaxHp() {
-		return (int) ((baseMaxHp + getArtifactManager().getFlatHealth()) * (1 + getArtifactManager().getPercentHealth()));
-	 }
-	
+	public int getMaxHp() {
+		return (int) ((baseMaxHp + getArtifactManager().getFlatHealth())
+				* (1 + getArtifactManager().getPercentHealth()));
+	}
+
 	public int getTotalUpgradesAvailible() {
 		return totalUpgradesAvailible;
 	}
@@ -270,14 +287,15 @@ public class Player extends Entity {
 	}
 
 	public void addExp(int i) {
-		currExp += i;
+		currExp += (i *  (1 + artifactManager.getPercentBonusExp()));
 	}
 
 	public int getKills() {
 		return kills;
 	}
+
 	public void addWeapon(WeaponTypes type, Weapon w) {
-	    weapons.put(type, w);
+		weapons.put(type, w);
 	}
 
 	public int getGold() {
