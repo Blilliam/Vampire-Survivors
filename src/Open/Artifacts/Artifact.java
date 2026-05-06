@@ -10,9 +10,11 @@ public abstract class Artifact {
 	protected int count;
 	protected String name;
 	protected BufferedImage icon;
+	protected GameObject gameObj;
 
 	public Artifact(GameObject gameObj) {
 		count = 1;
+		this.gameObj = gameObj;
 	}
 	
 	public BufferedImage getIcon() {
@@ -65,6 +67,9 @@ public abstract class Artifact {
 
 	public double getBonusInvinsibilityFrames() {
 		return 0;
+	}
+	public void update() {
+		return;
 	}
 
 }

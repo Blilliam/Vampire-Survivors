@@ -75,8 +75,6 @@ public class Player extends Entity {
 
 		invincibilityFrames = 0;
 		
-		//temp
-		//currExp = 10;
 		currExp = 0;
 
 		// Load walk frames
@@ -93,6 +91,8 @@ public class Player extends Entity {
 			isDead = true;
 			gameObj.setState(gameObj.getStateDead());
 		}
+		
+		artifactManager.onUpdate();
 
 		updateOpenMovement();
 
@@ -161,8 +161,8 @@ public class Player extends Entity {
 	}
 
 	public void draw(Graphics2D g2) {
-		int drawX = AppPanel.WIDTH / 2 - 50;
-		int drawY = AppPanel.HEIGHT / 2 - 50;
+		int drawX = AppPanel.WIDTH / 2 - width/2;
+		int drawY = AppPanel.HEIGHT / 2 - width/2;
 
 		if (isInvincible() && invincibilityFrames % 6 < 3) {
 			return;
@@ -206,7 +206,7 @@ public class Player extends Entity {
 		int x = (AppPanel.WIDTH - barWidth) / 2;
 		int y = AppPanel.HEIGHT - barHeight - 100;
 
-		float percent = Math.min(1.0f, (float) currHp / maxHp);
+		float percent = Math.min(1.0f, (float) currHp / getMaxHp());
 
 		g2.setColor(new Color(50, 50, 50, 180));
 		g2.fillRect(x, y, barWidth, barHeight);
@@ -255,7 +255,6 @@ public class Player extends Entity {
 
 	 public int getMaxHp() {
 		return (int) ((baseMaxHp + getArtifactManager().getFlatHealth()) * (1 + getArtifactManager().getPercentHealth()));
-		 
 	 }
 	
 	public int getTotalUpgradesAvailible() {

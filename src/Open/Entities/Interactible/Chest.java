@@ -6,9 +6,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.util.Random;
 
-import Open.Artifacts.ChunkyOats;
-import Open.Entities.Entity;
-import Open.Entities.Player;
+import Open.Artifacts.Magnet;
+import Open.Artifacts.WorldItem;
 import main.GameObject;
 import main.enums.ChestState;
 
@@ -17,6 +16,7 @@ public class Chest extends Interactible {
     private int shakeTimer = 0;
     private int openProgress = 0;
     private int cost;
+    private boolean spawnedItem;
 
     private Random rand = new Random();
 
@@ -25,6 +25,7 @@ public class Chest extends Interactible {
         width = 80;
         height = 60;
         cost = 0;
+        spawnedItem = false;
     }
 
     public void update() {
@@ -116,6 +117,11 @@ public class Chest extends Interactible {
         if (state == ChestState.OPEN || state == ChestState.OPENING && !tookItem) {
             g.setColor(new Color(255, 255, 100, 120));
             g.fillOval(drawX - 20, drawY - 40, width + 40, height);
+            if (!spawnedItem) {
+            	gameObj.getGroundItems().add(new WorldItem(gameObj, new Magnet(gameObj), x, y - 50));     
+            	spawnedItem = true; 
+            	tookItem = false;
+            }
         }
     }
     
@@ -123,6 +129,7 @@ public class Chest extends Interactible {
     	if (gameObj.getPlayer().getGold() >= cost) {
     		gameObj.getPlayer().setGold(gameObj.getPlayer().getGold() - cost);
     		state = ChestState.SHAKING;
+    		
     	}
     }
 }

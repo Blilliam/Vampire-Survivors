@@ -126,6 +126,8 @@ public class GameObject {
 	private void startGame() { // creates new everything
 
 		enemies = new ArrayList<Enemy>();
+		
+		groundItems = new ArrayList<WorldItem>();
 
 		map = new Background(this);
 

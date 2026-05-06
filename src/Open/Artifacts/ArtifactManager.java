@@ -6,13 +6,21 @@ import java.util.ArrayList;
 import main.GameObject;
 
 public class ArtifactManager {
-	GameObject gameObj;
-	ArrayList<Artifact> artifacts;
+	private GameObject gameObj;
+	private ArrayList<Artifact> artifacts;
+	private ArrayList<Artifact> allCommonArtifacts;
 	
 	
 	public ArtifactManager(GameObject gameObject) {
 		this.gameObj = gameObject;
 		this.artifacts = new ArrayList<Artifact>();
+		allCommonArtifacts = new ArrayList<Artifact>();
+		allCommonArtifacts.add(new ChunkyOats(gameObj));
+	}
+	
+	public Artifact randomArtifact() {
+		int randIndex = ((int) (Math.random() * allCommonArtifacts.size()));
+		return allCommonArtifacts.get(randIndex);
 	}
 	
 	public void addArtifact(Artifact a) {
@@ -125,9 +133,10 @@ public class ArtifactManager {
 		return output;
 	}
 	
-	public void draw(Graphics2D g) {
+	public void onUpdate() {
 		for (Artifact artifact:artifacts) {
-			artifact.getIcon();
+			artifact.update();
 		}
 	}
+	
 }
