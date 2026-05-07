@@ -59,7 +59,7 @@ public class Player extends Entity {
 
 		weapons = new EnumMap<WeaponTypes, Weapon>(WeaponTypes.class);
 
-		weapons.put(WeaponTypes.Banana, new AuraWeapon(gameObj));
+		weapons.put(WeaponTypes.Aura, new AuraWeapon(gameObj));
 
 		baseMaxHp = 10;
 		currHp = getMaxHp();
