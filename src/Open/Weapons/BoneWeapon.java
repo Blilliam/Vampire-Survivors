@@ -3,6 +3,7 @@ package Open.Weapons;
 import java.awt.Taskbar.State;
 
 import Open.Entities.Enemies.Enemy;
+import Open.Weapons.WeaponProjectile.BananaProjectile;
 import Open.Weapons.WeaponProjectile.BouncingProjectile;
 import main.Assets;
 import main.GameObject;
@@ -23,21 +24,18 @@ public class BoneWeapon extends Weapon {
 		stats.put(WeaponUpgrades.ProjectileBounce, (double) 1);
 		stats.put(WeaponUpgrades.CriticalDamage, (double) 2);
 		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
+
+		baseStats = stats.clone();
 	}
 
 	@Override
-	public void update() {
-		if (delayCounter > 0) {
-			delayCounter--;
-		} else {
-			Enemy target = gameObj.getPlayer().closestEnemy(stats.get(WeaponUpgrades.Range));
-			if (target != null) {
-				Vec2 dir = new Vec2(target.getX() - gameObj.getPlayer().getX(),
-						target.getY() - gameObj.getPlayer().getY());
-				gameObj.addProjectiles(new BouncingProjectile(gameObj, this, dir, gameObj.getPlayer().getX(),
-						gameObj.getPlayer().getY()));
-				delayCounter = stats.get(WeaponUpgrades.AttackSpeed);
-			}
+
+	protected void fireProjectile() {
+		var target = gameObj.getPlayer().closestEnemy(stats.get(WeaponUpgrades.Range));
+		if (target != null) {
+			Vec2 direction = Vec2.between(gameObj.getPlayer(), target);
+			gameObj.addProjectiles(new BouncingProjectile(gameObj, this, direction, gameObj.getPlayer().getX(),
+					gameObj.getPlayer().getY()));
 		}
 	}
 }

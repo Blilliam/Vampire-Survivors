@@ -6,9 +6,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-/**
- * A clickable button with hover and click functionality.
- */
 public class GameButton {
 
     private int x, y, w, h;
@@ -16,6 +13,7 @@ public class GameButton {
     private Runnable clickFunc;
     private Color mainColor;
     private Color borderColor;
+    private boolean transparentBackground = false;
 
     public GameButton(int x, int y, int w, int h, String text, Runnable clickFunc, Color mainColor, Color borderColor) {
         this(x, y, w, h, text, clickFunc);
@@ -29,44 +27,39 @@ public class GameButton {
         this.w = w;
         this.h = h;
         this.buttonText = text;
-        this.clickFunc = clickFunc; // what it does when clicked
+        this.clickFunc = clickFunc;
         this.mainColor = new Color(60, 60, 60);
         this.borderColor = Color.WHITE;
     }
 
-    /** Returns true if mouse is hovering over this button */
     public boolean isHovering() {
         return MouseInput.getMouseX() >= x && MouseInput.getMouseX() <= x + w &&
                MouseInput.getMouseY() >= y && MouseInput.getMouseY() <= y + h;
     }
 
-    /** Call this each frame to handle clicks */
     public void update() {
         if (isHovering() && MouseInput.isMousePressed()) {
             clickFunc.run();
-            MouseInput.update(); // consume click so it doesn't trigger again
+            MouseInput.update(); 
         }
     }
 
-    /** Draw the button with hover tint */
     public void draw(Graphics2D g2) {
-
-        // Base color
-        g2.setColor(mainColor);
-        g2.fillRect(x, y, w, h);
-
-        // Hover overlay
-        if (isHovering()) {
-            g2.setColor(new Color(0, 0, 0, 100));
+        if (!transparentBackground) {
+            g2.setColor(mainColor);
             g2.fillRect(x, y, w, h);
         }
 
-        // Border
+        if (isHovering()) {
+            g2.setColor(new Color(0, 0, 0, 80));
+            g2.fillRect(x, y, w, h);
+        }
+
         g2.setColor(borderColor);
+        g2.setStroke(new java.awt.BasicStroke(3));
         g2.drawRect(x, y, w, h);
 
-        // Text
-        g2.setFont(new Font("Malgun Gothic", Font.BOLD, 20));
+        g2.setFont(new Font("Malgun Gothic", Font.BOLD, 22));
         g2.setColor(Color.WHITE);
 
         FontMetrics fm = g2.getFontMetrics();
@@ -76,15 +69,9 @@ public class GameButton {
         g2.drawString(buttonText, textX, textY);
     }
 
-    /** Optional helper for rectangle bounds */
-    public Rectangle getBounds() {
-        return new Rectangle(x, y, w, h);
-    }
-
-	public void setText(String string) {
-		// TODO Auto-generated method stub
-		this.buttonText = string;
-	}
-    
-    
+    public void setTransparent(boolean transparent) { this.transparentBackground = transparent; }
+    public int getWidth() { return w; }
+    public int getHeight() { return h; }
+    public int getY() { return y; }
+    public int getX() { return x; }
 }

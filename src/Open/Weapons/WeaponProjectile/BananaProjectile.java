@@ -21,7 +21,7 @@ public class BananaProjectile extends WeaponEntity {
 		this.height = (int) (50 * weapon.getStats().get(WeaponUpgrades.AttackSize));
 		this.angle = 0;
 		this.duration = 0;
-		this.currProjectileBounces = weapon.getStats().get(WeaponUpgrades.ProjectileBounce);
+		this.diesAfterHit = false;
 
 		// Initialize velocity based on direction
 		this.velocity = direction.normalize().scale(speed);
@@ -53,7 +53,7 @@ public class BananaProjectile extends WeaponEntity {
 
 		// Apply Movement
 		position = position.add(velocity);
-		angle += weapon.getStats().get(WeaponUpgrades.ProjectileRotationSpeed); // The spin
+		angle += 0.2; // The spin
 		
 
 		this.x = (int) position.getX();

@@ -1,6 +1,9 @@
 package Open.Weapons;
 
+import java.util.EnumMap;
+
 import Open.Entities.Enemies.Enemy;
+import Open.Weapons.WeaponProjectile.BananaProjectile;
 import Open.Weapons.WeaponProjectile.SwordProjectile;
 import main.GameObject;
 import main.Vec2;
@@ -19,30 +22,16 @@ public class SwordWeapon extends Weapon {
 		stats.put(WeaponUpgrades.Range, (double) 500);
 		stats.put(WeaponUpgrades.CriticalDamage, (double) 2);
 		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
+		
+		baseStats = stats.clone();
     }
 
-    @Override
-    public void update() {
-        if (delayCounter > 0) {
-            delayCounter--;
-        } else {
-            // Find the closest enemy within a short range
-            Enemy target = gameObj.getPlayer().closestEnemy(stats.get(WeaponUpgrades.Range));
-            
-            if (target != null) {
-                spawnSlash(target);
-                delayCounter = stats.get(WeaponUpgrades.AttackSpeed);
-            }
+    protected void fireProjectile() {
+        var target = gameObj.getPlayer().closestEnemy(stats.get(WeaponUpgrades.Range));
+        if (target != null) {
+            Vec2 direction = Vec2.between(gameObj.getPlayer(), target);
+            gameObj.addProjectiles(new SwordProjectile(gameObj, this, direction, 
+                                   gameObj.getPlayer().getX(), gameObj.getPlayer().getY()));
         }
-    }
-
-    private void spawnSlash(Enemy target) {
-        // Calculate direction toward the enemy
-        Vec2 dir = new Vec2(target.getX() - gameObj.getPlayer().getX(), 
-                            target.getY() - gameObj.getPlayer().getY());
-        
-        // Spawn the slash at the player's position
-        gameObj.addProjectiles(new SwordProjectile(gameObj, this, dir, 
-                               gameObj.getPlayer().getX(), gameObj.getPlayer().getY()));
     }
 }

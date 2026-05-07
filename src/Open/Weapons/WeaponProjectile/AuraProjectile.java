@@ -15,16 +15,19 @@ import main.enums.WeaponUpgrades;
 public class AuraProjectile extends WeaponEntity {
 	
 	public AuraProjectile(GameObject gameObj, Weapon weapon) {
+		//FIX TEH UPGRADES SO IT SPAQNS A NEW AURA PROJECTILE WHEN UPGRADED AND DELETES TEH OLD ONE
 		super(gameObj, weapon, new Vec2(0, 0), 0, 0);
 		
 		this.hitCooldowns = new HashMap<>();
+		
+		this.diesAfterHit = false;
 
 		this.weapon = weapon;
 		this.sprite = weapon.getSprite();
 		this.position = new Vec2(AppPanel.WIDTH/2, AppPanel.HEIGHT/2);
 		isDead = false;
-		this.width = (int) (this.weapon.getStats().get(WeaponUpgrades.Range) * weapon.getStats().get(WeaponUpgrades.AttackSize));
-		this.height = (int) (this.weapon.getStats().get(WeaponUpgrades.Range) * weapon.getStats().get(WeaponUpgrades.AttackSize));
+		this.width = (int) (weapon.getStats().get(WeaponUpgrades.AttackSize) * 500);
+		this.height = (int) (weapon.getStats().get(WeaponUpgrades.AttackSize) * 500);
 
 	}
 	
@@ -53,7 +56,7 @@ public class AuraProjectile extends WeaponEntity {
 				}
 			}
 
-			if (Entity.circleCollision(this, e) && !hitCooldowns.containsKey(e)) {
+			if (!e.isDying() && Entity.circleCollision(this, e) && !hitCooldowns.containsKey(e)) {
 				e.damage(weapon.getDmg());
 				
 				impactX = e.getX();

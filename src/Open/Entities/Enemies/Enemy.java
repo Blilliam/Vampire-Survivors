@@ -84,15 +84,11 @@ public class Enemy extends Entity {
 		}
 	}
 
-	/**
-	 * damages enemy
-	 */
 	public void damage(double atk) {
 		if (isDying())
 			return;
 
 		currHp -= atk;
-
 		damageFlashTimer = FLASH_DURATION;
 
 		if (currHp <= 0) {
@@ -130,7 +126,7 @@ public class Enemy extends Entity {
 			}
 
 			if (Entity.rectCollision(this, gameObj.getPlayer())) {
-				gameObj.getPlayer().damage(1);
+				gameObj.getPlayer().damage(10);
 			}
 
 		} else {
@@ -145,7 +141,6 @@ public class Enemy extends Entity {
 
 			if (deathHoldTimer > 10) {
 				isDead = true;
-				
 			}
 		}
 	}
@@ -166,36 +161,76 @@ public class Enemy extends Entity {
 	}
 
 	public void draw(Graphics2D g) {
+	    BufferedImage img;
+	    int drawX, drawY, drawW, drawH;
 
-		BufferedImage img;
-		int drawX, drawY, drawW, drawH;
+	    // 1. Determine which frame to use and where to put it
+	    if (isDying()) {
+	        img = deathFrames[Math.min(frame, deathFrames.length - 1)];
+	        drawX = deathX - gameObj.getPlayer().getX() + AppPanel.WIDTH / 2 - width / 2;
+	        drawY = deathY - gameObj.getPlayer().getY() + AppPanel.HEIGHT / 2 - height / 2;
+	        drawW = width + 50;
+	        drawH = height + 50;
+	    } else {
+	        img = walkFrames[Math.min(frame, walkFrames.length - 1)];
+	        drawX = x - gameObj.getCameraX() - (width - 20) / 2;
+	        drawY = y - gameObj.getCameraY() - (height - 40) / 2;
+	        drawW = width;
+	        drawH = height;
 
-		if (isDying()) {
-			img = deathFrames[Math.min(frame, deathFrames.length - 1)];
+	        // Draw health bar (Done before the flash so the bar doesn't turn red)
+	        if (currHp < maxHp && currHp > 0) {
+	            drawHealthBar(g, drawX, drawY);
+	        }
+	    }
 
-			drawX = deathX - gameObj.getPlayer().getX() + AppPanel.WIDTH / 2 - width / 2;
-			drawY = deathY - gameObj.getPlayer().getY() + AppPanel.HEIGHT / 2 - height / 2;
-			drawW = width + 50;
-			drawH = height + 50;
+	    // 2. Handle the Rendering
+	    if (damageFlashTimer > 0 && img != null) {
+	        // Create a temporary image the size of the original frame
+	        BufferedImage tintImage = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+	        Graphics2D gTint = tintImage.createGraphics();
 
-		} else {
-			img = walkFrames[Math.min(frame, walkFrames.length - 1)];
+	        // Draw the enemy onto the temp image
+	        gTint.drawImage(img, 0, 0, null);
 
-			drawX = x - gameObj.getCameraX() - (width - 20) / 2;
-			drawY = y - gameObj.getCameraY() - (height - 40) / 2;
-			drawW = width;
-			drawH = height;
-		}
+	        // Apply red tint ONLY to where the enemy's pixels are (SRC_ATOP)
+	        gTint.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.7f));
+	        gTint.setColor(Color.RED);
+	        gTint.fillRect(0, 0, img.getWidth(), img.getHeight());
+	        
+	        gTint.dispose();
 
-		// draw base image
-		g.drawImage(img, drawX, drawY, drawW, drawH, null);
+	        // Draw the tinted result to the screen
+	        g.drawImage(tintImage, drawX, drawY, drawW, drawH, null);
+	    } else if (img != null) {
+	        // Draw the normal image if not flashing
+	        g.drawImage(img, drawX, drawY, drawW, drawH, null);
+	    }
+	}
 
-		if (damageFlashTimer > 0) {
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.5f));
-			g.setColor(Color.RED);
-			g.fillRect(drawX, drawY, drawW, drawH);
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-		}
+	private void drawHealthBar(Graphics2D g, int screenX, int screenY) {
+		int barWidth = 40;
+		int barHeight = 5;
+		int barOffset = 10; // Pixels above the enemy
+
+		// Position the bar above the enemy's head
+		int xPos = screenX + (width / 2) - (barWidth / 2);
+		int yPos = screenY - barOffset;
+
+		// 1. Black Outline
+		g.setColor(Color.BLACK);
+		g.fillRect(xPos - 1, yPos - 1, barWidth + 2, barHeight + 2);
+
+		// 2. Red Background (Empty health)
+		g.setColor(Color.RED);
+		g.fillRect(xPos, yPos, barWidth, barHeight);
+
+		// 3. Green Bar (Current health)
+		double hpPercent = (double) currHp / maxHp;
+		int hpWidth = (int) (barWidth * hpPercent);
+
+		g.setColor(Color.GREEN);
+		g.fillRect(xPos, yPos, hpWidth, barHeight);
 	}
 
 	public boolean isDying() {

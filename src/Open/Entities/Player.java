@@ -6,16 +6,11 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Set;
 
-import Open.Artifacts.Artifact;
 import Open.Artifacts.ArtifactManager;
 import Open.Artifacts.Common.ChunkyOats;
 import Open.Entities.Enemies.Enemy;
-import Open.Weapons.AuraWeapon;
-import Open.Weapons.BananaWeapon;
-import Open.Weapons.PewPewWeapon;
+import Open.Weapons.FireStaffWeapon;
 import Open.Weapons.Weapon;
 import main.Animation;
 import main.AppPanel;
@@ -59,7 +54,7 @@ public class Player extends Entity {
 
 		weapons = new EnumMap<WeaponTypes, Weapon>(WeaponTypes.class);
 
-		weapons.put(WeaponTypes.Aura, new AuraWeapon(gameObj));
+		weapons.put(WeaponTypes.FireStaff, new FireStaffWeapon(gameObj));
 
 		baseMaxHp = 10;
 		currHp = getMaxHp();
@@ -76,7 +71,7 @@ public class Player extends Entity {
 
 		invincibilityFrames = 0;
 
-		currExp = 0;
+		currExp = 100;
 
 		// Load walk frames
 		int frameCount = 4;

@@ -14,14 +14,15 @@ public class Exp extends Entity {
 	private double maxSpeed = 10;
 	private double accelStrength = 0.5;
 
-	private double magnetRange = 450;
-
+	private double magnetRange = 200;
 	private int size;
 
 	private int dx;
 	private int dy;
 
 	private Vec2 velocity;
+	
+	private boolean isCollected;
 
 	private Animation expAnimation;
 
@@ -41,8 +42,10 @@ public class Exp extends Entity {
 
 		setX(x);
 		setY(y);
+		
+		isCollected = false;
 
-		velocity = new Vec2((Math.random() - 0.5) * 6, (Math.random() - 0.5) * 6);
+		velocity = new Vec2(0, 0);
 	}
 
 	public void draw(Graphics2D g2) {
@@ -79,9 +82,13 @@ public class Exp extends Entity {
 
 		// 1. FRICTION
 		velocity = velocity.scale(0.92);
+		
+		if (isCollected) {
+			magnetRange = 2000;
+		}
 
 		// 2. MAGNET BEHAVIOR
-		if (distance < magnetRange && distance > 0.001) {
+		if ((distance < magnetRange && distance > 0.001)) {
 
 			Vec2 dir = toPlayer.normalize();
 
@@ -105,6 +112,11 @@ public class Exp extends Entity {
 
 	public void setSize(int newSize) {
 		size = newSize;
+	}
+
+	public void setCollected(boolean b) {
+		isCollected = b;
+		
 	}
 
 }

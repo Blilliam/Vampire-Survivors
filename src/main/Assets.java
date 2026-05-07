@@ -23,6 +23,7 @@ public class Assets {
 	public static BufferedImage WeaponBanana;
 	public static BufferedImage ProjectileBanana;
 	public static BufferedImage ProjectileBullet;
+	public static BufferedImage ProjectileFireBall;
 	
 	public static BufferedImage AuraIcon;
 	public static BufferedImage BananaIcon;
@@ -73,15 +74,13 @@ public class Assets {
 			magnetIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Legendary/Item_Sucky_Magnet.png"));
 			
 			
-			
-			
-			
 			AuraIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Aura_Icon.png"));
 			BananaIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Banana_Icon.png"));
 			FireStaffIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Fire_Staff.png"));
 
 			ProjectileBanana = ImageIO.read(Assets.class.getResource("/Images/Projectiles/Banana projectile.png"));
-			ProjectileBullet = ImageIO.read(Assets.class.getResource("/Images/Projectiles/newBulletProjectile.png"));
+			ProjectileBullet = ImageIO.read(Assets.class.getResource("/Images/Projectiles/projectileBullet.png"));
+			ProjectileFireBall = ImageIO.read(Assets.class.getResource("/Images/Projectiles/fireBallProjectile.png"));
 			
 			exp = splitSpriteSheet(ImageIO.read(Assets.class.getResource("/Images/Coins/spr_coin_azu.png")), 16, 16);
 			
