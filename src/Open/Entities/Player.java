@@ -6,11 +6,14 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import Open.Artifacts.ArtifactManager;
 import Open.Artifacts.Common.ChunkyOats;
 import Open.Entities.Enemies.Enemy;
-import Open.Weapons.FireStaffWeapon;
+import Open.Upgrades.Book;
+import Open.Weapons.SwordWeapon;
 import Open.Weapons.Weapon;
 import main.Animation;
 import main.AppPanel;
@@ -22,39 +25,32 @@ public class Player extends Entity {
 	private ArtifactManager artifactManager;
 	private EnumMap<WeaponTypes, Weapon> weapons;
 
+	// --- Book and Passive System ---
+	private Map<String, Book> ownedBooks = new HashMap<>();
+	private final int MAX_BOOKS = 4;
+
 	private int baseMaxHp;
-
 	private int kills;
-
 	private int expNeededToUpgrade = 10;
-	private int totalUpgradesAvailible = 1;
 	private int currExp;
-
 	private int gold;
-
 	private int invincibilityFrames;
-	private final int HIT_DELAY = 30; // ~0.5 sec at 60fps
+	private final int HIT_DELAY = 30;
 
 	private boolean isRight;
-
 	private final int MAX_WEAPONS = 4;
 
-	// Animation
 	private BufferedImage[] walkFrames;
 	private Animation walkAnim;
 	private int frameWidth = 192, frameHeight = 192;
 
 	public Player(GameObject gameObj) {
 		super(gameObj);
-
 		setArtifactManager(new ArtifactManager(gameObj));
 		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
 
-		// weapons
-
 		weapons = new EnumMap<WeaponTypes, Weapon>(WeaponTypes.class);
-
-		weapons.put(WeaponTypes.FireStaff, new FireStaffWeapon(gameObj));
+		weapons.put(WeaponTypes.Sword, new SwordWeapon(gameObj));
 
 		baseMaxHp = 10;
 		currHp = getMaxHp();
@@ -63,17 +59,12 @@ public class Player extends Entity {
 		y = gameObj.getMap().WIDTH / 2;
 
 		speed = 6;
-
 		isRight = true;
-
 		height = 70;
 		width = 70;
-
 		invincibilityFrames = 0;
-
 		currExp = 100;
 
-		// Load walk frames
 		int frameCount = 4;
 		walkFrames = new BufferedImage[frameCount];
 		for (int i = 0; i < frameCount; i++) {
@@ -89,37 +80,63 @@ public class Player extends Entity {
 		}
 
 		artifactManager.onUpdate();
-
 		updateOpenMovement();
 
 		if (invincibilityFrames > 0) {
 			invincibilityFrames--;
 		}
 
-		// update weapons
 		for (Weapon w : weapons.values()) {
 			w.update();
 		}
 
-		// leveling
 		if (currExp >= expNeededToUpgrade) {
-			gameObj.setState(gameObj.getStateUpgrade());
 			gameObj.getUpgrades().shuffleUpgrades();
+			gameObj.setState(gameObj.getStateUpgrade());
 			currExp -= expNeededToUpgrade;
 			expNeededToUpgrade *= 1.3;
 		}
 	}
 
-	public void updateOpenMovement() {
+	// --- Book Integration Logic ---
+	public void addOrUpgradeBook(Book newBook) {
+		// If we already have it, we replace it with the upgraded version (higher value)
+		ownedBooks.put(newBook.getName(), newBook);
 
+		// Special case: Max HP Book provides an instant heal for the amount gained
+		if (newBook.getName().equals("Max HP Book")) {
+			currHp += (int) newBook.getValue();
+		}
+	}
+
+	public double getStatBonus(String bookName) {
+		Book b = ownedBooks.get(bookName);
+		if (b != null) {
+			return b.getValue();
+		}
+		return 0.0;
+	}
+
+	@Override
+	public int getMaxHp() {
+		double bookBonus = getStatBonus("Max HP Book");
+		return (int) ((baseMaxHp + getArtifactManager().getFlatHealth() + bookBonus)
+				* (1 + getArtifactManager().getPercentHealth()));
+	}
+
+	public void addExp(int i) {
+		double bookBonus = getStatBonus("EXP Book") / 100.0;
+		currExp += (i * (1 + artifactManager.getPercentBonusExp() + bookBonus));
+	}
+
+	// --- Original Movement and Combat Methods ---
+	public void updateOpenMovement() {
 		if (gameObj.getKeyH().isMoving)
 			walkAnim.update();
 		else
 			walkAnim.setFrame(3);
 
-		double dx = 0;
-		double dy = 0;
-
+		double dx = 0, dy = 0;
 		if (gameObj.getKeyH().up)
 			dy -= 1;
 		if (gameObj.getKeyH().down)
@@ -134,11 +151,9 @@ public class Player extends Entity {
 		}
 
 		double length = Math.sqrt(dx * dx + dy * dy);
-
 		if (length > 0) {
 			dx /= length;
 			dy /= length;
-
 			x += dx * speed;
 			y += dy * speed;
 		}
@@ -147,7 +162,7 @@ public class Player extends Entity {
 	public void damage(int amount) {
 		if (invincibilityFrames <= 0) {
 			currHp -= amount;
-			currHp = Math.max(currHp, 0); // prevent negative HP
+			currHp = Math.max(currHp, 0);
 			invincibilityFrames = HIT_DELAY;
 		}
 	}
@@ -157,19 +172,13 @@ public class Player extends Entity {
 	}
 
 	public void draw(Graphics2D g2) {
-		// 1. ANCHOR: Offset the screen center so the MIDDLE of the box is the center
 		int screenX = (int) ((AppPanel.WIDTH / 2) - (width / 2));
 		int screenY = (int) ((AppPanel.HEIGHT / 2) - (height / 2));
-
-		// 2. VISUALS: Scale the art
 		int visualW = (int) (width * 1.5);
 		int visualH = (int) (height * 1.5);
-
-		// 3. CENTERING ART: Offset the art so it centers on the box
 		int drawX = screenX - (visualW - width) / 2;
 		int drawY = screenY - (visualH - height) / 2;
 
-		// --- Draw Sprite ---
 		if (!(isInvincible() && invincibilityFrames % 6 < 3)) {
 			if (isRight) {
 				g2.drawImage(walkAnim.getFrame(), drawX, drawY, visualW, visualH, null);
@@ -177,12 +186,6 @@ public class Player extends Entity {
 				g2.drawImage(walkAnim.getFrame(), drawX + visualW, drawY, -visualW, visualH, null);
 			}
 		}
-
-		// --- DEBUG: THE RED BOX ---
-//		g2.setColor(Color.RED);
-//		g2.drawRect(screenX, screenY, width, height);
-
-		// --- UI ---
 		artifactManager.draw(g2);
 		drawXPBar(g2);
 		drawHpBar(g2);
@@ -191,24 +194,16 @@ public class Player extends Entity {
 	private void drawXPBar(Graphics2D g2) {
 		int barWidth = AppPanel.WIDTH;
 		int barHeight = 30;
-		int x = 0;
-		int y = 0;
-
 		float percent = Math.min(1.0f, (float) currExp / expNeededToUpgrade);
-
 		g2.setColor(new Color(50, 50, 50, 180));
-		g2.fillRect(x, y, barWidth, barHeight);
-
+		g2.fillRect(0, 0, barWidth, barHeight);
 		g2.setColor(new Color(0, 200, 255));
-		g2.fillRect(x, y, (int) (barWidth * percent), barHeight);
-
+		g2.fillRect(0, 0, (int) (barWidth * percent), barHeight);
 		g2.setColor(Color.WHITE);
-		g2.drawRect(x, y, barWidth, barHeight);
-
+		g2.drawRect(0, 0, barWidth, barHeight);
 		g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
 		String text = "Exp: " + currExp + " / " + expNeededToUpgrade;
-		int textWidth = g2.getFontMetrics().stringWidth(text);
-		g2.drawString(text, x + (barWidth - textWidth) / 2, y + barHeight - 5);
+		g2.drawString(text, (barWidth - g2.getFontMetrics().stringWidth(text)) / 2, barHeight - 5);
 	}
 
 	private void drawHpBar(Graphics2D g2) {
@@ -216,81 +211,51 @@ public class Player extends Entity {
 		int barHeight = 30;
 		int x = (AppPanel.WIDTH - barWidth) / 2;
 		int y = AppPanel.HEIGHT - barHeight - 100;
-
 		float percent = Math.min(1.0f, (float) currHp / getMaxHp());
-
 		g2.setColor(new Color(50, 50, 50, 180));
 		g2.fillRect(x, y, barWidth, barHeight);
-
 		g2.setColor(new Color(255, 0, 0));
 		g2.fillRect(x, y, (int) (barWidth * percent), barHeight);
-
 		g2.setColor(Color.WHITE);
 		g2.drawRect(x, y, barWidth, barHeight);
-
 		g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
 		String text = "Hp: " + currHp + " / " + getMaxHp();
-		int textWidth = g2.getFontMetrics().stringWidth(text);
-		g2.drawString(text, x + (barWidth - textWidth) / 2, y + barHeight - 8);
+		g2.drawString(text, x + (barWidth - g2.getFontMetrics().stringWidth(text)) / 2, y + barHeight - 8);
 	}
 
-	public Enemy closestEnemy(Double double1) {
+	public Enemy closestEnemy(Double range) {
 		ArrayList<Enemy> enemies = gameObj.getEnemies();
 		double minDistance = Double.MAX_VALUE;
 		Enemy closestEnemy = null;
-
 		for (Enemy e : enemies) {
 			int dist = Entity.getDistance(this, e);
-			if (dist < double1 && !e.isDying() && dist < minDistance) {
+			if (dist < range && !e.isDying() && dist < minDistance) {
 				minDistance = dist;
 				closestEnemy = e;
 			}
 		}
-
 		return closestEnemy;
+	}
+
+	// --- Getters and Setters ---
+	public Map<String, Book> getOwnedBooks() {
+		return ownedBooks;
+	}
+
+	public int getMAX_BOOKS() {
+		return MAX_BOOKS;
 	}
 
 	public EnumMap<WeaponTypes, Weapon> getWeapons() {
 		return weapons;
 	}
 
-//	public Set<WeaponTypes> getWeaponSet() {
-//		Set<WeaponTypes> weaponSet = new HashSet<WeaponTypes>();
-//		
-//		for (Weapon w: weapons) {
-//			weaponSet.add(w.getWeaponType());
-//		}
-//		
-//		return weaponSet;
-//	}
-
-	public int getMaxHp() {
-		return (int) ((baseMaxHp + getArtifactManager().getFlatHealth())
-				* (1 + getArtifactManager().getPercentHealth()));
-	}
-
-	public int getTotalUpgradesAvailible() {
-		return totalUpgradesAvailible;
-	}
-
-	public int getExpToUpgrade() {
-		return expNeededToUpgrade;
-	}
-
-	public void addKills(int count) {
-		kills += count;
-	}
-
-	public void addExp(int i) {
-		currExp += (i *  (1 + artifactManager.getPercentBonusExp()));
-	}
-
-	public int getKills() {
-		return kills;
-	}
-
 	public void addWeapon(WeaponTypes type, Weapon w) {
 		weapons.put(type, w);
+	}
+
+	public int getMAX_WEAPONS() {
+		return MAX_WEAPONS;
 	}
 
 	public int getGold() {
@@ -301,15 +266,19 @@ public class Player extends Entity {
 		this.gold = gold;
 	}
 
-	public int getMAX_WEAPONS() {
-		return MAX_WEAPONS;
+	public int getKills() {
+		return kills;
+	}
+
+	public void addKills(int count) {
+		kills += count;
 	}
 
 	public ArtifactManager getArtifactManager() {
 		return artifactManager;
 	}
 
-	public void setArtifactManager(ArtifactManager artifactManager) {
-		this.artifactManager = artifactManager;
+	public void setArtifactManager(ArtifactManager am) {
+		this.artifactManager = am;
 	}
 }

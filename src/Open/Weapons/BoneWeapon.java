@@ -19,7 +19,7 @@ public class BoneWeapon extends Weapon {
 		stats.put(WeaponUpgrades.ProjectileCount, (double) 1);
 		stats.put(WeaponUpgrades.AttackSize, (double) 1);
 		stats.put(WeaponUpgrades.AttackSpeed, (double) 100);
-		stats.put(WeaponUpgrades.ProjectileSpeed, (double) 6);
+		stats.put(WeaponUpgrades.ProjectileSpeed, (double) 4);
 		stats.put(WeaponUpgrades.Range, (double) 500);
 		stats.put(WeaponUpgrades.ProjectileBounce, (double) 1);
 		stats.put(WeaponUpgrades.CriticalDamage, (double) 2);

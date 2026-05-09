@@ -16,8 +16,8 @@ public class FireStaffWeapon extends Weapon {
         stats.put(WeaponUpgrades.AttackDamage, (double) 8);
 		stats.put(WeaponUpgrades.ProjectileCount, (double) 1);
 		stats.put(WeaponUpgrades.AttackSize, (double) 1);
-		stats.put(WeaponUpgrades.AttackSpeed, (double) 60);
-		stats.put(WeaponUpgrades.ProjectileSpeed, (double) 4);
+		stats.put(WeaponUpgrades.AttackSpeed, (double) 300);
+		stats.put(WeaponUpgrades.ProjectileSpeed, (double) 3);
 		stats.put(WeaponUpgrades.Range, (double) 700);
 		stats.put(WeaponUpgrades.CriticalDamage, (double) 2);
 		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);

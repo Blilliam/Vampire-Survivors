@@ -13,13 +13,13 @@ public class PewPewWeapon extends Weapon {
     public PewPewWeapon(GameObject gameObj) {
         super(gameObj, WeaponTypes.PewPew);
         this.setSprite(Assets.ProjectileBullet);
-        stats.put(WeaponUpgrades.AttackDamage, (double) 8);
+        stats.put(WeaponUpgrades.AttackDamage, (double) 6.5);
 		stats.put(WeaponUpgrades.ProjectileCount, (double) 1);
 		stats.put(WeaponUpgrades.AttackSize, (double) 1);
-		stats.put(WeaponUpgrades.AttackSpeed, (double) 40);
-		stats.put(WeaponUpgrades.ProjectileSpeed, (double) 12);
+		stats.put(WeaponUpgrades.AttackSpeed, (double) 60);
+		stats.put(WeaponUpgrades.ProjectileSpeed, (double) 10);
 		stats.put(WeaponUpgrades.Range, (double) 700);
-		stats.put(WeaponUpgrades.ProjectileBounce, (double) 2);
+		stats.put(WeaponUpgrades.ProjectileBounce, (double) 1);
 		stats.put(WeaponUpgrades.CriticalDamage, (double) 2);
 		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
 		

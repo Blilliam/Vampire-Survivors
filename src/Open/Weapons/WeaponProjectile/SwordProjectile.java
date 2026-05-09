@@ -4,6 +4,10 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.Arc2D;
+import Open.Entities.Enemies.Enemy;
+import Open.Entities.Entity;
 import Open.Weapons.Weapon;
 import main.AppPanel;
 import main.GameObject;
@@ -12,38 +16,39 @@ import main.enums.WeaponUpgrades;
 
 public class SwordProjectile extends WeaponEntity {
 
-    private final int MAX_LIFETIME = 12; 
+    private final int MAX_LIFETIME = 12;
 
     public SwordProjectile(GameObject gameObj, Weapon weapon, Vec2 direction, int x, int y) {
         super(gameObj, weapon, direction, x, y);
-        
-        // 1. Calculate size based on weapon stats
-        this.width = (int)(300 * weapon.getStats().get(WeaponUpgrades.AttackSize));
-        this.height = (int)(160 * weapon.getStats().get(WeaponUpgrades.AttackSize));
-        
-        this.velocity = new Vec2(0, 0); 
+
+        // Define the reach of the crescent
+        this.width = (int) (260 * weapon.getStats().get(WeaponUpgrades.AttackSize));
+        this.height = (int) (260 * weapon.getStats().get(WeaponUpgrades.AttackSize));
+
+        this.velocity = new Vec2(0, 0); // Stationary relative to player
         this.angle = Math.atan2(direction.getY(), direction.getX());
-        
-        // 2. Immediate position sync to prevent 1-frame "teleport" borks
+
+        // Allow hitting multiple enemies in one swing
+        this.diesAfterHit = false;
+
         syncHitboxToPlayer();
     }
 
     private void syncHitboxToPlayer() {
-        // CENTER the hitbox on the player's current position
-        // If we don't subtract half width/height, the hitbox is offset to the bottom-right
-        this.position.setX(gameObj.getPlayer().getX() - (this.width / 2.0));
-        this.position.setY(gameObj.getPlayer().getY() - (this.height / 2.0));
+        // Center hitbox on the player's center
+        double pCenterX = gameObj.getPlayer().getX() + (gameObj.getPlayer().getWidth() / 2.0);
+        double pCenterY = gameObj.getPlayer().getY() + (gameObj.getPlayer().getHeight() / 2.0);
 
-        // Update the actual integer x/y used by the Entity collision system
+        this.position.setX(pCenterX - (this.width / 2.0));
+        this.position.setY(pCenterY - (this.height / 2.0));
+
         this.x = (int) position.getX();
         this.y = (int) position.getY();
     }
 
     @Override
     protected void updatePhysics() {
-        // Keep the slash attached to the player every frame
         syncHitboxToPlayer();
-
         duration++;
         if (duration > MAX_LIFETIME) {
             isDead = true;
@@ -51,53 +56,44 @@ public class SwordProjectile extends WeaponEntity {
     }
 
     @Override
-    public void draw(Graphics2D g) {
-        // Draw the impact animation if it exists
-        drawImpact(g);
+    public void update() {
+        updatePhysics();
 
-        if (sprite == null) {
-            drawFallbackArc(g);
-            return;
+        // Update Entity superclass x/y for collision math
+        this.x = (int) position.getX();
+        this.y = (int) position.getY();
+
+        // Handle hit cooldowns (logic from super)
+        hitCooldowns.entrySet().removeIf(entry -> {
+            entry.setValue(entry.getValue() - 1);
+            return entry.getValue() <= 0;
+        });
+
+        // Custom collision to ensure impact hits the enemy center
+        for (Enemy e : gameObj.getEnemies()) {
+            if (e != null && !e.isDying() && !e.isDead() && Entity.rectCollision(this, e)) {
+                if (!hitCooldowns.containsKey(e)) {
+                    e.damage(weapon.getDmg());
+                    onHitEffect(e);
+
+                    // HIT LOCATION FIX: Set impact coordinates to enemy center
+                    this.impactX = e.getX();
+                    this.impactY = e.getY();
+                    this.drawingImpact = true;
+                    this.impactAnim.setFrame(0);
+
+                    hitCooldowns.put(e, HIT_COOLDOWN);
+                }
+            }
         }
-
-        // --- Visual Positioning ---
-        // We calculate screen coordinates based on the player's center
-        int screenX = AppPanel.WIDTH / 2;
-        int screenY = AppPanel.HEIGHT / 2;
-
-        AffineTransform oldTransform = g.getTransform();
-
-        // Move to the player's center on screen
-        g.translate(screenX, screenY);
-        g.rotate(this.angle);
-
-        // Visual Effects: Scaling and Fading
-        double scaleProgress = (double)duration / MAX_LIFETIME;
-        double currentSizeScale = 1.0 + (0.3 * scaleProgress); 
-        float alpha = Math.max(0, 1.0f - (float)scaleProgress);
-        
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-
-        // Draw centered on the rotation point
-        int finalW = (int)(width * currentSizeScale);
-        int finalH = (int)(height * currentSizeScale);
-        
-        g.drawImage(sprite, -finalW / 2, -finalH / 2, finalW, finalH, null);
-
-        // Clean up
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-        g.setTransform(oldTransform);
-
-        // DEBUG: Uncomment this to see the actual hitbox if it still feels "borked"
-        /*
-        g.setColor(Color.RED);
-        g.drawRect(x - gameObj.getPlayer().getX() + AppPanel.WIDTH/2, 
-                   y - gameObj.getPlayer().getY() + AppPanel.HEIGHT/2, 
-                   width, height);
-        */
     }
 
-    private void drawFallbackArc(Graphics2D g) {
+    @Override
+    public void draw(Graphics2D g) {
+        // 1. Draw the impact first so it appears under/at the slash
+        drawImpact(g);
+
+        // 2. Draw the Crescent Moon centered on the player
         int screenX = AppPanel.WIDTH / 2;
         int screenY = AppPanel.HEIGHT / 2;
 
@@ -105,12 +101,31 @@ public class SwordProjectile extends WeaponEntity {
         g.translate(screenX, screenY);
         g.rotate(this.angle);
 
-        double prog = (double)duration / MAX_LIFETIME;
-        float alpha = Math.max(0, 1.0f - (float)prog);
+        double progress = (double) duration / MAX_LIFETIME;
+        float alpha = Math.max(0, 1.0f - (float) progress);
+
+        // Visual growth effect
+        double grow = 0.8 + (0.4 * progress);
+        int dW = (int) (width * grow);
+        int dH = (int) (height * grow);
+
+        // Crescent math: Subtract inner arc from outer arc
+        int thickness = (int) (dW * 0.18 * (1.0 - progress));
+
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 
+        Arc2D outer = new Arc2D.Double(-dW / 2.0, -dH / 2.0, dW, dH, -70, 140, Arc2D.PIE);
+        Arc2D inner = new Arc2D.Double(-dW / 2.0 + thickness, -dH / 2.0 + thickness,
+                dW - (thickness * 2), dH - (thickness * 2), -100, 200, Arc2D.PIE);
+
+        Area crescent = new Area(outer);
+        crescent.subtract(new Area(inner));
+
+        // Colors (Moonlight Blue/White)
+        g.setColor(new Color(170, 210, 255));
+        g.fill(crescent);
         g.setColor(Color.WHITE);
-        g.fillArc(-(width / 2), -(height / 2), width, height, -60, 120);
+        g.draw(crescent);
 
         g.setTransform(oldTransform);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));

@@ -2,6 +2,7 @@ package Open.Weapons.WeaponProjectile;
 
 import Open.Entities.Entity;
 import Open.Entities.Enemies.Enemy;
+import Open.Weapons.PewPewWeapon;
 import Open.Weapons.Weapon;
 import main.GameObject;
 import main.Vec2;
@@ -13,6 +14,9 @@ public class BouncingProjectile extends WeaponEntity {
 		super(gameObj, weapon, direction, x, y);
 		this.width = 25;
 		this.height = 25;
+		if (weapon.getClass().equals(PewPewWeapon.class)) {
+			height/=2;
+		}
 		// velocity is already set in the super() constructor!
 	}
 

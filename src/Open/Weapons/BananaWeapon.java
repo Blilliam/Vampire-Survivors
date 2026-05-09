@@ -13,10 +13,10 @@ public class BananaWeapon extends Weapon{
 		super(gameObj, WeaponTypes.Banana);
 		setSprite(Assets.ProjectileBanana);
 		this.icon = Assets.BananaIcon;
-		stats.put(WeaponUpgrades.AttackDamage, (double) 10); // 3
+		stats.put(WeaponUpgrades.AttackDamage, (double) 8); 
 		stats.put(WeaponUpgrades.ProjectileCount, (double) 1);
 		stats.put(WeaponUpgrades.AttackSize, (double) 1);
-		stats.put(WeaponUpgrades.AttackSpeed, (double) 60);
+		stats.put(WeaponUpgrades.AttackSpeed, (double) 120);
 		stats.put(WeaponUpgrades.ProjectileSpeed, (double) 5);
 		stats.put(WeaponUpgrades.Range, (double) 500);
 		stats.put(WeaponUpgrades.Duration, (double) 50);

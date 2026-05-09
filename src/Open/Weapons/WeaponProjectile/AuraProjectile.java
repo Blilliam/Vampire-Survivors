@@ -26,8 +26,8 @@ public class AuraProjectile extends WeaponEntity {
 		this.sprite = weapon.getSprite();
 		this.position = new Vec2(AppPanel.WIDTH/2, AppPanel.HEIGHT/2);
 		isDead = false;
-		this.width = (int) (weapon.getStats().get(WeaponUpgrades.AttackSize) * 500);
-		this.height = (int) (weapon.getStats().get(WeaponUpgrades.AttackSize) * 500);
+		this.width = (int) (weapon.getStats().get(WeaponUpgrades.AttackSize) * 300);
+		this.height = (int) (weapon.getStats().get(WeaponUpgrades.AttackSize) * 300);
 
 	}
 	
