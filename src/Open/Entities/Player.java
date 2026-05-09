@@ -48,6 +48,8 @@ public class Player extends Entity {
 		super(gameObj);
 		setArtifactManager(new ArtifactManager(gameObj));
 		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
+		
+		
 
 		weapons = new EnumMap<WeaponTypes, Weapon>(WeaponTypes.class);
 		weapons.put(WeaponTypes.Sword, new SwordWeapon(gameObj));
@@ -186,10 +188,116 @@ public class Player extends Entity {
 				g2.drawImage(walkAnim.getFrame(), drawX + visualW, drawY, -visualW, visualH, null);
 			}
 		}
+
 		artifactManager.draw(g2);
+		
+		drawInventoryPanel(g2);
+		
 		drawXPBar(g2);
 		drawHpBar(g2);
+		drawOwnedBooks(g2);
+		drawActiveWeapons(g2);
 	}
+
+	private void drawActiveWeapons(Graphics2D g2) {
+		int startX = 20;
+		int startY = 140; // Positioned below the Books
+		int iconSize = 70; // Weapons usually look better slightly larger
+		int spacing = 8;
+		int index = 0;
+
+		// Iterate through the weapons EnumMap
+		for (Weapon w : weapons.values()) {
+			BufferedImage icon = w.getIcon();
+
+			if (icon != null) {
+				int drawX = startX + (index * (iconSize + spacing));
+
+				// 1. Draw Weapon Slot Background
+				g2.setColor(new Color(40, 40, 40, 200));
+				g2.fillRoundRect(drawX, startY, iconSize, iconSize, 8, 8);
+
+				// 2. Draw the Weapon Icon
+				// We use the icon loaded in the Weapon class
+				g2.drawImage(icon, drawX + 4, startY + 4, iconSize - 8, iconSize - 8, null);
+
+				// 3. Optional: Draw a border
+				g2.setColor(Color.GRAY);
+				g2.drawRoundRect(drawX, startY, iconSize, iconSize, 8, 8);
+
+				index++;
+			}
+		}
+	}
+
+	private void drawOwnedBooks(Graphics2D g2) {
+		int startX = 20;
+		int startY = 230; // Positioned safely below the XP bar
+		int iconSize = 70;
+		int spacing = 8;
+		int index = 0;
+
+		// Use a simpler approach: just the icon and a subtle backing
+		for (Book book : ownedBooks.values()) {
+			BufferedImage icon = getIconForBook(book.getName());
+
+			if (icon != null) {
+				int drawX = startX + (index * (iconSize + spacing));
+
+				// 1. Semi-transparent backing so icons are visible over the map
+				g2.setColor(new Color(0, 0, 0, 100));
+				g2.fillRect(drawX, startY, iconSize, iconSize);
+
+				// 2. The Tome Icon
+				g2.drawImage(icon, drawX, startY, iconSize, iconSize, null);
+
+				// 3. Optional: A very thin white border to define the slot
+				g2.setColor(new Color(255, 255, 255, 50));
+				g2.drawRect(drawX, startY, iconSize, iconSize);
+
+				index++;
+			}
+		}
+	}
+
+	private BufferedImage getIconForBook(String name) {
+		return switch (name) {
+		case "Gold Book" -> Assets.GoldTomeIcon;
+		case "Max HP Book" -> Assets.HpTomeIcon;
+		case "Luck Book" -> Assets.LuckTomeIcon;
+		case "Crit Rate Book" -> Assets.CritTomeIcon;
+		case "Projectile Speed Book" -> Assets.ProjectileSpeedTomeIcon;
+		case "Quantity Over Quality Book" -> Assets.ProjectileCountTomeIcon;
+		case "Size Book" -> Assets.SizeTomeIcon;
+		case "EXP Book" -> Assets.XpTomeIcon;
+		case "Cooldown Book" -> Assets.CooldownTomeIcon;
+		case "Damage Book" -> Assets.DamageTomeIcon;
+		default -> null;
+		};
+	}
+
+	private void drawInventoryPanel(Graphics2D g2) {
+	    int startX = 10; // Slightly outside the first icon
+	    int startY = 130; // Just above the weapon row
+	    int iconSize = 70;
+	    int spacing = 8;
+	    
+	    // Calculate width based on max slots
+	    // Using MAX_WEAPONS (4) as the guide
+	    int panelWidth = (MAX_WEAPONS * (iconSize + spacing)) + 10; 
+	    int panelHeight = (iconSize * 2) + spacing + 30; // Enough for 2 rows + padding
+
+	    // 1. Draw the main grey box
+	    g2.setColor(new Color(60, 60, 60, 220)); // Dark grey, slightly transparent
+	    g2.fillRoundRect(startX, startY, panelWidth, panelHeight, 15, 15);
+
+	    // 2. Draw a lighter grey border
+	    g2.setStroke(new java.awt.BasicStroke(3));
+	    g2.setColor(new Color(100, 100, 100));
+	    g2.drawRoundRect(startX, startY, panelWidth, panelHeight, 15, 15);
+	    g2.setStroke(new java.awt.BasicStroke(1)); // Reset stroke
+	}
+	
 
 	private void drawXPBar(Graphics2D g2) {
 		int barWidth = AppPanel.WIDTH;

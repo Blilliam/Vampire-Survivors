@@ -24,6 +24,8 @@ public class PewPewWeapon extends Weapon {
 		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
 		
 		baseStats = stats.clone();
+		
+		this.icon = Assets.RevolverIcon;
     }
 
     protected void fireProjectile() {

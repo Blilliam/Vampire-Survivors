@@ -28,6 +28,9 @@ public class Assets {
 	public static BufferedImage AuraIcon;
 	public static BufferedImage BananaIcon;
 	public static BufferedImage FireStaffIcon;
+	public static BufferedImage RevolverIcon;
+	public static BufferedImage BoneIcon;
+	public static BufferedImage SwordIcon;
 	
 	public static BufferedImage oatsIcon;
 	public static BufferedImage watchIcon;
@@ -36,6 +39,19 @@ public class Assets {
 	public static BufferedImage batteryIcon;
 	public static BufferedImage cloverIcon;
 	public static BufferedImage midasIcon;
+	
+	public static BufferedImage GoldTomeIcon;
+	public static BufferedImage HpTomeIcon;
+	public static BufferedImage LuckTomeIcon;
+	public static BufferedImage CritTomeIcon;
+	public static BufferedImage ProjectileSpeedTomeIcon;
+	public static BufferedImage ProjectileCountTomeIcon;
+	public static BufferedImage SizeTomeIcon;
+	public static BufferedImage XpTomeIcon;
+	public static BufferedImage CooldownTomeIcon;
+	public static BufferedImage DamageTomeIcon;
+	public static BufferedImage CursedTomeIcon;
+	
 
 	// Player
 	public static BufferedImage playerSheet;
@@ -74,9 +90,25 @@ public class Assets {
 			magnetIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Legendary/Item_Sucky_Magnet.png"));
 			
 			
+			GoldTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Gold-Tome.png"));
+			HpTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/HP-Tome.png"));;
+			LuckTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Luck-Tome.png"));;
+			CritTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Precision-Tome.png"));;
+			ProjectileSpeedTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Projectile-Tome.png"));;
+			ProjectileCountTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Quantity-Tome.png"));;
+			SizeTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Size-Tome.png"));;
+			XpTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/XP-Tome.png"));;
+			CooldownTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Cooldown-Tome.png"));;
+			DamageTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Damage-Tome.png"));;
+			CursedTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Cursed_Tome_Logo.png"));;
+			
+			
 			AuraIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Aura_Icon.png"));
 			BananaIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Banana_Icon.png"));
 			FireStaffIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Fire_Staff.png"));
+			RevolverIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Revolver_Icon.png"));
+			BoneIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Bone_Icon.png"));
+			SwordIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Sword_Icon.png"));
 
 			ProjectileBanana = ImageIO.read(Assets.class.getResource("/Images/Projectiles/Banana projectile.png"));
 			ProjectileBullet = ImageIO.read(Assets.class.getResource("/Images/Projectiles/projectileBullet.png"));

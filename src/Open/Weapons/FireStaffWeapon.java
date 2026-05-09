@@ -23,6 +23,8 @@ public class FireStaffWeapon extends Weapon {
 		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
 		
 		baseStats = stats.clone();
+		
+		this.icon = Assets.FireStaffIcon;
     }
 
     protected void fireProjectile() {

@@ -5,6 +5,7 @@ import java.util.EnumMap;
 import Open.Entities.Enemies.Enemy;
 import Open.Weapons.WeaponProjectile.BananaProjectile;
 import Open.Weapons.WeaponProjectile.SwordProjectile;
+import main.Assets;
 import main.GameObject;
 import main.Vec2;
 import main.enums.WeaponTypes;
@@ -18,12 +19,14 @@ public class SwordWeapon extends Weapon {
         stats.put(WeaponUpgrades.AttackDamage, (double) 10);
 		stats.put(WeaponUpgrades.ProjectileCount, (double) 1);
 		stats.put(WeaponUpgrades.AttackSize, (double) 1);
-		stats.put(WeaponUpgrades.AttackSpeed, (double) 35);
+		stats.put(WeaponUpgrades.AttackSpeed, (double) 70);
 		stats.put(WeaponUpgrades.Range, (double) 500);
 		stats.put(WeaponUpgrades.CriticalDamage, (double) 2);
 		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
 		
 		baseStats = stats.clone();
+		
+		this.icon = Assets.SwordIcon;
     }
 
     protected void fireProjectile() {

@@ -180,6 +180,10 @@ public abstract class Weapon {
         }
     }
     
+    public BufferedImage getIcon() {
+    	return icon;
+    }
+    
     protected void onUpgrade() {
     	return;
     }

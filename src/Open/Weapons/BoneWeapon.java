@@ -26,6 +26,8 @@ public class BoneWeapon extends Weapon {
 		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
 
 		baseStats = stats.clone();
+		
+		this.icon = Assets.BoneIcon;
 	}
 
 	@Override
