@@ -48,6 +48,17 @@ public class Player extends Entity {
 		super(gameObj);
 		setArtifactManager(new ArtifactManager(gameObj));
 		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
+		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
+		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
+		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
+		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
+		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
+		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
+		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
+		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
+		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
+		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
+		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
 		
 		
 
@@ -65,7 +76,7 @@ public class Player extends Entity {
 		height = 70;
 		width = 70;
 		invincibilityFrames = 0;
-		currExp = 100;
+		currExp = 1000;
 
 		int frameCount = 4;
 		walkFrames = new BufferedImage[frameCount];
@@ -102,10 +113,8 @@ public class Player extends Entity {
 
 	// --- Book Integration Logic ---
 	public void addOrUpgradeBook(Book newBook) {
-		// If we already have it, we replace it with the upgraded version (higher value)
 		ownedBooks.put(newBook.getName(), newBook);
 
-		// Special case: Max HP Book provides an instant heal for the amount gained
 		if (newBook.getName().equals("Max HP Book")) {
 			currHp += (int) newBook.getValue();
 		}

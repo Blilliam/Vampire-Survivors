@@ -66,8 +66,9 @@ public class Upgrades {
 			boxRarities[i] = null;
 
 			float categoryRoll = rand.nextFloat();
+//CHANGE LATER
 
-			if (categoryRoll < 0.50f) {
+			if (/*categoryRoll < 0.50f*/ true) {
 				// --- WEAPON SLOT ---
 				boolean canBuy = false;
 				if (gameObj.getPlayer().getWeapons().size() < gameObj.getPlayer().getMAX_WEAPONS()) {

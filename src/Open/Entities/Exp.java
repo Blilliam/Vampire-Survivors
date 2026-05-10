@@ -21,7 +21,7 @@ public class Exp extends Entity {
 	private int dy;
 
 	private Vec2 velocity;
-	
+
 	private boolean isCollected;
 
 	private Animation expAnimation;
@@ -42,7 +42,7 @@ public class Exp extends Entity {
 
 		setX(x);
 		setY(y);
-		
+
 		isCollected = false;
 
 		velocity = new Vec2(0, 0);
@@ -60,12 +60,12 @@ public class Exp extends Entity {
 	public void update() {
 
 		updatePhysics();
-		
+
 		if (Entity.rectCollision(this, gameObj.getPlayer())) {
 			gameObj.getPlayer().addExp(value);
 			isDead = true;
 		}
-		
+
 		expAnimation.update();
 	}
 
@@ -82,7 +82,7 @@ public class Exp extends Entity {
 
 		// 1. FRICTION
 		velocity = velocity.scale(0.92);
-		
+
 		if (isCollected) {
 			magnetRange = 2000;
 		}
@@ -116,7 +116,7 @@ public class Exp extends Entity {
 
 	public void setCollected(boolean b) {
 		isCollected = b;
-		
+
 	}
 
 }

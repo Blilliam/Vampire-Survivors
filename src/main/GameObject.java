@@ -43,7 +43,7 @@ public class GameObject {
 
 	// player
 	private Player player;
-	
+
 	private BaseState state;
 	private ControlsState stateControl;
 	private DeadState stateDead;
@@ -52,7 +52,7 @@ public class GameObject {
 	private UpgradeState stateUpgrade;
 
 	private ArrayList<WorldItem> groundItems;
-	
+
 	// all enemies
 	private ArrayList<Enemy> enemies;
 
@@ -77,12 +77,12 @@ public class GameObject {
 		Assets.load(); // loads all the images
 
 		this.keyH = keyH;
-		
-		  stateControl = new ControlsState(this);
-		  stateDead = new DeadState(this);
-		  stateMenu = new MenuState(this);
-		  stateOpen = new OpenState(this);
-		  stateUpgrade = new UpgradeState(this);
+
+		stateControl = new ControlsState(this);
+		stateDead = new DeadState(this);
+		stateMenu = new MenuState(this);
+		stateOpen = new OpenState(this);
+		stateUpgrade = new UpgradeState(this);
 
 		this.mouseHandler = mouseHandler;
 		state = stateMenu; // sets teh state to the meneu
@@ -108,8 +108,7 @@ public class GameObject {
 		setExitControlButton(new GameButton(AppPanel.WIDTH / 2 - exitControlButtonWidth / 2,
 				AppPanel.HEIGHT / 2 + exitControlButtonHeight / 2 + 50, exitControlButtonWidth, exitControlButtonHeight,
 				"EXIT BACK", this::toMenu));
-		
-		
+
 	}
 
 	public void update() {
@@ -121,18 +120,16 @@ public class GameObject {
 		state.draw(g2);
 	}
 
-	
-
 	private void startGame() { // creates new everything
 
 		enemies = new ArrayList<Enemy>();
-		
+
 		groundItems = new ArrayList<WorldItem>();
 
 		map = new Background(this);
 
 		player = new Player(this);
-		
+
 		setUpgrades(new Upgrades(this));
 
 		waves = new EnemyWaves(this);
