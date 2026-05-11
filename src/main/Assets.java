@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -76,71 +77,80 @@ public class Assets {
 	public static BufferedImage[] glowingBatWalk;
 	public static BufferedImage[] glowingBatDeath;
 
-	public static void load() {
-		try {
-			//link to effect assets : https://untiedgames.itch.io/super-pixel-effects-gigapack
-	
-			oatsIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Common/Item_Oats.png"));
-			watchIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Common/Item_Time_Bracelet.png"));
-			cloverIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Common/Item_Clover.png"));
-			batteryIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Common/Item_Battery.png"));
-			keyIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Common/Item_Key.png"));
-			midasIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Common/Item_Golden_Glove.png"));
+	public static void load() throws IOException {
 			
-			magnetIcon = ImageIO.read(Assets.class.getResource("/Images/Artifacts/Legendary/Item_Sucky_Magnet.png"));
+			oatsIcon =loadImage("Images/Artifacts/Common/Item_Oats.png");
+			watchIcon = loadImage("Images/Artifacts/Common/Item_Time_Bracelet.png");
+			cloverIcon = loadImage("Images/Artifacts/Common/Item_Clover.png");
+			batteryIcon =loadImage("Images/Artifacts/Common/Item_Battery.png");
+			keyIcon =loadImage("Images/Artifacts/Common/Item_Key.png");
+			midasIcon =loadImage("Images/Artifacts/Common/Item_Golden_Glove.png");
+			
+			magnetIcon =loadImage("Images/Artifacts/Legendary/Item_Sucky_Magnet.png");
 			
 			
-			GoldTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Gold-Tome.png"));
-			HpTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/HP-Tome.png"));;
-			LuckTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Luck-Tome.png"));;
-			CritTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Precision-Tome.png"));;
-			ProjectileSpeedTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Projectile-Tome.png"));;
-			ProjectileCountTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Quantity-Tome.png"));;
-			SizeTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Size-Tome.png"));;
-			XpTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/XP-Tome.png"));;
-			CooldownTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Cooldown-Tome.png"));;
-			DamageTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Damage-Tome.png"));;
-			CursedTomeIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Tomes/Cursed_Tome_Logo.png"));;
+			GoldTomeIcon =loadImage("Images/Items/Tomes/Gold-Tome.png");
+			HpTomeIcon =loadImage("Images/Items/Tomes/HP-Tome.png");;
+			LuckTomeIcon =loadImage("Images/Items/Tomes/Luck-Tome.png");;
+			CritTomeIcon =loadImage("Images/Items/Tomes/Precision-Tome.png");;
+			ProjectileSpeedTomeIcon =loadImage("Images/Items/Tomes/Projectile-Tome.png");
+			ProjectileCountTomeIcon =loadImage("Images/Items/Tomes/Quantity-Tome.png");
+			SizeTomeIcon =loadImage("Images/Items/Tomes/Size-Tome.png");
+			XpTomeIcon =loadImage("Images/Items/Tomes/XP-Tome.png");
+			CooldownTomeIcon =loadImage("Images/Items/Tomes/Cooldown-Tome.png");
+			DamageTomeIcon =loadImage("Images/Items/Tomes/Damage-Tome.png");
+			CursedTomeIcon =loadImage("Images/Items/Tomes/Cursed_Tome_Logo.png");
 			
 			
-			AuraIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Aura_Icon.png"));
-			BananaIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Banana_Icon.png"));
-			FireStaffIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Fire_Staff.png"));
-			RevolverIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Revolver_Icon.png"));
-			BoneIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Bone_Icon.png"));
-			SwordIcon = ImageIO.read(Assets.class.getResource("/Images/Items/Sword_Icon.png"));
+			AuraIcon =loadImage("Images/Items/Aura_Icon.png");
+			BananaIcon =loadImage("Images/Items/Banana_Icon.png");
+			FireStaffIcon =loadImage("Images/Items/Fire_Staff.png");
+			RevolverIcon =loadImage("Images/Items/Revolver_Icon.png");
+			BoneIcon =loadImage("Images/Items/Bone_Icon.png");
+			SwordIcon =loadImage("Images/Items/Sword_Icon.png");
 
-			ProjectileBanana = ImageIO.read(Assets.class.getResource("/Images/Projectiles/Banana projectile.png"));
-			ProjectileBullet = ImageIO.read(Assets.class.getResource("/Images/Projectiles/projectileBullet.png"));
-			ProjectileFireBall = ImageIO.read(Assets.class.getResource("/Images/Projectiles/fireBallProjectile.png"));
+			ProjectileBanana =loadImage("Images/Projectiles/Banana projectile.png");
+			ProjectileBullet =loadImage("Images/Projectiles/projectileBullet.png");
+			ProjectileFireBall =loadImage("Images/Projectiles/fireBallProjectile.png");
 			
-			exp = splitSpriteSheet(ImageIO.read(Assets.class.getResource("/Images/Coins/spr_coin_azu.png")), 16, 16);
+			exp = splitSpriteSheet(ImageIO.read(Assets.class.getResource("Images/Coins/spr_coin_azu.png")), 16, 16);
 			
-			impact = splitSpriteSheet(ImageIO.read(Assets.class.getResource("/Images/Projectiles/Impact.png")), 48, 48);
+			impact = splitSpriteSheet(ImageIO.read(Assets.class.getResource("Images/Projectiles/Impact.png")), 48, 48);
 
 			// Player
 			
-			playerSheet = ImageIO.read(Assets.class.getResource("/Images/Player/antonio_spritesheet.png"));
+			playerSheet =loadImage("Images/Player/antonio_spritesheet.png");
 
 			// Enemy GIFs
-			zombieWalk = loadGifFrames("/Images/Enemy/z.gif");
-			zombieDeath = loadGifFrames("/Images/Enemy/zDead.gif");
+			zombieWalk = loadGifFrames("Images/Enemy/z.gif");
+			zombieDeath = loadGifFrames("Images/Enemy/zDead.gif");
 
-			skeletonWalk = loadGifFrames("/Images/Enemy/s.gif");
-			skeletonDeath = loadGifFrames("/Images/Enemy/sDead.gif");
+			skeletonWalk = loadGifFrames("Images/Enemy/s.gif");
+			skeletonDeath = loadGifFrames("Images/Enemy/sDead.gif");
 
-			mudmanWalk = loadGifFrames("/Images/Enemy/m.gif");
-			mudmanDeath = loadGifFrames("/Images/Enemy/mDead.gif");
+			mudmanWalk = loadGifFrames("Images/Enemy/m.gif");
+			mudmanDeath = loadGifFrames("Images/Enemy/mDead.gif");
 
-			batWalk = loadGifFrames("/Images/Enemy/bat.gif");
-			batDeath = loadGifFrames("/Images/Enemy/batDead.gif");
+			batWalk = loadGifFrames("Images/Enemy/bat.gif");
+			batDeath = loadGifFrames("Images/Enemy/batDead.gif");
 
-			glowingBatWalk = loadGifFrames("/Images/Enemy/glowBat.gif");
-			glowingBatDeath = loadGifFrames("/Images/Enemy/glowBatDead.gif");
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			glowingBatWalk = loadGifFrames("Images/Enemy/glowBat.gif");
+			glowingBatDeath = loadGifFrames("Images/Enemy/glowBatDead.gif");
+	}
+	
+	private static BufferedImage loadImage(String path) {
+	    try {
+	        File file = new File(path);
+	        if (!file.exists()) {
+	            System.err.println("MISSING FILE: " + file.getAbsolutePath());
+	            return null; 
+	        }
+	        return ImageIO.read(file);
+	    } catch (IOException e) {
+	        System.err.println("FAILED TO READ: " + path);
+	        e.printStackTrace();
+	        return null;
+	    }
 	}
 
 	/**
