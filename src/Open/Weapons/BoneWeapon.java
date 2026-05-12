@@ -20,9 +20,8 @@ public class BoneWeapon extends Weapon {
 		stats.put(WeaponUpgrades.AttackSize, (double) 1);
 		stats.put(WeaponUpgrades.AttackSpeed, (double) 100);
 		stats.put(WeaponUpgrades.ProjectileSpeed, (double) 4);
-		stats.put(WeaponUpgrades.Range, (double) 500);
 		stats.put(WeaponUpgrades.ProjectileBounce, (double) 1);
-		stats.put(WeaponUpgrades.CriticalDamage, (double) 2);
+		stats.put(WeaponUpgrades.CriticalDamage, (double) 1);
 		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
 
 		baseStats = stats.clone();
@@ -33,7 +32,7 @@ public class BoneWeapon extends Weapon {
 	@Override
 
 	protected void fireProjectile() {
-		var target = gameObj.getPlayer().closestEnemy(stats.get(WeaponUpgrades.Range));
+		var target = gameObj.getPlayer().closestEnemy((double) 500);
 		if (target != null) {
 			Vec2 direction = Vec2.between(gameObj.getPlayer(), target);
 			gameObj.addProjectiles(new BouncingProjectile(gameObj, this, direction, gameObj.getPlayer().getX(),

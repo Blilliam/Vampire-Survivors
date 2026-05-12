@@ -18,8 +18,7 @@ public class FireStaffWeapon extends Weapon {
 		stats.put(WeaponUpgrades.AttackSize, (double) 1);
 		stats.put(WeaponUpgrades.AttackSpeed, (double) 300);
 		stats.put(WeaponUpgrades.ProjectileSpeed, (double) 3);
-		stats.put(WeaponUpgrades.Range, (double) 700);
-		stats.put(WeaponUpgrades.CriticalDamage, (double) 2);
+		stats.put(WeaponUpgrades.CriticalDamage, (double) 1);
 		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
 		
 		baseStats = stats.clone();
@@ -28,7 +27,7 @@ public class FireStaffWeapon extends Weapon {
     }
 
     protected void fireProjectile() {
-        var target = gameObj.getPlayer().closestEnemy(stats.get(WeaponUpgrades.Range));
+        var target = gameObj.getPlayer().closestEnemy((double) 500);
         if (target != null) {
             Vec2 direction = Vec2.between(gameObj.getPlayer(), target);
             gameObj.addProjectiles(new FireStaffProjectile(gameObj, this, direction, 

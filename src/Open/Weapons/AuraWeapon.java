@@ -19,7 +19,7 @@ public class AuraWeapon extends Weapon{
 		stats.put(WeaponUpgrades.AttackDamage, (double) 5);
 		stats.put(WeaponUpgrades.AttackSize, (double) 1);
 		stats.put(WeaponUpgrades.AttackSpeed, (double) 80);
-		stats.put(WeaponUpgrades.CriticalDamage, (double) 2);
+		stats.put(WeaponUpgrades.CriticalDamage, (double) 1);
 		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
 		
 		baseStats = stats.clone();

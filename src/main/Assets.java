@@ -1,9 +1,10 @@
 package main;
 
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
@@ -77,7 +78,7 @@ public class Assets {
 	public static BufferedImage[] glowingBatWalk;
 	public static BufferedImage[] glowingBatDeath;
 
-	public static void load() throws IOException {
+	public static void load() {
 			
 			oatsIcon =loadImage("Images/Artifacts/Common/Item_Oats.png");
 			watchIcon = loadImage("Images/Artifacts/Common/Item_Time_Bracelet.png");
@@ -113,9 +114,9 @@ public class Assets {
 			ProjectileBullet =loadImage("Images/Projectiles/projectileBullet.png");
 			ProjectileFireBall =loadImage("Images/Projectiles/fireBallProjectile.png");
 			
-			exp = splitSpriteSheet(ImageIO.read(Assets.class.getResource("Images/Coins/spr_coin_azu.png")), 16, 16);
+			exp = splitSpriteSheet(loadImage("Images/Coins/spr_coin_azu.png"), 16, 16);
 			
-			impact = splitSpriteSheet(ImageIO.read(Assets.class.getResource("Images/Projectiles/Impact.png")), 48, 48);
+			impact = splitSpriteSheet(loadImage("Images/Projectiles/Impact.png"), 48, 48);
 
 			// Player
 			
@@ -160,53 +161,60 @@ public class Assets {
 	 * @return returns array of buffered images of the gif
 	 */
 	public static BufferedImage[] loadGifFrames(String path) {
-		try (InputStream stream = Assets.class.getResourceAsStream(path)) {
-			if (stream == null) {
-				System.err.println("Cannot find resource: " + path);
-				return new BufferedImage[0];
-			}
+	    File file = new File(path);
+	    if (!file.exists()) {
+	        System.err.println("GIF FILE NOT FOUND: " + file.getAbsolutePath());
+	        return new BufferedImage[0];
+	    }
 
-			ImageInputStream iis = ImageIO.createImageInputStream(stream);
-			var readers = ImageIO.getImageReadersByFormatName("gif");
-			if (!readers.hasNext()) {
-				System.err.println("No GIF reader available for: " + path);
-				return new BufferedImage[0];
-			}
+	    try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+	        var readers = ImageIO.getImageReadersByFormatName("gif");
+	        if (!readers.hasNext()) return new BufferedImage[0];
 
-			var reader = readers.next();
-			reader.setInput(iis, false);
+	        var reader = readers.next();
+	        reader.setInput(iis);
 
-			int frameCount = reader.getNumImages(true);
-			if (frameCount == 0) {
-				System.err.println("No frames found in GIF: " + path);
-				return new BufferedImage[0];
-			}
+	        int frameCount = reader.getNumImages(true);
+	        BufferedImage[] frames = new BufferedImage[frameCount];
+	        
+	        // Use a consistent canvas for the entire GIF
+	        BufferedImage master = null;
 
-			BufferedImage[] frames = new BufferedImage[frameCount];
-			BufferedImage firstFrame = reader.read(0);
-			int width = firstFrame.getWidth();
-			int height = firstFrame.getHeight();
+	        for (int i = 0; i < frameCount; i++) {
+	            BufferedImage frame = reader.read(i);
+	            
+	            if (master == null) {
+	                master = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_ARGB);
+	            }
 
-			for (int i = 0; i < frameCount; i++) {
-				BufferedImage frame = reader.read(i);
-				if (frame == null) {
-					// Replace null frames with a transparent placeholder
-					frame = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-				} else if (frame.getWidth() != width || frame.getHeight() != height) {
-					// Resize inconsistent frames to match first frame
-					BufferedImage tmp = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-					tmp.getGraphics().drawImage(frame, 0, 0, null);
-					frame = tmp;
-				}
-				frames[i] = frame;
-			}
+	            // --- THE CRITICAL FIX ---
+	            // Create a graphics object and set the composite to clear the previous area
+	            Graphics2D g = master.createGraphics();
+	            
+	            // This clears the canvas so old frames don't "stack"
+	            g.setComposite(AlphaComposite.Clear);
+	            g.fillRect(0, 0, master.getWidth(), master.getHeight());
+	            g.setComposite(AlphaComposite.SrcOver);
+	            
+	            // Draw the new frame
+	            g.drawImage(frame, 0, 0, null);
+	            g.dispose();
 
-			return frames;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new BufferedImage[0];
-		}
+	            // Create a permanent copy for this specific animation frame
+	            BufferedImage copy = new BufferedImage(master.getWidth(), master.getHeight(), BufferedImage.TYPE_INT_ARGB);
+	            Graphics2D gCopy = copy.createGraphics();
+	            gCopy.drawImage(master, 0, 0, null);
+	            gCopy.dispose();
+	            
+	            frames[i] = copy;
+	        }
+	        
+	        reader.dispose();
+	        return frames;
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        return new BufferedImage[0];
+	    }
 	}
 
 	public static BufferedImage[] splitSpriteSheet(BufferedImage sheet, int frameWidth, int frameHeight) {

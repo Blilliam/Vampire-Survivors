@@ -20,8 +20,7 @@ public class SwordWeapon extends Weapon {
 		stats.put(WeaponUpgrades.ProjectileCount, (double) 1);
 		stats.put(WeaponUpgrades.AttackSize, (double) 1);
 		stats.put(WeaponUpgrades.AttackSpeed, (double) 70);
-		stats.put(WeaponUpgrades.Range, (double) 500);
-		stats.put(WeaponUpgrades.CriticalDamage, (double) 2);
+		stats.put(WeaponUpgrades.CriticalDamage, (double) 1);
 		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
 		
 		baseStats = stats.clone();
@@ -30,7 +29,7 @@ public class SwordWeapon extends Weapon {
     }
 
     protected void fireProjectile() {
-        var target = gameObj.getPlayer().closestEnemy(stats.get(WeaponUpgrades.Range));
+        var target = gameObj.getPlayer().closestEnemy((double) 500);
         if (target != null) {
             Vec2 direction = Vec2.between(gameObj.getPlayer(), target);
             gameObj.addProjectiles(new SwordProjectile(gameObj, this, direction, 

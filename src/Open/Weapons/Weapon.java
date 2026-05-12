@@ -5,6 +5,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import main.GameObject;
+import main.DamageResult;
 import main.enums.WeaponRarity;
 import main.enums.WeaponTypes;
 import main.enums.WeaponUpgrades;
@@ -19,57 +20,62 @@ public abstract class Weapon {
     
     protected int projectilesToFire = 0;
     protected int subDelayCounter = 0;
-    protected final int BURST_DELAY = 10; // Frames between each banana in a burst
+    protected final int BURST_DELAY = 10; // Frames between each projectile in a burst
 
     public Weapon(GameObject gameObj, WeaponTypes type) {
         this.gameObj = gameObj;
         this.stats = new EnumMap<>(WeaponUpgrades.class);
         this.baseStats = new EnumMap<>(WeaponUpgrades.class);
         this.delayCounter = 0.0;
-        
-        for (WeaponUpgrades upgrade : WeaponUpgrades.values()) {
-            stats.put(upgrade, 0.0);
-            baseStats.put(upgrade, 0.0);
-        }
 
-        // Core Defaults based on your documentation
-        stats.put(WeaponUpgrades.CriticalDamage, 1.0); // Starts at 100% (1.0)
-        stats.put(WeaponUpgrades.AttackSize, 1.0);    // Default scale 100%
-        stats.put(WeaponUpgrades.ProjectileCount, 1.0);
+        // Core Defaults: Only initialize what every weapon uses.
+        // This prevents the UI from showing empty/zero stats for things like "Bounces" on a Sword.
     }
 
     /**
-     * Calculates damage including Critical hits.
-     * Documentation: 100% base Crit Damage means a crit deals 200% total damage.
-     * Formula: BaseDmg * (1 + (CritDamageMultiplier))
+     * Calculates damage and determines if the hit is a Critical Strike.
+     * Returns a DamageResult containing the final number and a red/white flag.
      */
-    public int getDmg() {
-        double baseDmg = stats.get(WeaponUpgrades.AttackDamage);
-        double critChance = stats.get(WeaponUpgrades.CriticalChance);
-        double critBonus = stats.get(WeaponUpgrades.CriticalDamage);
+    public DamageResult getDmg() {
+        double baseDmg = stats.getOrDefault(WeaponUpgrades.AttackDamage, 0.0);
+        double critChance = stats.getOrDefault(WeaponUpgrades.CriticalChance, 0.0);
+        double critBonus = stats.getOrDefault(WeaponUpgrades.CriticalDamage, 0.0);
 
         double totalMult = 1.0;
-        int guaranteedCrits = (int) critChance;
-        totalMult += (guaranteedCrits * critBonus);
+        boolean isCrit = false;
 
+        // Handle guaranteed crits (e.g., 200% crit chance adds multiplier twice)
+        int guaranteedCrits = (int) critChance;
+        if (guaranteedCrits > 0) {
+            totalMult += (guaranteedCrits * critBonus);
+            isCrit = true;
+        }
+
+        // Roll for the remaining partial chance
         double partialChance = critChance % 1;
         if (Math.random() < partialChance) {
             totalMult += critBonus;
+            isCrit = true;
         }
-        return (int) (baseDmg * totalMult);
+
+        int finalDamage = (int) (baseDmg * totalMult);
+        return new DamageResult(finalDamage, isCrit);
     }
 
     public void update() {
         // 1. Check if the main weapon cooldown is ready
-        if (delayCounter >= stats.get(WeaponUpgrades.AttackSpeed)) {
-            if (gameObj.getPlayer().closestEnemy(stats.get(WeaponUpgrades.Range)) != null) {
-                // Instead of a loop, we "load" the burst
-                projectilesToFire = stats.get(WeaponUpgrades.ProjectileCount).intValue();
+        double attackSpeed = stats.getOrDefault(WeaponUpgrades.AttackSpeed, 100.0);
+        double range = stats.getOrDefault(WeaponUpgrades.Range, 500.0);
+
+        if (delayCounter >= attackSpeed) {
+            if (gameObj.getPlayer().closestEnemy(range) != null) {
+                // "Load" the burst based on ProjectileCount stat
+                projectilesToFire = stats.getOrDefault(WeaponUpgrades.ProjectileCount, 1.0).intValue();
                 delayCounter = 0.0;
             }
         }
 
-        // 2. Handle the Burst Logic
+        // 2. Handle the Burst Logic (staggered firing)
         if (projectilesToFire > 0) {
             subDelayCounter++;
             
@@ -85,7 +91,7 @@ public abstract class Weapon {
 
     protected abstract void fireProjectile();
 
-	public EnumMap<WeaponUpgrades, Double> getStats() {
+    public EnumMap<WeaponUpgrades, Double> getStats() {
         return stats;
     }
 
@@ -98,26 +104,19 @@ public abstract class Weapon {
     }
 
     /**
-     * Applies upgrades based on the Stat Overview documentation.
+     * Applies upgrades and updates the current stats map.
      */
     public void applyUpgrade(WeaponUpgrades upgrade, WeaponRarity rarity) {
-    	
-    	
         double currentVal = stats.getOrDefault(upgrade, 0.0);
         double baseValue = getBaseValueFor(upgrade);
-
-        // Your documentation uses specific multipliers per rarity:
-        // Bronze: 1.0, Silver: 1.2, Gold: 1.4, Diamond: 2.0
         double rarityMultiplier = getRarityMultiplier(rarity);
 
         switch (upgrade) {
             case AttackDamage:
-                // Bronze: +X, Silver: +1.2X, etc.
                 stats.put(upgrade, currentVal + (baseValue * rarityMultiplier));
                 break;
 
             case AttackSpeed:
-                // Bronze: -5%, Silver: -6%, Gold: -7%, Diamond: -10%
                 double speedReduc = 0.05;
                 if (rarity == WeaponRarity.SILVER) speedReduc = 0.06;
                 if (rarity == WeaponRarity.GOLD) speedReduc = 0.07;
@@ -126,12 +125,10 @@ public abstract class Weapon {
                 break;
 
             case ProjectileCount:
-                // Bronze: +1, Silver: +1.2... (Note: Projectile count is usually int, but using double for logic)
                 stats.put(upgrade, currentVal + rarityMultiplier);
                 break;
 
             case AttackSize:
-                // Bronze: +10%, Silver: +12%, Gold: +16%, Diamond: +20%
                 double sizeInc = 0.10;
                 if (rarity == WeaponRarity.SILVER) sizeInc = 0.12;
                 if (rarity == WeaponRarity.GOLD) sizeInc = 0.16;
@@ -140,7 +137,6 @@ public abstract class Weapon {
                 break;
 
             case CriticalChance:
-                // Bronze: +5%, Silver: +6%, Gold: +8%, Diamond: +10%
                 double critInc = 0.05;
                 if (rarity == WeaponRarity.SILVER) critInc = 0.06;
                 if (rarity == WeaponRarity.GOLD) critInc = 0.08;
@@ -149,7 +145,6 @@ public abstract class Weapon {
                 break;
 
             case CriticalDamage:
-                // Bronze: +25%, Silver: +30%, Gold: +40%, Diamond: +50%
                 double critDmgInc = 0.25;
                 if (rarity == WeaponRarity.SILVER) critDmgInc = 0.30;
                 if (rarity == WeaponRarity.GOLD) critDmgInc = 0.40;
@@ -158,12 +153,10 @@ public abstract class Weapon {
                 break;
 
             case ProjectileSpeed:
-                // Bronze: +X, Silver: +1.2X, etc.
                 stats.put(upgrade, currentVal + (baseValue * rarityMultiplier));
                 break;
 
             case ProjectileBounce:
-                // Bronze: +1, Silver: +1.2, etc.
                 stats.put(upgrade, currentVal + rarityMultiplier);
                 break;
         }
@@ -171,28 +164,26 @@ public abstract class Weapon {
     }
 
     private double getRarityMultiplier(WeaponRarity rarity) {
-        switch (rarity) {
-            case SILVER: return 1.2;
-            case GOLD: return 1.4;
-            case DIAMOND: return 2.0;
-            case BRONZE: 
-            default: return 1.0;
-        }
+        return switch (rarity) {
+            case SILVER -> 1.2;
+            case GOLD -> 1.4;
+            case DIAMOND -> 2.0;
+            default -> 1.0; // BRONZE
+        };
     }
     
     public BufferedImage getIcon() {
-    	return icon;
+        return icon;
     }
     
     protected void onUpgrade() {
-    	return;
+        // Optional hook for subclasses
     }
 
     public BufferedImage getSprite() { return sprite; }
     public void setSprite(BufferedImage sprite) { this.sprite = sprite; }
 
-	public EnumMap<WeaponUpgrades, Double> getBaseStats() {
-		// TODO Auto-generated method stub
-		return baseStats;
-	}
+    public EnumMap<WeaponUpgrades, Double> getBaseStats() {
+        return baseStats;
+    }
 }

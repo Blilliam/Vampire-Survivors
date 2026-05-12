@@ -3,6 +3,7 @@ package main;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.List;
 
 import Open.Artifacts.WorldItem;
 import Open.Entities.Exp;
@@ -58,6 +59,8 @@ public class GameObject {
 
 	// chests
 	private ArrayList<Chest> chests;
+	
+	private List<DamageText> damageTexts;
 
 	// exp
 	private ArrayList<Exp> exp;
@@ -121,26 +124,17 @@ public class GameObject {
 	}
 
 	private void startGame() { // creates new everything
-
 		enemies = new ArrayList<Enemy>();
-
 		groundItems = new ArrayList<WorldItem>();
-
 		map = new Background(this);
-
 		player = new Player(this);
-
 		setUpgrades(new Upgrades(this));
-
 		waves = new EnemyWaves(this);
-
 		state = getStateOpen();
-
 		setExp(new ArrayList<Exp>());
-
 		setChests(new ArrayList<Chest>());
 		getChests().add(new Chest(this, player.getX() + 200, player.getY()));
-
+		setDamageTexts(new ArrayList<>());
 		setProjectiles(new ArrayList<WeaponEntity>());
 		// projectiles.add(new WeaponEntity(this, Assets.ProjectileBanana, player.getX()
 		// + 200, player.getY(), 0, 0, 0));
@@ -223,6 +217,9 @@ public class GameObject {
 
 	public Player getPlayer() {
 		return player;
+	}
+	public void addDamageText(double x, double y, int dmg, boolean isCrit) {
+	    getDamageTexts().add(new DamageText(x, y, dmg, isCrit));
 	}
 
 	public void setPlayer(Player player) {
@@ -347,5 +344,13 @@ public class GameObject {
 
 	public void setGroundItems(ArrayList<WorldItem> groundItems) {
 		this.groundItems = groundItems;
+	}
+
+	public List<DamageText> getDamageTexts() {
+		return damageTexts;
+	}
+
+	public void setDamageTexts(List<DamageText> damageTexts) {
+		this.damageTexts = damageTexts;
 	}
 }

@@ -12,12 +12,11 @@ public class EnemyWaves {
     private double creditGainRate;
     private int tickCounter;
 
-    // A "Spawn Card" defines an enemy's economy stats
     private class SpawnCard {
         int id;
-        int cost;   // Credit cost per unit
-        int weight; // Probability of being chosen
-        int maxGroup; // Max size for one pack
+        int cost;
+        int weight;
+        int maxGroup;
 
         SpawnCard(int id, int cost, int weight, int maxGroup) {
             this.id = id;
@@ -32,21 +31,21 @@ public class EnemyWaves {
     public EnemyWaves(GameObject gameObj) {
         this.gameObj = gameObj;
         this.credits = 0;
-        this.creditGainRate = 0.15; // Starting speed
+        this.creditGainRate = 0.30; 
         this.tickCounter = 0;
 
-        // ID: 1:Zombie, 2:Skeleton, 3:Mudman, 4:Bat, 5:Glowing Bat
-        pool.add(new SpawnCard(1, 10, 100, 8)); // Common horde
-        pool.add(new SpawnCard(2, 15, 80, 5));  // Slower, tougher horde
-        pool.add(new SpawnCard(4, 8, 90, 10));  // Fast swarm
+        // 2. REBALANCED POOL
+        // Lowered costs for Zombies/Skeletons and boosted their weights
+        pool.add(new SpawnCard(1, 8, 150, 10)); // Zombie: Now as cheap as bats, higher weight
+        pool.add(new SpawnCard(2, 10, 100, 6)); // Skeleton: Much cheaper
+        pool.add(new SpawnCard(4, 8, 60, 12));  // Bat: Kept cost, but lowered weight so they appear less
         
-        // Elite/Rare Roster
-        pool.add(new SpawnCard(3, 50, 15, 2));  // Mudman: Rare, small groups
-        pool.add(new SpawnCard(5, 75, 8, 1));   // Glowing Bat: Very Rare, solo
+        // Elite Roster
+        pool.add(new SpawnCard(3, 40, 25, 3));  // Mudman: Cheaper and slightly more common
+        pool.add(new SpawnCard(5, 60, 12, 1));  // Glowing Bat: More affordable for the director
     }
 
     public double getDifficultyMult() {
-        // Increases by 10% every 30 seconds (1800 ticks)
         return 1.0 + (tickCounter / 1800.0) * 0.1;
     }
 
@@ -56,12 +55,11 @@ public class EnemyWaves {
         tickCounter++;
         credits += creditGainRate;
 
-        // RoR2 Difficulty Scaling: Increase gain rate over time
-        if (tickCounter % 600 == 0) { // Every 10 seconds
-            creditGainRate += 0.02;
+        if (tickCounter % 600 == 0) { 
+            creditGainRate += 0.03; // Faster ramp up
         }
 
-        // Try to spawn if the director has enough for the cheapest unit (Bat: 8)
+        // Try to spawn as soon as we can afford any unit
         if (credits >= 8) {
             attemptSpawn();
         }
@@ -75,7 +73,6 @@ public class EnemyWaves {
 
         if (affordable.isEmpty()) return;
 
-        // Weighted Selection
         int totalWeight = 0;
         for (SpawnCard sc : affordable) totalWeight += sc.weight;
         int roll = (int) (Math.random() * totalWeight);
@@ -90,23 +87,20 @@ public class EnemyWaves {
             }
         }
 
-        // Spend Budget on a Group
-        // Director spends up to 50% of current credits on this specific pack
-        double spendLimit = Math.max(selected.cost, credits * 0.5);
+        // 4. MORE AGGRESSIVE SPENDING
+        // Director now spends up to 80% of budget at once (was 50%)
+        double spendLimit = Math.max(selected.cost, credits * 0.8);
         int spawnedCount = 0;
         
-        // Central point for the pack
         double spawnAngle = Math.random() * Math.PI * 2;
-        double spawnDist = 500 + (Math.random() * 200);
+        double spawnDist = 600 + (Math.random() * 200);
         int centerX = (int) (gameObj.getPlayer().getX() + Math.cos(spawnAngle) * spawnDist);
         int centerY = (int) (gameObj.getPlayer().getY() + Math.sin(spawnAngle) * spawnDist);
 
         while (credits >= selected.cost && spendLimit >= selected.cost && spawnedCount < selected.maxGroup) {
-            // Add jitter so they aren't on the exact same pixel
-            int jX = centerX + (int)((Math.random() - 0.5) * 60);
-            int jY = centerY + (int)((Math.random() - 0.5) * 60);
+            int jX = centerX + (int)((Math.random() - 0.5) * 80);
+            int jY = centerY + (int)((Math.random() - 0.5) * 80);
             
-            // Clamp to map
             jX = Math.max(0, Math.min(jX, gameObj.getMap().WIDTH - 1));
             jY = Math.max(0, Math.min(jY, gameObj.getMap().HEIGHT - 1));
 

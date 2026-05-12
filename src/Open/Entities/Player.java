@@ -1,5 +1,6 @@
 package Open.Entities;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -19,7 +20,9 @@ import main.Animation;
 import main.AppPanel;
 import main.Assets;
 import main.GameObject;
+import main.MouseInput;
 import main.enums.WeaponTypes;
+import main.enums.WeaponUpgrades;
 
 public class Player extends Entity {
 	private ArtifactManager artifactManager;
@@ -47,25 +50,12 @@ public class Player extends Entity {
 	public Player(GameObject gameObj) {
 		super(gameObj);
 		setArtifactManager(new ArtifactManager(gameObj));
-		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
-		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
-		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
-		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
-		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
-		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
-		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
-		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
-		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
-		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
-		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
-		getArtifactManager().addArtifact(new ChunkyOats(gameObj));
-		
 		
 
 		weapons = new EnumMap<WeaponTypes, Weapon>(WeaponTypes.class);
 		weapons.put(WeaponTypes.Sword, new SwordWeapon(gameObj));
 
-		baseMaxHp = 10;
+		baseMaxHp = 100;
 		currHp = getMaxHp();
 
 		x = gameObj.getMap().HEIGHT / 2;
@@ -76,7 +66,7 @@ public class Player extends Entity {
 		height = 70;
 		width = 70;
 		invincibilityFrames = 0;
-		currExp = 1000;
+		currExp = 0;
 
 		int frameCount = 4;
 		walkFrames = new BufferedImage[frameCount];
@@ -209,34 +199,125 @@ public class Player extends Entity {
 	}
 
 	private void drawActiveWeapons(Graphics2D g2) {
-		int startX = 20;
-		int startY = 140; // Positioned below the Books
-		int iconSize = 70; // Weapons usually look better slightly larger
-		int spacing = 8;
-		int index = 0;
+	    int startX = 20;
+	    int startY = 140;
+	    int iconSize = 70;
+	    int spacing = 8;
+	    int index = 0;
 
-		// Iterate through the weapons EnumMap
-		for (Weapon w : weapons.values()) {
-			BufferedImage icon = w.getIcon();
 
-			if (icon != null) {
-				int drawX = startX + (index * (iconSize + spacing));
+	    int mx = MouseInput.getMouseX(); 
+		int my = MouseInput.getMouseY();
+	    
+	    Weapon hoveredWeapon = null;
 
-				// 1. Draw Weapon Slot Background
-				g2.setColor(new Color(40, 40, 40, 200));
-				g2.fillRoundRect(drawX, startY, iconSize, iconSize, 8, 8);
+	    for (Weapon w : weapons.values()) {
+	        BufferedImage icon = w.getIcon();
+	        if (icon != null) {
+	            int drawX = startX + (index * (iconSize + spacing));
 
-				// 2. Draw the Weapon Icon
-				// We use the icon loaded in the Weapon class
-				g2.drawImage(icon, drawX + 4, startY + 4, iconSize - 8, iconSize - 8, null);
+	            // Draw Weapon Slot
+	            g2.setColor(new Color(40, 40, 40, 200));
+	            g2.fillRoundRect(drawX, startY, iconSize, iconSize, 8, 8);
+	            g2.drawImage(icon, drawX + 4, startY + 4, iconSize - 8, iconSize - 8, null);
+	            g2.setColor(Color.GRAY);
+	            g2.drawRoundRect(drawX, startY, iconSize, iconSize, 8, 8);
 
-				// 3. Optional: Draw a border
-				g2.setColor(Color.GRAY);
-				g2.drawRoundRect(drawX, startY, iconSize, iconSize, 8, 8);
+	            // CHECK FOR HOVER
+	            if (mx >= drawX && mx <= drawX + iconSize && my >= startY && my <= startY + iconSize) {
+	                hoveredWeapon = w;
+	                // Optional: Highlight the hovered icon
+	                g2.setColor(new Color(255, 255, 255, 100));
+	                g2.fillRoundRect(drawX, startY, iconSize, iconSize, 8, 8);
+	            }
+	            index++;
+	        }
+	    }
 
-				index++;
-			}
-		}
+	    // Draw the tooltip LAST so it appears on top of everything
+	    if (hoveredWeapon != null) {
+	        drawWeaponTooltip(g2, hoveredWeapon, mx, my);
+	    }
+	}
+
+	private void drawWeaponTooltip(Graphics2D g2, Weapon w, int mouseX, int mouseY) {
+	    EnumMap<main.enums.WeaponUpgrades, Double> stats = w.getStats();
+	    int rowHeight = 25; // Increased for better readability
+	    int padding = 15;
+	    int width = 220;
+	    
+	    // Count active stats to set height
+	    int activeStatCount = 0;
+	    for (Double val : stats.values()) if (val > 0) activeStatCount++;
+	    int height = (activeStatCount * rowHeight) + (padding * 2);
+
+	    int drawX = mouseX + 20;
+	    int drawY = mouseY + 20;
+
+	    // 1. Draw the "Pixel" Background Box
+	    g2.setColor(new Color(20, 20, 20, 230)); // Near black
+	    g2.fillRoundRect(drawX, drawY, width, height, 5, 5);
+	    
+	    // 2. Draw a thick border (like your buttons)
+	    g2.setStroke(new BasicStroke(3));
+	    g2.setColor(new Color(100, 100, 100)); // Grey border
+	    g2.drawRoundRect(drawX, drawY, width, height, 5, 5);
+
+	    // 3. Draw Stats with "Upgrade Menu" Styling
+	    g2.setFont(new Font("Monospaced", Font.BOLD, 16));
+	    int i = 0;
+	    for (var entry : stats.entrySet()) {
+	        double value = entry.getValue();
+	        if (value <= 0 && entry.getKey() != main.enums.WeaponUpgrades.AttackDamage) continue;
+
+	        String label = getDisplayName(entry.getKey());
+	        String formattedValue = formatStatValue(entry.getKey(), value);
+	        
+	        int textY = drawY + padding + (i * rowHeight) + 15;
+
+	        // A. Draw Shadow (The "Visual Stuff")
+	        g2.setColor(Color.BLACK);
+	        g2.drawString(label + ":", drawX + padding + 2, textY + 2);
+	        g2.drawString(formattedValue, drawX + width - 70 + 2, textY + 2);
+
+	        // B. Draw Main Text
+	        g2.setColor(new Color(200, 200, 200)); // Silver/Grey for labels
+	        g2.drawString(label + ":", drawX + padding, textY);
+	        
+	        g2.setColor(new Color(255, 215, 0)); // Gold for the actual numbers
+	        g2.drawString(formattedValue, drawX + width - 70, textY);
+	        
+	        i++;
+	    }
+	}
+	private String formatStatValue(WeaponUpgrades stat, double val) {
+	    // Check if it's a percentage stat
+	    if (stat == WeaponUpgrades.CriticalChance || 
+	        stat == WeaponUpgrades.CriticalDamage || 
+	        stat == WeaponUpgrades.AttackSize) {
+	        return String.format("%.0f%%", val * 100);
+	    }
+	    // Check if it's the Cooldown/AttackSpeed (showing frames to seconds conversion)
+	    if (stat == WeaponUpgrades.AttackSpeed) {
+	        return String.format("%.2fs", val / 60.0);
+	    }
+	    // Standard number
+	    return String.format("%.1f", val);
+	}
+
+	// Add your display name helper if it's not already in Player
+	private String getDisplayName(WeaponUpgrades stat) {
+	    return switch (stat) {
+	        case AttackSpeed -> "Cooldown";
+	        case AttackDamage -> "Damage";
+	        case AttackSize -> "Area";
+	        case ProjectileCount -> "Amount";
+	        case ProjectileSpeed -> "Speed";
+	        case ProjectileBounce -> "Bounces";
+	        case CriticalChance -> "Crit Rate";
+	        case CriticalDamage -> "Crit Damage";
+	        default -> stat.toString();
+	    };
 	}
 
 	private void drawOwnedBooks(Graphics2D g2) {

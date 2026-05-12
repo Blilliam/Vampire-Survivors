@@ -1,244 +1,174 @@
 package Open.Entities.Enemies;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
 import Open.Entities.Entity;
-import main.AppPanel;
+import main.Animation;
 import main.Assets;
+import main.DamageResult;
 import main.GameObject;
 
 public class Enemy extends Entity {
+    private Animation walkAnim;
+    private Animation deathAnim;
+    private int deathHoldTimer = 0;
+    private boolean dying = false;
 
-	private BufferedImage[] walkFrames;
-	private BufferedImage[] deathFrames;
+    // Spawn Animation Variables
+    private int spawnInTimer = 60; 
+    private final int MAX_SPAWN_TIME = 60;
+    private int damageFlashTimer = 0;
+    private final int FLASH_DURATION = 6;
+    private int atk;
 
-	private int frame = 0;
-	private int frameCounter = 0;
-	private int deathHoldTimer = 0;
-	private boolean dying = false;
+    public Enemy(GameObject gameObj, int x, int y, int type, double statMultiplier) {
+        super(gameObj);
+        this.x = x;
+        this.y = y;
+        this.width = 100;
+        this.height = 100;
+        
+        loadEnemy(type);
 
-	// Spawn Animation Variables
-	private int spawnInTimer = 60; // 1 second at 60fps
-	private final int MAX_SPAWN_TIME = 60;
+        // Apply scaling
+        this.maxHp = (int) (this.maxHp * statMultiplier);
+        this.atk = (int) (this.atk * statMultiplier);
+        this.speed = (int) (this.speed * (1.0 + (statMultiplier - 1.0) * 0.2));
+        this.currHp = maxHp;
+    }
 
-	private int deathX, deathY;
-	private int damageFlashTimer = 0;
-	private final int FLASH_DURATION = 6;
-	private int atk;
+    private void loadEnemy(int num) {
+        BufferedImage[] wFrames = null;
+        BufferedImage[] dFrames = null;
 
-	public Enemy(GameObject gameObj, int x, int y, int type, double statMultiplier) {
-		super(gameObj);
-		this.x = x;
-		this.y = y;
-		this.width = 100;
-		this.height = 100;
+        switch (num) {
+            case 1 -> { wFrames = Assets.zombieWalk; dFrames = Assets.zombieDeath; speed = 3; maxHp = 15; atk = 10; }
+            case 2 -> { wFrames = Assets.skeletonWalk; dFrames = Assets.skeletonDeath; speed = 2; maxHp = 12; atk = 12; }
+            case 3 -> { wFrames = Assets.mudmanWalk; dFrames = Assets.mudmanDeath; speed = 1; maxHp = 40; atk = 20; }
+            case 4 -> { wFrames = Assets.batWalk; dFrames = Assets.batDeath; speed = 4; maxHp = 8; atk = 5; }
+            case 5 -> { wFrames = Assets.glowingBatWalk; dFrames = Assets.glowingBatDeath; speed = 5; maxHp = 35; atk = 25; }
+        }
 
-		loadEnemy(type);
+        // Initialize Animation objects (100ms per frame)
+        this.walkAnim = new Animation(wFrames, 100);
+        this.deathAnim = new Animation(dFrames, 120);
+    }
 
-		// Apply Scaling
-		this.maxHp = (int) (this.maxHp * statMultiplier);
-		this.atk = (int) (this.atk * statMultiplier);
-		this.speed = (int) (this.speed * (1.0 + (statMultiplier - 1.0) * 0.2));
+    public void update() {
+        if (spawnInTimer > 0) {
+            spawnInTimer--;
+            return;
+        }
 
-		this.currHp = maxHp;
+        if (damageFlashTimer > 0) damageFlashTimer--;
 
-		if (walkFrames == null || walkFrames.length == 0)
-			walkFrames = new BufferedImage[1];
-		if (deathFrames == null || deathFrames.length == 0)
-			deathFrames = new BufferedImage[1];
-	}
+        if (!isDying()) {
+            followPlayer();
+            walkAnim.update();
 
-	private void loadEnemy(int num) {
-		switch (num) {
-		case 1 -> {
-			walkFrames = Assets.zombieWalk;
-			deathFrames = Assets.zombieDeath;
-			speed = 5;
-			maxHp = 15;
-			atk = 10;
-		}
-		case 2 -> {
-			walkFrames = Assets.skeletonWalk;
-			deathFrames = Assets.skeletonDeath;
-			speed = 4;
-			maxHp = 12;
-			atk = 12;
-		}
-		case 3 -> {
-			walkFrames = Assets.mudmanWalk;
-			deathFrames = Assets.mudmanDeath;
-			speed = 3;
-			maxHp = 40;
-			atk = 20;
-		}
-		case 4 -> {
-			walkFrames = Assets.batWalk;
-			deathFrames = Assets.batDeath;
-			speed = 7;
-			maxHp = 8;
-			atk = 5;
-		}
-		case 5 -> {
-			walkFrames = Assets.glowingBatWalk;
-			deathFrames = Assets.glowingBatDeath;
-			speed = 8;
-			maxHp = 35;
-			atk = 25;
-		}
-		}
-	}
+            if (Entity.rectCollision(this, gameObj.getPlayer())) {
+                gameObj.getPlayer().damage(atk);
+            }
+        } else {
+            updateDeathAnimation();
+        }
+    }
 
-	public void update() {
-		// 1. Handle Spawning State
-		if (spawnInTimer > 0) {
-			spawnInTimer--;
-			return; // Don't move or attack while spawning
-		}
+    private void updateDeathAnimation() {
+        // Play the animation until it hits the final frame
+        if (deathAnim.getCurrentFrameIndex() < deathAnim.getFrameLength() - 1) {
+            deathAnim.update();
+        } else {
+            // Once at the end, stop updating the animation and wait to despawn
+            deathHoldTimer++;
+            if (deathHoldTimer > 40) { 
+                isDead = true; 
+            }
+        }
+    }
 
-		// 2. Normal Update Logic
-		frameCounter++;
-		if (damageFlashTimer > 0)
-			damageFlashTimer--;
+    public void draw(Graphics2D g) {
+        // Coordinate Math: World Position - Camera Position - Half the sprite size
+        int drawX = (int)x - gameObj.getCameraX() - (width / 2);
+        int drawY = (int)y - gameObj.getCameraY() - (height / 2);
 
-		if (!isDying()) {
-			followPlayer();
-			if (frameCounter > 6) {
-				frame = (frame + 1) % walkFrames.length;
-				frameCounter = 0;
-			}
-			if (Entity.rectCollision(this, gameObj.getPlayer())) {
-				gameObj.getPlayer().damage(atk);
-			}
-		} else {
-			updateDeathAnimation();
-		}
-	}
+        BufferedImage img = isDying() ? deathAnim.getFrame() : walkAnim.getFrame();
 
-	private void updateDeathAnimation() {
-		if (frameCounter > 6) {
-			if (frame < deathFrames.length - 1)
-				frame++;
-			else
-				deathHoldTimer++;
-			frameCounter = 0;
-		}
-		if (deathHoldTimer > 10)
-			isDead = true;
-	}
+        if (img == null) return;
 
-	public void draw(Graphics2D g) {
-		BufferedImage img;
-		int drawX, drawY, drawW, drawH;
+        if (spawnInTimer > 0) {
+            // Handle Fading in
+            float percent = 1.0f - ((float) spawnInTimer / MAX_SPAWN_TIME);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.max(0, percent)));
+            g.drawImage(img, drawX, drawY, width, height, null);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            return;
+        }
 
-		// Position Logic
-		if (isDying()) {
-			img = deathFrames[Math.min(frame, deathFrames.length - 1)];
-			drawX = deathX - gameObj.getPlayer().getX() + AppPanel.WIDTH / 2 - width / 2;
-			drawY = deathY - gameObj.getPlayer().getY() + AppPanel.HEIGHT / 2 - height / 2;
-			drawW = width + 50;
-			drawH = height + 50;
-		} else {
-			img = walkFrames[Math.min(frame, walkFrames.length - 1)];
-			drawX = x - gameObj.getCameraX() - (width - 20) / 2;
-			drawY = y - gameObj.getCameraY() - (height - 40) / 2;
-			drawW = width;
-			drawH = height;
-		}
+        // Handle Damage Flash vs Normal Draw
+        if (damageFlashTimer > 0 && !isDying()) {
+            drawFlash(g, img, drawX, drawY, width, height);
+        } else {
+            g.drawImage(img, drawX, drawY, width, height, null);
+        }
 
-		if (img == null)
-			return;
+        // Health Bar (Only if alive)
+        if (!isDying() && currHp < maxHp) {
+            drawHealthBar(g, drawX, drawY);
+        }
+    }
 
-		// --- SPAWN ANIMATION EFFECT ---
-		if (spawnInTimer > 0) {
-			float percent = 1.0f - ((float) spawnInTimer / MAX_SPAWN_TIME);
+    private void drawFlash(Graphics2D g, BufferedImage img, int x, int y, int w, int h) {
+        g.drawImage(img, x, y, w, h, null);
+        g.setColor(new Color(255, 0, 0, 100)); // Semi-transparent red overlay
+        g.fillRect(x, y, w, h);
+    }
 
-			// Fading in
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, percent));
+    private void drawHealthBar(Graphics2D g, int screenX, int screenY) {
+        int barWidth = 40, barHeight = 5;
+        int xPos = screenX + (width / 2) - (barWidth / 2);
+        int yPos = screenY - 10;
 
-			// "Growing" or "Rising" effect
-			int spawnW = (int) (drawW * percent);
-			int spawnH = (int) (drawH * percent);
-			int centerX = drawX + (drawW / 2);
-			int centerY = drawY + (drawH / 2);
+        g.setColor(Color.BLACK);
+        g.fillRect(xPos - 1, yPos - 1, barWidth + 2, barHeight + 2);
+        g.setColor(Color.RED);
+        g.fillRect(xPos, yPos, barWidth, barHeight);
+        g.setColor(Color.GREEN);
+        g.fillRect(xPos, yPos, (int) (barWidth * ((double) currHp / maxHp)), barHeight);
+    }
 
-			g.drawImage(img, centerX - (spawnW / 2), centerY - (spawnH / 2), spawnW, spawnH, null);
+    public void damage(DamageResult result) {
+        if (isDying() || (spawnInTimer > 0)) return;
 
-			// Reset composite for other draws
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-			return; // Skip rest of draw
-		}
+        currHp -= result.damage;
+        damageFlashTimer = FLASH_DURATION;
 
-		// --- NORMAL DRAWING (Flash and Health) ---
-		if (damageFlashTimer > 0) {
-			drawFlash(g, img, drawX, drawY, drawW, drawH);
-		} else {
-			g.drawImage(img, drawX, drawY, drawW, drawH, null);
-		}
+        // SPAWN DAMAGE NUMBER
+        gameObj.addDamageText(x, y, result.damage, result.isCrit);
 
-		if (!isDying() && currHp < maxHp)
-			drawHealthBar(g, drawX, drawY);
-	}
+        if (currHp <= 0) die();
+    }
 
-	private void drawFlash(Graphics2D g, BufferedImage img, int x, int y, int w, int h) {
-		BufferedImage tintImage = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D gTint = tintImage.createGraphics();
-		gTint.drawImage(img, 0, 0, null);
-		gTint.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.7f));
-		gTint.setColor(Color.RED);
-		gTint.fillRect(0, 0, img.getWidth(), img.getHeight());
-		gTint.dispose();
-		g.drawImage(tintImage, x, y, w, h, null);
-	}
+    private void die() {
+        setDying(true);
+        deathAnim.setFrame(0); // Ensure death starts at first frame
+        gameObj.addExp(1, x, y);
+    }
 
-	private void drawHealthBar(Graphics2D g, int screenX, int screenY) {
-		int barWidth = 40, barHeight = 5, barOffset = 10;
-		int xPos = screenX + (width / 2) - (barWidth / 2);
-		int yPos = screenY - barOffset;
-		g.setColor(Color.BLACK);
-		g.fillRect(xPos - 1, yPos - 1, barWidth + 2, barHeight + 2);
-		g.setColor(Color.RED);
-		g.fillRect(xPos, yPos, barWidth, barHeight);
-		g.setColor(Color.GREEN);
-		g.fillRect(xPos, yPos, (int) (barWidth * ((double) currHp / maxHp)), barHeight);
-	}
+    private void followPlayer() {
+        double dx = gameObj.getPlayer().getX() - x;
+        double dy = gameObj.getPlayer().getY() - y;
+        double dist = Math.sqrt(dx * dx + dy * dy);
 
-	public void damage(double atk) {
-		if (isDying() || spawnInTimer > 0)
-			return; // Invulnerable while spawning
-		currHp -= atk;
-		damageFlashTimer = FLASH_DURATION;
-		if (currHp <= 0)
-			die();
-	}
+        if (dist > 0) {
+            x += (dx / dist) * speed * 0.5;
+            y += (dy / dist) * speed * 0.5;
+        }
+    }
 
-	private void die() {
-		setDying(true);
-		frame = 0;
-		frameCounter = 0;
-		deathHoldTimer = 0;
-		gameObj.addExp(1, x, y);
-		gameObj.getPlayer().addKills(1);
-		deathX = x;
-		deathY = y;
-	}
-
-	private void followPlayer() {
-		double dx = gameObj.getPlayer().getX() - getX();
-		double dy = gameObj.getPlayer().getY() - getY();
-		double dist = Math.sqrt(dx * dx + dy * dy);
-		if (dist > 0) {
-			x += (dx / dist) * speed * 0.5 + (Math.random() - 0.5) * 0.3;
-			y += (dy / dist) * speed * 0.5 + (Math.random() - 0.5) * 0.3;
-		}
-	}
-
-	public boolean isDying() {
-		return dying;
-	}
-
-	public void setDying(boolean dying) {
-		this.dying = dying;
-	}
+    public boolean isDying() { return dying; }
+    public void setDying(boolean dying) { this.dying = dying; }
 }

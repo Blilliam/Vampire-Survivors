@@ -18,9 +18,8 @@ public class PewPewWeapon extends Weapon {
 		stats.put(WeaponUpgrades.AttackSize, (double) 1);
 		stats.put(WeaponUpgrades.AttackSpeed, (double) 60);
 		stats.put(WeaponUpgrades.ProjectileSpeed, (double) 10);
-		stats.put(WeaponUpgrades.Range, (double) 700);
 		stats.put(WeaponUpgrades.ProjectileBounce, (double) 1);
-		stats.put(WeaponUpgrades.CriticalDamage, (double) 2);
+		stats.put(WeaponUpgrades.CriticalDamage, (double) 1);
 		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
 		
 		baseStats = stats.clone();
@@ -29,7 +28,7 @@ public class PewPewWeapon extends Weapon {
     }
 
     protected void fireProjectile() {
-        var target = gameObj.getPlayer().closestEnemy(stats.get(WeaponUpgrades.Range));
+        var target = gameObj.getPlayer().closestEnemy((double) 700);
         if (target != null) {
             Vec2 direction = Vec2.between(gameObj.getPlayer(), target);
             gameObj.addProjectiles(new BouncingProjectile(gameObj, this, direction, 
