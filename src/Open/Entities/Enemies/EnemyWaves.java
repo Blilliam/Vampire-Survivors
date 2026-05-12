@@ -2,84 +2,119 @@ package Open.Entities.Enemies;
 
 import main.AppPanel;
 import main.GameObject;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EnemyWaves {
 
-	private GameObject gameObj;
+    private GameObject gameObj;
+    private double credits;
+    private double creditGainRate;
+    private int tickCounter;
 
-	// difficulty system
-	private double credits;
-	private double creditGainRate; // credits per tick
-	private int difficultyLevel;
+    // A "Spawn Card" defines an enemy's economy stats
+    private class SpawnCard {
+        int id;
+        int cost;   // Credit cost per unit
+        int weight; // Probability of being chosen
+        int maxGroup; // Max size for one pack
 
-	public EnemyWaves(GameObject gameObj) {
-		this.gameObj = gameObj;
+        SpawnCard(int id, int cost, int weight, int maxGroup) {
+            this.id = id;
+            this.cost = cost;
+            this.weight = weight;
+            this.maxGroup = maxGroup;
+        }
+    }
 
-		credits = 0;
-		creditGainRate = 0.05; // starting difficulty
-		difficultyLevel = 1;
-	}
+    private List<SpawnCard> pool = new ArrayList<>();
 
-	public void update() {
+    public EnemyWaves(GameObject gameObj) {
+        this.gameObj = gameObj;
+        this.credits = 0;
+        this.creditGainRate = 0.15; // Starting speed
+        this.tickCounter = 0;
 
-		if (gameObj.getState() != gameObj.getStateOpen())
-			return;
+        // ID: 1:Zombie, 2:Skeleton, 3:Mudman, 4:Bat, 5:Glowing Bat
+        pool.add(new SpawnCard(1, 10, 100, 8)); // Common horde
+        pool.add(new SpawnCard(2, 15, 80, 5));  // Slower, tougher horde
+        pool.add(new SpawnCard(4, 8, 90, 10));  // Fast swarm
+        
+        // Elite/Rare Roster
+        pool.add(new SpawnCard(3, 50, 15, 2));  // Mudman: Rare, small groups
+        pool.add(new SpawnCard(5, 75, 8, 1));   // Glowing Bat: Very Rare, solo
+    }
 
-		// increase difficulty over time
-		difficultyLevel++;
+    public double getDifficultyMult() {
+        // Increases by 10% every 30 seconds (1800 ticks)
+        return 1.0 + (tickCounter / 1800.0) * 0.1;
+    }
 
-		// gain credits over time
-		credits += creditGainRate;
+    public void update() {
+        if (gameObj.getState() != gameObj.getStateOpen()) return;
 
-		// slowly ramp difficulty
-		if (difficultyLevel % 600 == 0) { // ~10 seconds at 60fps
-			creditGainRate += 0.02;
-		}
+        tickCounter++;
+        credits += creditGainRate;
 
-		// spawn as long as we can afford enemies
-		while (credits >= 1) {
-			spawnEnemy();
-			credits -= 1;
-		}
-	}
+        // RoR2 Difficulty Scaling: Increase gain rate over time
+        if (tickCounter % 600 == 0) { // Every 10 seconds
+            creditGainRate += 0.02;
+        }
 
-	private void spawnEnemy() {
+        // Try to spawn if the director has enough for the cheapest unit (Bat: 8)
+        if (credits >= 8) {
+            attemptSpawn();
+        }
+    }
 
-		int tier = 1 + (int) (Math.random() * 3); // basic tiers for now
+    private void attemptSpawn() {
+        List<SpawnCard> affordable = new ArrayList<>();
+        for (SpawnCard sc : pool) {
+            if (credits >= sc.cost) affordable.add(sc);
+        }
 
-		int margin = 100;
+        if (affordable.isEmpty()) return;
 
-		int tempX = 0;
-		int tempY = 0;
+        // Weighted Selection
+        int totalWeight = 0;
+        for (SpawnCard sc : affordable) totalWeight += sc.weight;
+        int roll = (int) (Math.random() * totalWeight);
+        int cursor = 0;
+        SpawnCard selected = affordable.get(0);
 
-		boolean spawnLeftOrRight = Math.random() < 0.5;
+        for (SpawnCard sc : affordable) {
+            cursor += sc.weight;
+            if (roll < cursor) {
+                selected = sc;
+                break;
+            }
+        }
 
-		if (spawnLeftOrRight) {
+        // Spend Budget on a Group
+        // Director spends up to 50% of current credits on this specific pack
+        double spendLimit = Math.max(selected.cost, credits * 0.5);
+        int spawnedCount = 0;
+        
+        // Central point for the pack
+        double spawnAngle = Math.random() * Math.PI * 2;
+        double spawnDist = 500 + (Math.random() * 200);
+        int centerX = (int) (gameObj.getPlayer().getX() + Math.cos(spawnAngle) * spawnDist);
+        int centerY = (int) (gameObj.getPlayer().getY() + Math.sin(spawnAngle) * spawnDist);
 
-			if (Math.random() < 0.5) {
-				// left
-				tempX = gameObj.getPlayer().getX() - AppPanel.WIDTH / 2 - margin;
-			} else {
-				// right
-				tempX = gameObj.getPlayer().getX() + AppPanel.WIDTH / 2 + margin;
-			}
-			tempY = (int) (Math.random() * gameObj.getMap().HEIGHT);
+        while (credits >= selected.cost && spendLimit >= selected.cost && spawnedCount < selected.maxGroup) {
+            // Add jitter so they aren't on the exact same pixel
+            int jX = centerX + (int)((Math.random() - 0.5) * 60);
+            int jY = centerY + (int)((Math.random() - 0.5) * 60);
+            
+            // Clamp to map
+            jX = Math.max(0, Math.min(jX, gameObj.getMap().WIDTH - 1));
+            jY = Math.max(0, Math.min(jY, gameObj.getMap().HEIGHT - 1));
 
-		} else {
-
-			if (Math.random() < 0.5) {
-				// top
-				tempY = gameObj.getPlayer().getY() - AppPanel.HEIGHT / 2 - margin;
-			} else {
-				// bottom
-				tempY = gameObj.getPlayer().getY() + AppPanel.HEIGHT / 2 + margin;
-			}
-			tempX = (int) (Math.random() * gameObj.getMap().WIDTH);
-		}
-		// clamp to map
-		tempX = Math.max(0, Math.min(tempX, gameObj.getMap().WIDTH - 1));
-		tempY = Math.max(0, Math.min(tempY, gameObj.getMap().HEIGHT - 1));
-
-		gameObj.addEnemy(new Enemy(gameObj, tempX, tempY, tier));
-	}
+            gameObj.addEnemy(new Enemy(gameObj, jX, jY, selected.id, getDifficultyMult()));
+            
+            credits -= selected.cost;
+            spendLimit -= selected.cost;
+            spawnedCount++;
+        }
+    }
 }

@@ -2,6 +2,7 @@ package States;
 
 import java.awt.Graphics2D;
 
+import Open.Artifacts.WorldItem;
 import Open.Entities.Exp;
 import Open.Entities.Enemies.Enemy;
 import Open.Entities.Interactible.Chest;
@@ -34,6 +35,10 @@ public class OpenState extends BaseState {
 				e.draw(g2);
 		}
 		for (Chest e : gameObj.getChests()) {
+			if (gameObj.isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
+				e.draw(g2);
+		}
+		for (WorldItem e : gameObj.getGroundItems()) {
 			if (gameObj.isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
 				e.draw(g2);
 		}
@@ -80,6 +85,12 @@ public class OpenState extends BaseState {
 				gameObj.getProjectiles().remove(i); // removes dead enemies
 			}
 		}
+		for (int i = gameObj.getGroundItems().size() - 1; i >= 0; i--) { // for every enemy (going backwards)
+			WorldItem e = gameObj.getGroundItems().get(i);
+
+			e.update(); // update each enemy
+		}
+		
 
 		gameObj.getWaves().update(); // update enemy spawning
 		

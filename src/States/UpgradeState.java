@@ -14,10 +14,13 @@ public class UpgradeState extends BaseState{
 
 	@Override
 	public void draw(Graphics2D g2) {
+		
+		
+		gameObj.getStateOpen().draw(g2);
 		g2.setColor(new Color(0, 0, 0, 150)); // dark semi-transparent overlay
 		g2.fillRect(0, 0, AppPanel.WIDTH, AppPanel.HEIGHT);
-		
 		gameObj.getUpgrades().draw(g2);
+		
 		
 	}
 
