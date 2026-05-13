@@ -8,10 +8,10 @@ import main.GameObject;
 
 public class ChunkyOats extends Artifact {
 
-	public ChunkyOats(GameObject gameobj) {
+	public ChunkyOats(GameObject gameobj) { // implemented
 		super(gameobj);
 		this.name = "Chunky Oats";
-		this.icon = Assets.oatsIcon;
+		this.icon = Assets.CommonOatsIcon;
 	}
 
 	@Override

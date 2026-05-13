@@ -4,11 +4,11 @@ import Open.Artifacts.Artifact;
 import main.Assets;
 import main.GameObject;
 
-public class Key extends Artifact {
+public class Key extends Artifact { // still no implemented
     public Key(GameObject gameObj) {
         super(gameObj);
         this.name = "Key";
-        this.icon = Assets.keyIcon;
+        this.icon = Assets.CommonKeyIcon;
     }
 
     @Override

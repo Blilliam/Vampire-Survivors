@@ -5,10 +5,10 @@ import main.Assets;
 import main.GameObject;
 
 public class Battery extends Artifact {
-    public Battery(GameObject gameObj) {
+    public Battery(GameObject gameObj) { //Implemented
         super(gameObj);
         this.name = "Battery";
-        this.icon = Assets.batteryIcon;
+        this.icon = Assets.CommonBatteryIcon;
     }
 
     @Override

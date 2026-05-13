@@ -8,7 +8,6 @@ import java.util.Random;
 
 import Open.Artifacts.WorldItem;
 import Open.Artifacts.Common.ChunkyOats;
-import Open.Artifacts.Common.Magnet;
 import main.GameObject;
 import main.enums.ChestState;
 

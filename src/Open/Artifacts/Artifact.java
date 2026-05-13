@@ -25,15 +25,15 @@ public abstract class Artifact {
 		count++;
 	}
 
-	public double GetPercentDamage() {
+	public double getPercentDamage() {
 		return 0;
 	}
 
-	public int GetFlatDamage() {
+	public int getFlatDamage() {
 		return 0;
 	}
 
-	public int getProjectileCount() {
+	public int getBonusProjectiles() {
 		return 0;
 	}
 
@@ -68,6 +68,10 @@ public abstract class Artifact {
 	public double getBonusInvinsibilityFrames() {
 		return 0;
 	}
+	public double getBonusExpDropChance() {
+		return 0;
+	}
+	
 	public void update() {
 		return;
 	}

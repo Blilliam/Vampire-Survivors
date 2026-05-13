@@ -10,10 +10,14 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import Open.Artifacts.Artifact;
 import Open.Artifacts.ArtifactManager;
+import Open.Artifacts.Magnet;
 import Open.Artifacts.Common.ChunkyOats;
+import Open.Artifacts.Uncommon.Beer;
 import Open.Entities.Enemies.Enemy;
 import Open.Upgrades.Book;
+import Open.Weapons.AuraWeapon;
 import Open.Weapons.SwordWeapon;
 import Open.Weapons.Weapon;
 import main.Animation;
@@ -50,10 +54,11 @@ public class Player extends Entity {
 	public Player(GameObject gameObj) {
 		super(gameObj);
 		setArtifactManager(new ArtifactManager(gameObj));
+		artifactManager.addArtifact(new Magnet(gameObj));
 		
 
 		weapons = new EnumMap<WeaponTypes, Weapon>(WeaponTypes.class);
-		weapons.put(WeaponTypes.Sword, new SwordWeapon(gameObj));
+		weapons.put(WeaponTypes.Aura, new AuraWeapon(gameObj));
 
 		baseMaxHp = 100;
 		currHp = getMaxHp();
@@ -241,7 +246,7 @@ public class Player extends Entity {
 	}
 
 	private void drawWeaponTooltip(Graphics2D g2, Weapon w, int mouseX, int mouseY) {
-	    EnumMap<main.enums.WeaponUpgrades, Double> stats = w.getStats();
+	    EnumMap<WeaponUpgrades, Double> stats = w.getStats();
 	    int rowHeight = 25; // Increased for better readability
 	    int padding = 15;
 	    int width = 220;
@@ -268,7 +273,7 @@ public class Player extends Entity {
 	    int i = 0;
 	    for (var entry : stats.entrySet()) {
 	        double value = entry.getValue();
-	        if (value <= 0 && entry.getKey() != main.enums.WeaponUpgrades.AttackDamage) continue;
+	        if (value <= 0 && entry.getKey() != WeaponUpgrades.AttackDamage) continue;
 
 	        String label = getDisplayName(entry.getKey());
 	        String formattedValue = formatStatValue(entry.getKey(), value);
@@ -382,10 +387,10 @@ public class Player extends Entity {
 	    g2.fillRoundRect(startX, startY, panelWidth, panelHeight, 15, 15);
 
 	    // 2. Draw a lighter grey border
-	    g2.setStroke(new java.awt.BasicStroke(3));
+	    g2.setStroke(new BasicStroke(3));
 	    g2.setColor(new Color(100, 100, 100));
 	    g2.drawRoundRect(startX, startY, panelWidth, panelHeight, 15, 15);
-	    g2.setStroke(new java.awt.BasicStroke(1)); // Reset stroke
+	    g2.setStroke(new BasicStroke(1)); // Reset stroke
 	}
 	
 

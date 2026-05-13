@@ -103,7 +103,8 @@ public class Upgrades {
 
 					boxes[i] = new GameButton(AppPanel.WIDTH / 2 - rectWidth / 2, yPos, rectWidth, rectHeight, text,
 							() -> {
-								w.applyUpgrade(stat, rarity);
+								w.getStats().put(stat, after);
+								w.onUpgrade();
 								finishUpgrade();
 							});
 				}
@@ -329,7 +330,7 @@ public class Upgrades {
 		if (upgrade == WeaponUpgrades.ProjectileSpeed)
 			return currentVal + (2.0 * multiplier);
 		if (upgrade == WeaponUpgrades.AttackDamage) {
-			double step = w.getBaseStats().getOrDefault(WeaponUpgrades.AttackDamage, 10.0) / 10.0;
+			double step = w.getBaseStats().getOrDefault(WeaponUpgrades.AttackDamage, 10.0) / 5.0;
 			return currentVal + (step * multiplier);
 		}
 		if (upgrade == WeaponUpgrades.AttackSpeed) {

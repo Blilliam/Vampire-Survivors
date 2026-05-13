@@ -17,15 +17,11 @@ public class BananaWeapon extends Weapon{
 		stats.put(WeaponUpgrades.ProjectileCount, (double) 1);
 		stats.put(WeaponUpgrades.AttackSize, (double) 1);
 		stats.put(WeaponUpgrades.AttackSpeed, (double) 120);
-		stats.put(WeaponUpgrades.ProjectileSpeed, (double) 5);
+		stats.put(WeaponUpgrades.ProjectileSpeed, (double) 10);
 		stats.put(WeaponUpgrades.Duration, (double) 50);
 		stats.put(WeaponUpgrades.CriticalDamage, (double) 1);
 		stats.put(WeaponUpgrades.CriticalChance, (double) 0.1);
-		
 		baseStats = stats.clone();
-		
-		
-
 		delayCounter = 0.0;
 	}
 

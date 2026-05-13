@@ -11,7 +11,7 @@ public class Magnet extends Artifact {
 	public Magnet(GameObject gameobj) {
 		super(gameobj);
 		this.name = "Watch";
-		this.icon = Assets.magnetIcon;
+		this.icon = Assets.LegendaryMagenetIcon;
 		cooldown = 200;
 		count = 0;
 	}

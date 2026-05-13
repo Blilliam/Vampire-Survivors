@@ -174,21 +174,28 @@ public class ArtifactManager {
 	public double GetPercentDamage() {
 		double out = 0;
 		for (Artifact a : artifacts)
-			out += a.GetPercentDamage();
+			out += a.getPercentDamage();
 		return out;
 	}
 
+	public double getBonusExpDropChance() {
+		double out = 0;
+		for (Artifact a : artifacts)
+			out += a.getBonusExpDropChance();
+		return out;
+	}
+	
 	public int GetFlatDamage() {
 		int out = 0;
 		for (Artifact a : artifacts)
-			out += a.GetFlatDamage();
+			out += a.getFlatDamage();
 		return out;
 	}
 
-	public int getProjectileCount() {
+	public int getBonusProjectiles() {
 		int out = 0;
 		for (Artifact a : artifacts)
-			out += a.getProjectileCount();
+			out += a.getBonusProjectiles();
 		return out;
 	}
 

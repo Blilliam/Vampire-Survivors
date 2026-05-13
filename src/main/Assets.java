@@ -33,14 +33,22 @@ public class Assets {
 	public static BufferedImage RevolverIcon;
 	public static BufferedImage BoneIcon;
 	public static BufferedImage SwordIcon;
+	//artifacts
+	public static BufferedImage CommonOatsIcon;
+	public static BufferedImage CommonWatchIcon;
+	public static BufferedImage CommonKeyIcon;
+	public static BufferedImage CommonBatteryIcon;
+	public static BufferedImage CommonCloverIcon;
+	public static BufferedImage CommonMidasIcon;
 	
-	public static BufferedImage oatsIcon;
-	public static BufferedImage watchIcon;
-	public static BufferedImage magnetIcon;
-	public static BufferedImage keyIcon;
-	public static BufferedImage batteryIcon;
-	public static BufferedImage cloverIcon;
-	public static BufferedImage midasIcon;
+	public static BufferedImage UncommonBackPackIcon;
+	public static BufferedImage UncommonBeerIcon;
+	public static BufferedImage UncommonDemonicBladeIcon;
+	public static BufferedImage UncommonDemonicBloodIcon;
+	public static BufferedImage UncommonEchoShardIcon;
+	
+	public static BufferedImage LegendaryMagenetIcon;
+
 	
 	public static BufferedImage GoldTomeIcon;
 	public static BufferedImage HpTomeIcon;
@@ -80,14 +88,20 @@ public class Assets {
 
 	public static void load() {
 			
-			oatsIcon =loadImage("Images/Artifacts/Common/Item_Oats.png");
-			watchIcon = loadImage("Images/Artifacts/Common/Item_Time_Bracelet.png");
-			cloverIcon = loadImage("Images/Artifacts/Common/Item_Clover.png");
-			batteryIcon =loadImage("Images/Artifacts/Common/Item_Battery.png");
-			keyIcon =loadImage("Images/Artifacts/Common/Item_Key.png");
-			midasIcon =loadImage("Images/Artifacts/Common/Item_Golden_Glove.png");
+			CommonOatsIcon =loadImage("Images/Artifacts/Common/Item_Oats.png");
+			CommonWatchIcon = loadImage("Images/Artifacts/Common/Item_Time_Bracelet.png");
+			CommonCloverIcon = loadImage("Images/Artifacts/Common/Item_Clover.png");
+			CommonBatteryIcon =loadImage("Images/Artifacts/Common/Item_Battery.png");
+			CommonKeyIcon =loadImage("Images/Artifacts/Common/Item_Key.png");
+			CommonMidasIcon =loadImage("Images/Artifacts/Common/Item_Golden_Glove.png");
 			
-			magnetIcon =loadImage("Images/Artifacts/Legendary/Item_Sucky_Magnet.png");
+			UncommonBackPackIcon =loadImage("Images/Artifacts/Uncommon/Item_Backpack.png");
+			UncommonBeerIcon = loadImage("Images/Artifacts/Uncommon/Item_Beer.png");
+			UncommonDemonicBladeIcon = loadImage("Images/Artifacts/Uncommon/Item_Demonic_Blade.png");
+			UncommonDemonicBloodIcon =loadImage("Images/Artifacts/Uncommon/Item_Demonic_Blood.png");
+			UncommonEchoShardIcon =loadImage("Images/Artifacts/Uncommon/Item_Echo_Shard.png");
+			
+			LegendaryMagenetIcon =loadImage("Images/Artifacts/Legendary/Item_Sucky_Magnet.png");
 			
 			
 			GoldTomeIcon =loadImage("Images/Items/Tomes/Gold-Tome.png");

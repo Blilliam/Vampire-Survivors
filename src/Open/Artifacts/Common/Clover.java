@@ -8,7 +8,7 @@ public class Clover extends Artifact { // still not implemented
     public Clover(GameObject gameObj) {
         super(gameObj);
         this.name = "Clover";
-        this.icon = Assets.cloverIcon;
+        this.icon = Assets.CommonCloverIcon;
     }
 
     @Override

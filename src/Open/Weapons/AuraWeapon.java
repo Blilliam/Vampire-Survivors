@@ -16,7 +16,7 @@ public class AuraWeapon extends Weapon{
 
 	public AuraWeapon(GameObject gameObj) {
 		super(gameObj, WeaponTypes.Aura);
-		stats.put(WeaponUpgrades.AttackDamage, (double) 5);
+		stats.put(WeaponUpgrades.AttackDamage, (double) 2);
 		stats.put(WeaponUpgrades.AttackSize, (double) 1);
 		stats.put(WeaponUpgrades.AttackSpeed, (double) 80);
 		stats.put(WeaponUpgrades.CriticalDamage, (double) 1);
@@ -40,7 +40,7 @@ public class AuraWeapon extends Weapon{
 		
 	}
 	@Override
-	protected void onUpgrade() {
+	public void onUpgrade() {
 		if (currentAuraEntity != null) {
             currentAuraEntity.setDead(true); 
         }

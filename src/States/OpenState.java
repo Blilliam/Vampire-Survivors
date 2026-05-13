@@ -21,30 +21,41 @@ public class OpenState extends BaseState {
 	@Override
 	public void draw(Graphics2D g2) {
 		gameObj.getMap().draw(g2); // draw map
-
-		for (Enemy e : gameObj.getEnemies()) {
+		
+		for(int i = 0;i < gameObj.getEnemies().size();i++) {
+			Enemy e = gameObj.getEnemies().get(i);
 			if (gameObj.isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
 				e.draw(g2); // draw every enemy
 		}
-		for (WeaponEntity e : gameObj.getProjectiles()) {
+/*
+		for (Enemy e : gameObj.getEnemies()) {
 			if (gameObj.isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
-				e.draw(g2);
-		}
-		for (Exp e : gameObj.getExp()) {
+				e.draw(g2); // draw every enemy
+		}*/
+		for(int i = 0;i < gameObj.getProjectiles().size();i++) {
+			WeaponEntity e = gameObj.getProjectiles().get(i);
 			if (gameObj.isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
-				e.draw(g2);
+				e.draw(g2); // draw every enemy
 		}
-		for (Chest e : gameObj.getChests()) {
+		for(int i = 0;i < gameObj.getExp().size();i++) {
+			Exp e = gameObj.getExp().get(i);
 			if (gameObj.isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
-				e.draw(g2);
+				e.draw(g2); // draw every enemy
 		}
-		for (WorldItem e : gameObj.getGroundItems()) {
+		for(int i = 0;i < gameObj.getChests().size();i++) {
+			Chest e = gameObj.getChests().get(i);
 			if (gameObj.isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
-				e.draw(g2);
+				e.draw(g2); // draw every enemy
 		}
-		for (DamageText dt : gameObj.getDamageTexts()) {
-	        dt.draw(g2, gameObj.getCameraX(), gameObj.getCameraY());
-	    }
+		for(int i = 0;i < gameObj.getGroundItems().size();i++) {
+			WorldItem e = gameObj.getGroundItems().get(i);
+			if (gameObj.isOnScreen(e.getX(), e.getY(), e.getWidth(), e.getHeight()))
+				e.draw(g2); // draw every enemy
+		}
+		for(int i = 0;i < gameObj.getDamageTexts().size();i++) {
+			DamageText e = gameObj.getDamageTexts().get(i);
+				e.draw(g2, gameObj.getCameraX(), gameObj.getCameraY()); // draw every enemy
+		}
 		gameObj.getPlayer().draw(g2); // draw player
 
 	}

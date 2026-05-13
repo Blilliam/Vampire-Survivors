@@ -37,7 +37,7 @@ public abstract class Weapon {
      * Returns a DamageResult containing the final number and a red/white flag.
      */
     public DamageResult getDmg() {
-        double baseDmg = stats.getOrDefault(WeaponUpgrades.AttackDamage, 0.0);
+        double baseDmg = (stats.getOrDefault(WeaponUpgrades.AttackDamage, 0.0) + gameObj.getPlayer().getArtifactManager().GetFlatDamage()) * (1 + gameObj.getPlayer().getArtifactManager().GetPercentDamage());
         double critChance = stats.getOrDefault(WeaponUpgrades.CriticalChance, 0.0);
         double critBonus = stats.getOrDefault(WeaponUpgrades.CriticalDamage, 0.0);
 
@@ -64,13 +64,13 @@ public abstract class Weapon {
 
     public void update() {
         // 1. Check if the main weapon cooldown is ready
-        double attackSpeed = stats.getOrDefault(WeaponUpgrades.AttackSpeed, 100.0);
+        double attackSpeed = stats.getOrDefault(WeaponUpgrades.AttackSpeed, 100.0) * (1-gameObj.getPlayer().getArtifactManager().getPercentAttackSpeed());
         double range = stats.getOrDefault(WeaponUpgrades.Range, 500.0);
 
         if (delayCounter >= attackSpeed) {
             if (gameObj.getPlayer().closestEnemy(range) != null) {
                 // "Load" the burst based on ProjectileCount stat
-                projectilesToFire = stats.getOrDefault(WeaponUpgrades.ProjectileCount, 1.0).intValue();
+                projectilesToFire = stats.getOrDefault(WeaponUpgrades.ProjectileCount, 1.0).intValue() + gameObj.getPlayer().getArtifactManager().getBonusProjectiles();
                 delayCounter = 0.0;
             }
         }
@@ -106,62 +106,6 @@ public abstract class Weapon {
     /**
      * Applies upgrades and updates the current stats map.
      */
-    public void applyUpgrade(WeaponUpgrades upgrade, WeaponRarity rarity) {
-        double currentVal = stats.getOrDefault(upgrade, 0.0);
-        double baseValue = getBaseValueFor(upgrade);
-        double rarityMultiplier = getRarityMultiplier(rarity);
-
-        switch (upgrade) {
-            case AttackDamage:
-                stats.put(upgrade, currentVal + (baseValue * rarityMultiplier));
-                break;
-
-            case AttackSpeed:
-                double speedReduc = 0.05;
-                if (rarity == WeaponRarity.SILVER) speedReduc = 0.06;
-                if (rarity == WeaponRarity.GOLD) speedReduc = 0.07;
-                if (rarity == WeaponRarity.DIAMOND) speedReduc = 0.10;
-                stats.put(upgrade, currentVal * (1.0 - speedReduc));
-                break;
-
-            case ProjectileCount:
-                stats.put(upgrade, currentVal + rarityMultiplier);
-                break;
-
-            case AttackSize:
-                double sizeInc = 0.10;
-                if (rarity == WeaponRarity.SILVER) sizeInc = 0.12;
-                if (rarity == WeaponRarity.GOLD) sizeInc = 0.16;
-                if (rarity == WeaponRarity.DIAMOND) sizeInc = 0.20;
-                stats.put(upgrade, currentVal + sizeInc);
-                break;
-
-            case CriticalChance:
-                double critInc = 0.05;
-                if (rarity == WeaponRarity.SILVER) critInc = 0.06;
-                if (rarity == WeaponRarity.GOLD) critInc = 0.08;
-                if (rarity == WeaponRarity.DIAMOND) critInc = 0.10;
-                stats.put(upgrade, currentVal + critInc);
-                break;
-
-            case CriticalDamage:
-                double critDmgInc = 0.25;
-                if (rarity == WeaponRarity.SILVER) critDmgInc = 0.30;
-                if (rarity == WeaponRarity.GOLD) critDmgInc = 0.40;
-                if (rarity == WeaponRarity.DIAMOND) critDmgInc = 0.50;
-                stats.put(upgrade, currentVal + critDmgInc);
-                break;
-
-            case ProjectileSpeed:
-                stats.put(upgrade, currentVal + (baseValue * rarityMultiplier));
-                break;
-
-            case ProjectileBounce:
-                stats.put(upgrade, currentVal + rarityMultiplier);
-                break;
-        }
-        onUpgrade();
-    }
 
     private double getRarityMultiplier(WeaponRarity rarity) {
         return switch (rarity) {
@@ -176,7 +120,7 @@ public abstract class Weapon {
         return icon;
     }
     
-    protected void onUpgrade() {
+    public void onUpgrade() {
         // Optional hook for subclasses
     }
 

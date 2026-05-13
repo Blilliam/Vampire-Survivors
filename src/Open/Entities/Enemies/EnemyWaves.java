@@ -31,7 +31,7 @@ public class EnemyWaves {
     public EnemyWaves(GameObject gameObj) {
         this.gameObj = gameObj;
         this.credits = 0;
-        this.creditGainRate = 0.30; 
+        this.creditGainRate = 0.50; 
         this.tickCounter = 0;
 
         // 2. REBALANCED POOL
